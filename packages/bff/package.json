@@ -2,7 +2,9 @@
   "name": "bff",
   "private": true,
   "scripts": {
-    "dev": "node scripts/dev.js",
+    "dev": "FORCE_COLOR=true run-p -l -c dev:*",
+    "dev:serve": "node scripts/dev.js",
+    "dev:gen-gql-codes": "graphql-codegen --watch",
     "lint": "FORCE_COLOR=true run-p -l -c lint:*",
     "lint:eslint": "eslint './**/*.{js,ts,tsx}' --format codeframe --color --max-warnings=0",
     "lint:typing": "tsc --pretty",
@@ -17,6 +19,9 @@
     "graphql": "^16.0.1"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "^2.3.0",
+    "@graphql-codegen/typescript": "^2.4.1",
+    "@graphql-codegen/typescript-resolvers": "^2.4.2",
     "@typescript-eslint/eslint-plugin": "^5.5.0",
     "@typescript-eslint/parser": "^5.5.0",
     "esbuild": "^0.14.1",
