@@ -1,11 +1,6 @@
 import { Resolvers } from '@/resolvers/generated';
+import { Query } from '@/resolvers/query';
 
-const resolvers: Resolvers = {
-  Query: {
-    hello: () => {
-      return `Hello world`;
-    },
-  },
-};
+const resolvers: Resolvers = { Query };
 
 export { resolvers };
