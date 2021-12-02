@@ -2,6 +2,7 @@ schema: src/schema/*.ts
 generates:
   ./src/resolvers/generated.ts:
     config:
+      contextType: ../context#Context
       scalars:
         Date: Date
     plugins:
