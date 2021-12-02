@@ -3,7 +3,9 @@
   "private": true,
   "scripts": {
     "dev": "node scripts/dev.js",
+    "lint": "FORCE_COLOR=true run-p -l -c lint:*",
     "lint:eslint": "eslint './**/*.{js,ts,tsx}' --format codeframe --color --max-warnings=0",
+    "lint:typing": "tsc --pretty",
     "lint:format": "prettier -c './**/*.{js,ts,tsx}'",
     "format": "prettier -w './**/*.{js,ts,tsx}'"
   },
@@ -22,6 +24,7 @@
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "nodemon": "^2.0.15",
+    "npm-run-all": "^4.1.5",
     "prettier": "^2.5.0"
   }
 }
