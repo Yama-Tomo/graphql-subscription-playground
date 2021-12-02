@@ -3,7 +3,9 @@
   "private": true,
   "scripts": {
     "dev": "node scripts/dev.js",
-    "lint:eslint": "eslint './**/*.{js,ts,tsx}' --format codeframe --color --max-warnings=0"
+    "lint:eslint": "eslint './**/*.{js,ts,tsx}' --format codeframe --color --max-warnings=0",
+    "lint:format": "prettier -c './**/*.{js,ts,tsx}'",
+    "format": "prettier -w './**/*.{js,ts,tsx}'"
   },
   "dependencies": {
     "@graphql-tools/schema": "^8.3.1",
@@ -19,6 +21,7 @@
     "esbuild-node-externals": "^1.4.0",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
-    "nodemon": "^2.0.15"
+    "nodemon": "^2.0.15",
+    "prettier": "^2.5.0"
   }
 }
