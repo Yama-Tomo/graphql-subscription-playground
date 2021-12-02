@@ -2,7 +2,8 @@
   "name": "bff",
   "private": true,
   "scripts": {
-    "dev": "node scripts/dev.js"
+    "dev": "node scripts/dev.js",
+    "lint:eslint": "eslint './**/*.{js,ts,tsx}' --format codeframe --color --max-warnings=0"
   },
   "dependencies": {
     "@graphql-tools/schema": "^8.3.1",
@@ -12,8 +13,12 @@
     "graphql": "^16.0.1"
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.5.0",
+    "@typescript-eslint/parser": "^5.5.0",
     "esbuild": "^0.14.1",
     "esbuild-node-externals": "^1.4.0",
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.3.0",
     "nodemon": "^2.0.15"
   }
 }
