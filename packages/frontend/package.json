@@ -5,7 +5,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint --max-warnings=0 --format codeframe"
+    "lint": "next lint --max-warnings=0 --format codeframe",
+    "lint:format": "prettier -c './**/*.{js,ts,tsx}'",
+    "format": "prettier -w './**/*.{js,ts,tsx}'"
   },
   "dependencies": {
     "next": "^12.0.4",
@@ -19,6 +21,7 @@
     "eslint": "^7.32.0",
     "eslint-config-next": "^12.0.4",
     "eslint-config-prettier": "^8.3.0",
+    "prettier": "^2.5.0",
     "typescript": "^4.5.2"
   }
 }
