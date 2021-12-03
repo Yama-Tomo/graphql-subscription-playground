@@ -4,7 +4,7 @@
   "scripts": {
     "dev": "FORCE_COLOR=true run-p -l -c dev:*",
     "dev:serve": "node scripts/dev.js",
-    "dev:gen-gql-codes": "graphql-codegen --watch",
+    "dev:gen-gql-codes": "graphql-codegen --watch './src/schema/**/*.ts'",
     "lint": "FORCE_COLOR=true run-p -l -c lint:*",
     "lint:eslint": "eslint './**/*.{js,ts,tsx}' --format codeframe --color --max-warnings=0",
     "lint:typing": "tsc --pretty",

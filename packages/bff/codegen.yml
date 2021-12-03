@@ -1,4 +1,8 @@
-schema: src/schema/*.ts
+require:
+  - ts-node/register
+schema:
+  - './src/schema/index.ts':
+      noPluck: true
 generates:
   ./src/resolvers/generated.ts:
     config:

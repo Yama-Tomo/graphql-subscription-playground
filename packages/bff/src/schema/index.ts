@@ -1,11 +1,13 @@
 import { gql } from 'apollo-server-fastify';
-import { message } from '@/schema/message';
-import { scalars } from '@/schema/scalars';
+import { DateTypeDefinition } from 'graphql-scalars';
+import { message } from './message';
 
 const typeDefs = gql`
   type Query {
     hello: String
   }
+
+  ${DateTypeDefinition}
 
   enum MutationType {
     CREATED
@@ -13,7 +15,6 @@ const typeDefs = gql`
     DELETED
   }
 
-  ${scalars}
   ${message}
 `;
 

@@ -1,6 +1,4 @@
-import { gql } from 'apollo-server-fastify';
-
-const message = gql`
+const message = `
   type Mutation {
     createMessage(data: CreateMessageInput!): Message!
     deleteMessage(id: ID!): Message!
