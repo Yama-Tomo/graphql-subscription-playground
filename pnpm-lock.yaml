@@ -11,6 +11,7 @@ importers:
       '@graphql-codegen/typescript': ^2.4.1
       '@graphql-codegen/typescript-resolvers': ^2.4.2
       '@graphql-tools/schema': ^8.3.1
+      '@types/uuid': ^8.3.3
       '@typescript-eslint/eslint-plugin': ^5.5.0
       '@typescript-eslint/parser': ^5.5.0
       apollo-server-core: ^3.5.0
@@ -27,6 +28,7 @@ importers:
       npm-run-all: ^4.1.5
       prettier: ^2.5.0
       subscriptions-transport-ws: ^0.11.0
+      uuid: ^8.3.2
     dependencies:
       '@graphql-tools/schema': 8.3.1_graphql@16.0.1
       apollo-server-core: 3.5.0_graphql@16.0.1
@@ -36,10 +38,12 @@ importers:
       graphql-scalars: 1.13.6_graphql@16.0.1
       graphql-subscriptions: 2.0.0_graphql@16.0.1
       subscriptions-transport-ws: 0.11.0_graphql@16.0.1
+      uuid: 8.3.2
     devDependencies:
       '@graphql-codegen/cli': 2.3.0_graphql@16.0.1
       '@graphql-codegen/typescript': 2.4.1_graphql@16.0.1
       '@graphql-codegen/typescript-resolvers': 2.4.2_graphql@16.0.1
+      '@types/uuid': 8.3.3
       '@typescript-eslint/eslint-plugin': 5.5.0_5b8353cc5034007b51dd1beec8e68a86
       '@typescript-eslint/parser': 5.5.0_eslint@7.32.0
       esbuild: 0.14.1
@@ -1521,6 +1525,10 @@ packages:
 
   /@types/scheduler/0.16.2:
     resolution: {integrity: sha512-hppQEBDmlwhFAXKJX2KnWLYu5yMfi91yazPb2l+lbJiwW+wdo1gNeRA+3RgNSO39WYX2euey41KEwnqesU2Jew==}
+    dev: true
+
+  /@types/uuid/8.3.3:
+    resolution: {integrity: sha512-0LbEEx1zxrYB3pgpd1M5lEhLcXjKJnYghvhTRgaBeUivLHMDM1TzF3IJ6hXU2+8uA4Xz+5BA63mtZo5DjVT8iA==}
     dev: true
 
   /@types/websocket/1.0.4:
