@@ -18,13 +18,13 @@ const message = gql`
   }
 
   input UpdateMessageInput {
-    id: String!
+    id: ID!
     userId: String!
     text: String!
   }
 
   type Message {
-    id: String!
+    id: ID!
     channelId: ID!
     userId: String!
     text: String!
