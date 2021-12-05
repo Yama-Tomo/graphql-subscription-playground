@@ -2,7 +2,9 @@
   "name": "frontend",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "FORCE_COLOR=true run-p -l -c dev:*",
+    "dev:serve": "next dev",
+    "dev:gen-gql-codes": "if [ -f ./.env.local ]; then set -a; source ./.env.local; set +a; fi; env | graphql-codegen --watch",
     "build": "next build",
     "start": "next start",
     "lint": "FORCE_COLOR=true run-p -l -c lint:*",
@@ -13,16 +15,23 @@
   },
   "dependencies": {
     "next": "^12.0.4",
+    "next-urql": "^3.3.1",
     "react": "^17.0.2",
-    "react-dom": "^17.0.2"
+    "react-dom": "^17.0.2",
+    "urql": "^2.0.5"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "^2.3.0",
+    "@graphql-codegen/typescript": "^2.4.1",
+    "@graphql-codegen/typescript-operations": "^2.2.1",
+    "@graphql-codegen/typescript-urql": "^3.4.1",
     "@types/node": "^16.11.11",
     "@types/react": "^17.0.37",
     "@typescript-eslint/eslint-plugin": "^5.5.0",
     "eslint": "^7.32.0",
     "eslint-config-next": "^12.0.4",
     "eslint-config-prettier": "^8.3.0",
+    "graphql-tag": "^2.12.6",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.5.0",
     "typescript": "^4.5.2"
