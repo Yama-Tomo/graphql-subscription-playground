@@ -1,8 +1,10 @@
-import { Resolvers, Message } from '@/resolvers/generated';
+import { Resolvers, Message, Channel } from '@/resolvers/generated';
 import { Query } from '@/resolvers/query';
 import { Date } from '@/resolvers/scalers';
+import { Mutation } from '@/resolvers/mutation';
+import { Subscription } from '@/resolvers/subscription';
 
-const resolvers: Resolvers = { Query, Date };
+const resolvers: Resolvers = { Query, Date, Mutation, Subscription };
 
 export { resolvers };
-export type { Message };
+export type { Message, Channel };

@@ -1,20 +1,26 @@
-import { Resolvers, Subscription } from '@/resolvers/generated';
+import { PubSub } from 'graphql-subscriptions';
+import {
+  Resolvers,
+  Subscription,
+  ChangeNotificationSubscriptionPayload,
+} from '@/resolvers/generated';
+import { Context } from '@/context';
 
-const subscribeTopics = {
-  changeMessage: (channelId: string) => `changeMessage:${channelId}`,
+const publishNotification = (
+  pubsub: PubSub,
+  userId: Context['user']['id'],
+  payload: ChangeNotificationSubscriptionPayload
+) => {
+  return pubsub.publish(userId, payload);
 };
 
 const Subscription: Resolvers['Subscription'] = {
-  changeMessage: {
-    subscribe(parent, args, { pubsub, db, user }) {
-      // TODO: ユーザが購読できるチャンネルの一覧を取得し、チャンネルの変化を購読する
-
+  changeNotification: {
+    subscribe(_, __, { pubsub, user }) {
       // TODO: https://github.com/dotansimha/graphql-code-generator/pull/7015
-      return pubsub.asyncIterator([
-        subscribeTopics.changeMessage('TODO'),
-      ]) as unknown as AsyncIterable<any>;
+      return pubsub.asyncIterator(user.id) as unknown as AsyncIterable<any>;
     },
   },
 };
 
-export { Subscription, subscribeTopics };
+export { Subscription, publishNotification };
