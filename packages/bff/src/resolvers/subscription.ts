@@ -18,6 +18,7 @@ const Subscription: Resolvers['Subscription'] = {
   changeNotification: {
     subscribe(_, __, { pubsub, user }) {
       // TODO: https://github.com/dotansimha/graphql-code-generator/pull/7015
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return pubsub.asyncIterator(user.id) as unknown as AsyncIterable<any>;
     },
   },
