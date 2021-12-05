@@ -1,1 +1,2 @@
 .next
+src/hooks/api/gql_generated.ts
