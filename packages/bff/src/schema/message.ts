@@ -11,13 +11,11 @@ const message = `
 
   input CreateMessageInput {
     channelId: ID!
-    userId: String!
     text: String!
   }
 
   input UpdateMessageInput {
     id: ID!
-    userId: String!
     text: String!
   }
 
