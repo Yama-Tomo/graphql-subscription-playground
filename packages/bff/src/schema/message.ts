@@ -5,10 +5,6 @@ const message = `
     updateMessage(data: UpdateMessageInput!): Message!
   }
 
-  type Subscription {
-    changeMessage: ChangeMessageSubscriptionPayload!
-  }
-
   input CreateMessageInput {
     channelId: ID!
     text: String!
