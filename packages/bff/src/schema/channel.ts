@@ -1,4 +1,8 @@
 const channel = `
+  type Query {
+    channels: [Channel!]!
+  }
+  
   type Mutation {
     createChannel(data: CreateChannelInput!): Channel!
     deleteChannel(id: ID!): Channel!
