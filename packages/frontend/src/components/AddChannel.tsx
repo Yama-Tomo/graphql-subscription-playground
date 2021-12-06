@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { gql } from 'urql';
-import { Channel, useCreateChannelMutation } from '@/hooks/api';
+import { types, useCreateChannelMutation } from '@/hooks/api';
 
 type UiProps = {
   name: JSX.IntrinsicElements['input']['value'];
@@ -24,7 +23,7 @@ const Ui: React.FC<UiProps> = (props) => (
 );
 
 type ContainerProps = {
-  onChannelCreated?: (data: Channel) => void;
+  onChannelCreated?: (data: types.Channel) => void;
 };
 const Container: React.FC<ContainerProps> = (props) => {
   const [state, setState] = useState({ name: '', description: '' });
@@ -49,20 +48,6 @@ const Container: React.FC<ContainerProps> = (props) => {
 
   return <Ui {...uiProps} />;
 };
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const CreateChannelMutation = gql`
-  mutation CreateChannel($name: String!, $description: String) {
-    createChannel(data: { name: $name, description: $description }) {
-      id
-      isDM
-      joinUsers
-      description
-      name
-      ownerId
-    }
-  }
-`;
 
 export { Container as AddChannel };
 export type { ContainerProps as AddChannelProps };

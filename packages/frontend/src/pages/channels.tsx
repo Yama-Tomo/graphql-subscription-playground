@@ -1,10 +1,9 @@
 import React, { Fragment, useState } from 'react';
 import { NextPage } from 'next';
-import { gql } from 'urql';
-import { useMyChannelsQuery, MyChannelsQuery } from '@/hooks/api';
+import { useMyChannelsQuery, types } from '@/hooks/api';
 import { AddChannel, AddChannelProps } from '@/components/AddChannel';
 
-const Channels: React.FC<Pick<MyChannelsQuery, 'channels'>> = (props) => (
+const Channels: React.FC<Pick<types.MyChannelsQuery, 'channels'>> = (props) => (
   <ul>
     {props.channels.map((channel) => (
       <li key={channel.id}>{channel.name}</li>
@@ -12,7 +11,7 @@ const Channels: React.FC<Pick<MyChannelsQuery, 'channels'>> = (props) => (
   </ul>
 );
 
-type UiProps = MyChannelsQuery & {
+type UiProps = types.MyChannelsQuery & {
   loading: boolean;
   onAddChannelClick: () => void;
   onAddChannelCancelClick: () => void;
@@ -70,16 +69,4 @@ const Container: NextPage = () => {
   return <Ui {...uiProps} />;
 };
 
-const MyChannels = gql`
-  query MyChannels {
-    channels {
-      id
-      name
-      isDM
-      ownerId
-    }
-  }
-`;
-
 export default Container;
-export { MyChannels };

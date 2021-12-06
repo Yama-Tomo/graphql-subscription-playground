@@ -1,6 +1,7 @@
 schema: ${NEXT_PUBLIC_GRAPHQL_URL}
 documents:
   - ./src/**/*.tsx
+  - ./src/**/*.ts
 generates:
   ./src/hooks/api/gql_generated.ts:
     plugins:
