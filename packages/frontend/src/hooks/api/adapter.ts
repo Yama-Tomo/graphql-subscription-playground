@@ -1,17 +1,17 @@
 import { UseQueryResponse } from 'urql';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const toApolloClientIFUseQuery = <T2 extends (args: any) => UseQueryResponse>(useQueryFn: T2) => {
+const toApolloClientIFUseQuery = <T extends (args: any) => UseQueryResponse>(useQueryFn: T) => {
   return function useQueryWrapper(
-    options?: Omit<Parameters<T2>[0], 'requestPolicy'> & {
-      fetchPolicy?: NonNullable<Parameters<T2>[0]>['requestPolicy'];
-      skip?: NonNullable<Parameters<T2>[0]>['pause'];
+    options?: Omit<Parameters<T>[0], 'requestPolicy'> & {
+      fetchPolicy?: NonNullable<Parameters<T>[0]>['requestPolicy'];
+      skip?: NonNullable<Parameters<T>[0]>['pause'];
     }
   ) {
     const [res, refetch] = useQueryFn(options ? swapOptKeys(options) : {});
 
     return {
-      data: res.data as ReturnType<T2>[0]['data'],
+      data: res.data as ReturnType<T>[0]['data'],
       loading: res.fetching,
       error: res.error,
       refetch,
