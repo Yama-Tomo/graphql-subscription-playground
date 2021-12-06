@@ -2,11 +2,17 @@ import React, { Fragment, useState } from 'react';
 import { NextPage } from 'next';
 import { useMyChannelsQuery, types } from '@/hooks/api';
 import { AddChannel, AddChannelProps } from '@/components/AddChannel';
+import { Link } from '@/components/Link';
+import { pagesPath } from '@/libs/$path';
 
 const Channels: React.FC<Pick<types.MyChannelsQuery, 'channels'>> = (props) => (
   <ul>
     {props.channels.map((channel) => (
-      <li key={channel.id}>{channel.name}</li>
+      <li key={channel.id}>
+        <Link href={pagesPath.channels._id(channel.id).$url()}>
+          <a>{channel.name}</a>
+        </Link>
+      </li>
     ))}
   </ul>
 );

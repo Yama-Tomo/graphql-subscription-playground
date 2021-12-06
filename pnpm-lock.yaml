@@ -27,6 +27,7 @@ importers:
       graphql-subscriptions: ^2.0.0
       nodemon: ^2.0.15
       npm-run-all: ^4.1.5
+      pathpida: ^0.17.0
       prettier: ^2.5.0
       source-map-support: ^0.5.21
       subscriptions-transport-ws: ^0.11.0
@@ -55,6 +56,7 @@ importers:
       eslint-config-prettier: 8.3.0_eslint@7.32.0
       nodemon: 2.0.15
       npm-run-all: 4.1.5
+      pathpida: 0.17.0
       prettier: 2.5.0
       source-map-support: 0.5.21
 
@@ -75,6 +77,7 @@ importers:
       next: ^12.0.4
       next-urql: ^3.3.1
       npm-run-all: ^4.1.5
+      pathpida: ^0.17.0
       prettier: ^2.5.0
       react: ^17.0.2
       react-dom: ^17.0.2
@@ -100,6 +103,7 @@ importers:
       eslint-config-prettier: 8.3.0_eslint@7.32.0
       graphql-tag: 2.12.6
       npm-run-all: 4.1.5
+      pathpida: 0.17.0
       prettier: 2.5.0
       typescript: 4.5.2
 
@@ -6165,6 +6169,15 @@ packages:
   /path-type/4.0.0:
     resolution: {integrity: sha512-gDKb8aZMDeD/tZWs9P6+q0J9Mwkdl6xMV8TjnGP3qJVJ06bdMgkbBlLU8IdfOsIsFz2BW1rNVT3XuNEl8zPAvw==}
     engines: {node: '>=8'}
+    dev: true
+
+  /pathpida/0.17.0:
+    resolution: {integrity: sha512-Ajk/uMPJUECIK0jb1rG1rOATTjU2PSksSVIWS2n6w2jp3QgN4kHbGnPDFLqeaag2eudI2tOPQfAzDO7F26XSmg==}
+    hasBin: true
+    dependencies:
+      chokidar: 3.5.2
+      ignore: 5.1.9
+      minimist: 1.2.5
     dev: true
 
   /pbkdf2/3.1.2:
