@@ -8,7 +8,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 
 export default withUrqlClient(
   () => ({
-    url: 'http://localhost:4000/graphql',
+    url: process.env.NEXT_PUBLIC_GRAPHQL_URL || '',
   }),
   { ssr: false }
 )(MyApp);
