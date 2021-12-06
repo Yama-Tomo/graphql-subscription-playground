@@ -9,6 +9,7 @@ esbuild
     ...buildOpts(),
     entryPoints: ['./src/dev_server.ts'],
     outfile,
+    sourcemap: 'inline',
     watch: {
       onRebuild(error) {
         if (error) {
