@@ -70,7 +70,6 @@ const Container: NextPage = () => {
   return <Ui {...uiProps} />;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const MyChannels = gql`
   query MyChannels {
     channels {
@@ -83,3 +82,4 @@ const MyChannels = gql`
 `;
 
 export default Container;
+export { MyChannels };
