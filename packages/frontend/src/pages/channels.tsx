@@ -1,7 +1,8 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useState } from 'react';
 import { NextPage } from 'next';
 import { gql } from 'urql';
 import { useMyChannelsQuery, MyChannelsQuery } from '@/hooks/api';
+import { AddChannel, AddChannelProps } from '@/components/AddChannel';
 
 const Channels: React.FC<Pick<MyChannelsQuery, 'channels'>> = (props) => (
   <ul>
@@ -11,9 +12,28 @@ const Channels: React.FC<Pick<MyChannelsQuery, 'channels'>> = (props) => (
   </ul>
 );
 
-const Ui: React.FC<MyChannelsQuery & { loading: boolean }> = ({ channels, loading }) => (
+type UiProps = MyChannelsQuery & {
+  loading: boolean;
+  onAddChannelClick: () => void;
+  onAddChannelCancelClick: () => void;
+  newChannelEditing: boolean;
+} & AddChannelProps;
+const Ui: React.FC<UiProps> = ({
+  channels,
+  loading,
+  onAddChannelClick,
+  onAddChannelCancelClick,
+  newChannelEditing,
+  onChannelCreated,
+}) => (
   <main>
-    <h1>channels</h1>
+    <h1>
+      channels{' '}
+      <button onClick={newChannelEditing ? onAddChannelCancelClick : onAddChannelClick}>
+        {newChannelEditing ? 'cancel' : 'add'}
+      </button>
+    </h1>
+    {newChannelEditing && <AddChannel onChannelCreated={onChannelCreated} />}
     {loading && <span>loading...</span>}
     {!loading && (
       <Fragment>
@@ -31,8 +51,22 @@ const Ui: React.FC<MyChannelsQuery & { loading: boolean }> = ({ channels, loadin
 );
 
 const Container: NextPage = () => {
+  const [state, setState] = useState({ newChannelEditing: false });
   const { data, loading } = useMyChannelsQuery();
-  const uiProps = { channels: data?.channels || [], loading };
+  const uiProps: UiProps = {
+    channels: data?.channels || [],
+    loading,
+    newChannelEditing: state.newChannelEditing,
+    onAddChannelClick: () => {
+      setState((current) => ({ ...current, newChannelEditing: true }));
+    },
+    onAddChannelCancelClick: () => {
+      setState((current) => ({ ...current, newChannelEditing: false }));
+    },
+    onChannelCreated: () => {
+      setState((current) => ({ ...current, newChannelEditing: false }));
+    },
+  };
   return <Ui {...uiProps} />;
 };
 

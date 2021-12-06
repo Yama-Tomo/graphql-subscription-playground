@@ -1,6 +1,10 @@
-import { useMyChannelsQuery as useURQLMyChannelsQuery } from '@/hooks/api/gql_generated';
-import { toApolloClientIFUseQuery } from '@/hooks/api/adapter';
+import {
+  useMyChannelsQuery as useURQLMyChannelsQuery,
+  useCreateChannelMutation as useURQLCreateChannelMutation,
+} from '@/hooks/api/gql_generated';
+import { toApolloClientIFUseMutation, toApolloClientIFUseQuery } from '@/hooks/api/adapter';
 
 const useMyChannelsQuery = toApolloClientIFUseQuery(useURQLMyChannelsQuery);
+const useCreateChannelMutation = toApolloClientIFUseMutation(useURQLCreateChannelMutation);
 
-export { useMyChannelsQuery };
+export { useMyChannelsQuery, useCreateChannelMutation };
