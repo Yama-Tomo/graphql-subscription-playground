@@ -16,6 +16,13 @@ const typeDefs = gql`
     DELETED
   }
 
+  type PageInfo {
+    hasNextPage: Boolean!
+    hasPreviousPage: Boolean!
+    startCursor: String
+    endCursor: String
+  }
+
   ${message}
   ${channel}
 

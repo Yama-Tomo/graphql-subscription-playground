@@ -1,8 +1,10 @@
-const channel = `
+import { gql } from 'apollo-server-fastify';
+
+const channel = gql`
   type Query {
     channels: [Channel!]!
   }
-  
+
   type Mutation {
     createChannel(data: CreateChannelInput!): Channel!
     deleteChannel(id: ID!): Channel!
