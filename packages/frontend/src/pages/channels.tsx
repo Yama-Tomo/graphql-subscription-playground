@@ -1,6 +1,7 @@
 import React, { Fragment, useState } from 'react';
 import { NextPage } from 'next';
 import { useMyChannelsQuery, types } from '@/hooks/api';
+import { gql } from 'urql';
 import { AddChannel, AddChannelProps } from '@/components/AddChannel';
 import { Link } from '@/components/Link';
 import { pagesPath } from '@/libs/$path';
@@ -74,5 +75,16 @@ const Container: NextPage = () => {
   };
   return <Ui {...uiProps} />;
 };
+
+gql`
+  query MyChannels {
+    channels {
+      id
+      name
+      isDM
+      ownerId
+    }
+  }
+`;
 
 export default Container;

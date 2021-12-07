@@ -1,3 +1,3 @@
 export * from './channel';
-export * as gql from './gql';
+export * as docs from './docs';
 export * as types from './types';

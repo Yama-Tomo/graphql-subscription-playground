@@ -1,12 +1,12 @@
 import { cacheExchange } from '@urql/exchange-graphcache';
-import { types, gql } from '@/hooks/api';
+import { types, docs } from '@/hooks/api';
 
 const setupCache = () =>
   cacheExchange({
     updates: {
       Mutation: {
         createChannel: (parent: types.CreateChannelMutation, _, cache) => {
-          cache.updateQuery<types.MyChannelsQuery>({ query: gql.MyChannels }, (data) => {
+          cache.updateQuery<types.MyChannelsQuery>({ query: docs.MyChannelsDocument }, (data) => {
             if (data) {
               data.channels.push(parent.createChannel);
             }
