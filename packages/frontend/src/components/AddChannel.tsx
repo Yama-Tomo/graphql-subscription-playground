@@ -23,7 +23,7 @@ const Ui: React.FC<UiProps> = (props) => (
 );
 
 type ContainerProps = {
-  onChannelCreated?: (data: types.Channel) => void;
+  onChannelCreated?: (data: types.CreateChannelMutation['createChannel']) => void;
 };
 const Container: React.FC<ContainerProps> = (props) => {
   const [state, setState] = useState({ name: '', description: '' });
