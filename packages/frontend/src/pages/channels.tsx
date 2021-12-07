@@ -31,6 +31,7 @@ const Ui: React.FC<UiProps> = ({
   onAddChannelCancelClick,
   newChannelEditing,
   onChannelCreated,
+  children,
 }) => (
   <main>
     <h1>
@@ -53,13 +54,15 @@ const Ui: React.FC<UiProps> = ({
         <Channels channels={channels.filter((channel) => channel.isDM)} />
       </Fragment>
     )}
+    {children}
   </main>
 );
 
-const Container: NextPage = () => {
+const Container: NextPage = (props) => {
   const [state, setState] = useState({ newChannelEditing: false });
   const { data, loading } = useMyChannelsQuery();
   const uiProps: UiProps = {
+    ...props,
     channels: data?.channels || [],
     loading,
     newChannelEditing: state.newChannelEditing,
