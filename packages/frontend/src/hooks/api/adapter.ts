@@ -3,21 +3,35 @@ import {
   OperationResult,
   UseMutationResponse,
   UseMutationState,
+  UseQueryArgs,
   UseQueryResponse,
 } from 'urql';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const toApolloClientIFUseQuery = <T extends (args: any) => UseQueryResponse>(useQueryFn: T) => {
-  return function useQueryWrapper(
-    options?: Omit<Parameters<T>[0], 'requestPolicy'> & {
-      fetchPolicy?: NonNullable<Parameters<T>[0]>['requestPolicy'];
-      skip?: NonNullable<Parameters<T>[0]>['pause'];
+type UseCustomQueryArgs<T> = T extends Omit<UseQueryArgs, 'query'>
+  ? Omit<T, 'requestPolicy' | 'pause'> & {
+      fetchPolicy?: NonNullable<T>['requestPolicy'];
+      skip?: NonNullable<T>['pause'];
     }
+  : never;
+
+const toApolloClientIFUseQuery = <
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  CODEGEN_USE_QUERY_FN extends (args: any) => UseQueryResponse,
+  OPTS_OPTIONAL extends boolean = false
+>(
+  useQueryFn: CODEGEN_USE_QUERY_FN,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  opts_optional?: OPTS_OPTIONAL
+) => {
+  return function useQueryWrapper(
+    ...options: NonNullable<OPTS_OPTIONAL> extends true
+      ? Partial<[UseCustomQueryArgs<Parameters<CODEGEN_USE_QUERY_FN>[0]>]>
+      : [UseCustomQueryArgs<Parameters<CODEGEN_USE_QUERY_FN>[0]>]
   ) {
-    const [res, refetch] = useQueryFn(options ? swapOptKeys(options) : {});
+    const [res, refetch] = useQueryFn(options[0] ? swapOptKeys(options[0]) : {});
 
     return {
-      data: res.data as ReturnType<T>[0]['data'],
+      data: res.data as ReturnType<CODEGEN_USE_QUERY_FN>[0]['data'],
       loading: res.fetching,
       error: res.error,
       refetch,
