@@ -2,7 +2,7 @@ import React, { Fragment, useState } from 'react';
 import { NextPage } from 'next';
 import { useMyChannelsQuery, types } from '@/hooks/api';
 import { gql } from 'urql';
-import { AddChannel, AddChannelProps } from '@/components/AddChannel';
+import { CreateChannel, CreateChannelProps } from '@/components/CreateChannel';
 import { Link } from '@/components/Link';
 import { pagesPath } from '@/libs/$path';
 
@@ -23,7 +23,7 @@ type UiProps = types.MyChannelsQuery & {
   onAddChannelClick: () => void;
   onAddChannelCancelClick: () => void;
   newChannelEditing: boolean;
-} & AddChannelProps;
+} & CreateChannelProps;
 const Ui: React.FC<UiProps> = ({
   channels,
   loading,
@@ -40,7 +40,7 @@ const Ui: React.FC<UiProps> = ({
         {newChannelEditing ? 'cancel' : 'add'}
       </button>
     </h1>
-    {newChannelEditing && <AddChannel onChannelCreated={onChannelCreated} />}
+    {newChannelEditing && <CreateChannel onChannelCreated={onChannelCreated} />}
     {loading && <span>loading...</span>}
     {!loading && (
       <Fragment>

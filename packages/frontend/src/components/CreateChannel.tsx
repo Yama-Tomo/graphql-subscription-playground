@@ -63,5 +63,5 @@ gql`
   }
 `;
 
-export { Container as AddChannel };
-export type { ContainerProps as AddChannelProps };
+export { Container as CreateChannel };
+export type { ContainerProps as CreateChannelProps };
