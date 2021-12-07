@@ -1,1 +1,8 @@
-export type { MyChannelsQuery, CreateChannelMutation, LatestMessagesQuery } from './gql_generated';
+export type {
+  MyChannelsQuery,
+  CreateChannelMutation,
+  LatestMessagesQuery,
+  CreateMessageMutation,
+  CreateMessageMutationVariables,
+  LatestMessagesQueryVariables,
+} from './gql_generated';
