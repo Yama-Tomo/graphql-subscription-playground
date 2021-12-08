@@ -50,6 +50,10 @@ const addNewMessage = (message: types.CreateMessageMutation['createMessage'], ca
   cache.updateQuery<types.LatestMessagesQuery>(
     { query: docs.LatestMessagesDocument, variables: latestPageCache.arguments || undefined },
     (data) => {
+      if (data?.messages.edges.find((item) => item.node.id === message.id)) {
+        return data;
+      }
+
       data?.messages.edges.push({
         __typename: 'MessageEdge',
         cursor: message.id,

@@ -12,7 +12,6 @@ const Mutation: Resolvers['Mutation'] = {
 
     db.messages.push(message);
     channel.joinUsers.forEach((userId) => {
-      if (user.id === userId) return;
       publishNotification(pubsub, userId, {
         changeNotification: {
           __typename: 'ChangeMessageSubscriptionPayload',
@@ -37,7 +36,6 @@ const Mutation: Resolvers['Mutation'] = {
 
     message.text = data.text;
     channel.joinUsers.forEach((userId) => {
-      if (user.id === userId) return;
       publishNotification(pubsub, userId, {
         changeNotification: {
           __typename: 'ChangeMessageSubscriptionPayload',
@@ -63,7 +61,6 @@ const Mutation: Resolvers['Mutation'] = {
 
     db.messages.splice(dataIdx, 1);
     channel.joinUsers.forEach((userId) => {
-      if (user.id === userId) return;
       publishNotification(pubsub, userId, {
         changeNotification: {
           __typename: 'ChangeMessageSubscriptionPayload',
@@ -96,7 +93,6 @@ const Mutation: Resolvers['Mutation'] = {
     channel.name = data.name;
     channel.description = data.description;
     channel.joinUsers.forEach((userId) => {
-      if (user.id === userId) return;
       publishNotification(pubsub, userId, {
         changeNotification: {
           __typename: 'ChangeChannelSubscriptionPayload',
@@ -117,7 +113,6 @@ const Mutation: Resolvers['Mutation'] = {
     channel.joinUsers.push(data.userId);
 
     channel.joinUsers.forEach((userId) => {
-      if (user.id === userId) return;
       publishNotification(pubsub, userId, {
         changeNotification: {
           __typename: 'ChangeChannelSubscriptionPayload',
@@ -139,7 +134,6 @@ const Mutation: Resolvers['Mutation'] = {
 
     db.channels.splice(dataIdx, 1);
     channel.joinUsers.forEach((userId) => {
-      if (user.id === userId) return;
       publishNotification(pubsub, userId, {
         changeNotification: {
           __typename: 'ChangeChannelSubscriptionPayload',
