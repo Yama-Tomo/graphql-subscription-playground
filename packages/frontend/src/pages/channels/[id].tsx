@@ -7,7 +7,7 @@ import { CreateMessage } from '@/components/CreateMessage';
 
 const Ui: React.FC<{ channelId: string }> = (props) => (
   <Channel>
-    <hr />
+    <hr style={{ width: '100%' }} />
     <Messages channelId={props.channelId} />
     <CreateMessage channelId={props.channelId} />
   </Channel>

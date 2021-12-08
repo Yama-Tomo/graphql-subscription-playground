@@ -80,6 +80,7 @@ importers:
       prettier: ^2.5.0
       react: ^17.0.2
       react-dom: ^17.0.2
+      react-infinite-scroll-component: ^6.1.0
       subscriptions-transport-ws: ^0.11.0
       typescript: ^4.5.2
       urql: ^2.0.5
@@ -89,6 +90,7 @@ importers:
       next-urql: 3.3.1_react@17.0.2+urql@2.0.5
       react: 17.0.2
       react-dom: 17.0.2_react@17.0.2
+      react-infinite-scroll-component: 6.1.0_react@17.0.2
       subscriptions-transport-ws: 0.11.0
       urql: 2.0.5_react@17.0.2
     devDependencies:
@@ -6417,6 +6419,15 @@ packages:
       scheduler: 0.20.2
     dev: false
 
+  /react-infinite-scroll-component/6.1.0_react@17.0.2:
+    resolution: {integrity: sha512-SQu5nCqy8DxQWpnUVLx7V7b7LcA37aM7tvoWjTLZp1dk6EJibM5/4EJKzOnl07/BsM1Y40sKLuqjCwwH/xV0TQ==}
+    peerDependencies:
+      react: '>=16.0.0'
+    dependencies:
+      react: 17.0.2
+      throttle-debounce: 2.3.0
+    dev: false
+
   /react-is/16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
     dev: true
@@ -7190,6 +7201,11 @@ packages:
   /text-table/0.2.0:
     resolution: {integrity: sha1-f17oI66AUgfACvLfSoTsP8+lcLQ=}
     dev: true
+
+  /throttle-debounce/2.3.0:
+    resolution: {integrity: sha512-H7oLPV0P7+jgvrk+6mwwwBDmxTaxnu9HMXmloNLXwnNO0ZxZ31Orah2n8lU1eMPvsaowP2CX+USCgyovXfdOFQ==}
+    engines: {node: '>=8'}
+    dev: false
 
   /through/2.3.8:
     resolution: {integrity: sha1-DdTJ/6q8NXlgsbckEV1+Doai4fU=}

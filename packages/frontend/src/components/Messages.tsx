@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { gql } from 'urql';
+import InfiniteScroll from 'react-infinite-scroll-component';
 import { types } from '@/hooks/api';
 import { useLatestMessagesQuery } from '@/hooks/api';
 
@@ -10,18 +11,37 @@ type UiProps = {
 };
 const Ui: React.FC<UiProps> = (props) => (
   <React.Fragment>
-    {props.hasPrevPage && <button onClick={props.onPrevClick}>old message</button>}
     {!props.messages && 'loading...'}
-    {props.messages &&
-      props.messages.edges.map((message) => (
-        <div key={message.node.id}>
-          <div style={{ marginBottom: '1rem' }}>
-            {/* TODO: ユーザ名に変換 */}
-            <b>{message.node.id}</b>
-            <div>{message.node.text}</div>
-          </div>
-        </div>
-      ))}
+    {props.messages && (
+      <div
+        id="messages-container"
+        style={{ overflow: 'auto', display: 'flex', flexDirection: 'column-reverse' }}
+      >
+        <InfiniteScroll
+          style={{ display: 'flex', flexDirection: 'column-reverse' }}
+          scrollableTarget="messages-container"
+          dataLength={props.messages.edges.length}
+          next={props.onPrevClick}
+          hasMore={props.hasPrevPage}
+          inverse={true}
+          loader={
+            <div className="loader" key={0}>
+              Loading ...
+            </div>
+          }
+        >
+          {[...props.messages.edges].reverse().map((message, idx) => (
+            <div key={idx}>
+              <div style={{ marginBottom: '1rem' }}>
+                {/* TODO: ユーザ名に変換 */}
+                <b>{message.node.id}</b>
+                <div>{message.node.text}</div>
+              </div>
+            </div>
+          ))}
+        </InfiniteScroll>
+      </div>
+    )}
   </React.Fragment>
 );
 

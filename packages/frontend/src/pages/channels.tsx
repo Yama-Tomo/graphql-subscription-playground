@@ -29,7 +29,7 @@ const Ui: React.FC<UiProps> = ({
   onChannelCreated,
   children,
 }) => (
-  <main>
+  <main style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
     {loading && <span>loading...</span>}
     {!loading && (
       <Fragment>
