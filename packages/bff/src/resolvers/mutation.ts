@@ -72,7 +72,7 @@ const Mutation: Resolvers['Mutation'] = {
 
     return message;
   },
-  createChannel(parent, { data }, { db, user }) {
+  createChannel(parent, { data }, { db, user, pubsub }) {
     const channel: Channel = {
       ...data,
       joinUsers: [user.id],
@@ -81,6 +81,15 @@ const Mutation: Resolvers['Mutation'] = {
       ownerId: user.id,
     };
     db.channels.push(channel);
+    channel.joinUsers.forEach((userId) => {
+      publishNotification(pubsub, userId, {
+        changeNotification: {
+          __typename: 'ChangeChannelSubscriptionPayload',
+          mutation: MutationType.Created,
+          data: channel,
+        },
+      });
+    });
 
     return channel;
   },
