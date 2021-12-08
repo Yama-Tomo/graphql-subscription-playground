@@ -1,1 +1,6 @@
-export { MyChannelsDocument, CreateChannelDocument, LatestMessagesDocument } from './gql_generated';
+export {
+  MyChannelsDocument,
+  CreateChannelDocument,
+  LatestMessagesDocument,
+  ChangeNotificationDocument,
+} from './gql_generated';

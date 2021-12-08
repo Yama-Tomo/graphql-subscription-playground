@@ -31,7 +31,7 @@ const typeDefs = gql`
     | ChangeChannelSubscriptionPayload
 
   type Subscription {
-    changeNotification: ChangeNotificationSubscriptionPayload
+    changeNotification: ChangeNotificationSubscriptionPayload!
   }
 `;
 

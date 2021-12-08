@@ -5,4 +5,7 @@ export type {
   CreateMessageMutation,
   CreateMessageMutationVariables,
   LatestMessagesQueryVariables,
+  ChangeNotificationSubscription,
+  WithTypename,
+  GraphCacheConfig,
 } from './gql_generated';
