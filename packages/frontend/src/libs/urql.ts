@@ -5,13 +5,9 @@ const cacheConfig = (): types.GraphCacheConfig => ({
   updates: {
     Mutation: {
       createChannel: (parent, args, cache) => {
-        cache.updateQuery<types.MyChannelsQuery>({ query: docs.MyChannelsDocument }, (data) => {
-          if (data?.channels && isAllKeyNotEmpty(parent.createChannel)) {
-            data.channels.push(parent.createChannel);
-          }
-
-          return data;
-        });
+        if (isAllKeyNotEmpty(parent.createChannel)) {
+          addNewChannel(parent.createChannel, cache);
+        }
       },
       createMessage: (parent, args, cache) => {
         if (isAllKeyNotEmpty(parent.createMessage)) {
@@ -22,8 +18,13 @@ const cacheConfig = (): types.GraphCacheConfig => ({
     Subscription: {
       changeNotification: ({ changeNotification: { mutation, data } }, args, cache) => {
         console.log('subscription:', mutation, data);
-        if (mutation === MutationType.Created && data?.__typename == 'Message') {
-          addNewMessage(data, cache);
+        if (mutation === MutationType.Created) {
+          if (data?.__typename === 'Message') {
+            addNewMessage(data, cache);
+          }
+          if (data?.__typename === 'Channel') {
+            addNewChannel(data, cache);
+          }
         }
       },
     },
@@ -33,6 +34,22 @@ const cacheConfig = (): types.GraphCacheConfig => ({
 const isAllKeyNotEmpty = <T extends Record<string, unknown>>(
   arg: T | undefined
 ): arg is Required<NonNullable<T>> => arg != null && !Object.values(arg).find((v) => v == null);
+
+const addNewChannel = (channel: types.CreateChannelMutation['createChannel'], cache: Cache) => {
+  const channelCache = cache.inspectFields('Query').find((qc) => qc.fieldName === 'channels');
+  if (!channelCache) {
+    return;
+  }
+
+  cache.updateQuery<types.MyChannelsQuery>({ query: docs.MyChannelsDocument }, (data) => {
+    if (data?.channels.find((item) => item.id === channel.id)) {
+      return data;
+    }
+
+    data?.channels.push({ __typename: 'Channel', ...channel });
+    return data;
+  });
+};
 
 const addNewMessage = (message: types.CreateMessageMutation['createMessage'], cache: Cache) => {
   const latestPageCache = cache.inspectFields('Query').find((queryCache) => {
