@@ -13,7 +13,13 @@ const Mutation: Resolvers['Mutation'] = {
     db.messages.push(message);
     channel.joinUsers.forEach((userId) => {
       if (user.id === userId) return;
-      publishNotification(pubsub, userId, { mutation: MutationType.Created, data: message });
+      publishNotification(pubsub, userId, {
+        changeNotification: {
+          __typename: 'ChangeMessageSubscriptionPayload',
+          mutation: MutationType.Created,
+          data: message,
+        },
+      });
     });
 
     return message;
@@ -32,7 +38,13 @@ const Mutation: Resolvers['Mutation'] = {
     message.text = data.text;
     channel.joinUsers.forEach((userId) => {
       if (user.id === userId) return;
-      publishNotification(pubsub, userId, { mutation: MutationType.Updated, data: message });
+      publishNotification(pubsub, userId, {
+        changeNotification: {
+          __typename: 'ChangeMessageSubscriptionPayload',
+          mutation: MutationType.Updated,
+          data: message,
+        },
+      });
     });
 
     return message;
@@ -52,7 +64,13 @@ const Mutation: Resolvers['Mutation'] = {
     db.messages.splice(dataIdx, 1);
     channel.joinUsers.forEach((userId) => {
       if (user.id === userId) return;
-      publishNotification(pubsub, userId, { mutation: MutationType.Deleted, data: message });
+      publishNotification(pubsub, userId, {
+        changeNotification: {
+          __typename: 'ChangeMessageSubscriptionPayload',
+          mutation: MutationType.Deleted,
+          data: message,
+        },
+      });
     });
 
     return message;
@@ -79,7 +97,13 @@ const Mutation: Resolvers['Mutation'] = {
     channel.description = data.description;
     channel.joinUsers.forEach((userId) => {
       if (user.id === userId) return;
-      publishNotification(pubsub, userId, { mutation: MutationType.Updated, data: channel });
+      publishNotification(pubsub, userId, {
+        changeNotification: {
+          __typename: 'ChangeChannelSubscriptionPayload',
+          mutation: MutationType.Updated,
+          data: channel,
+        },
+      });
     });
 
     return channel;
@@ -94,7 +118,13 @@ const Mutation: Resolvers['Mutation'] = {
 
     channel.joinUsers.forEach((userId) => {
       if (user.id === userId) return;
-      publishNotification(pubsub, userId, { mutation: MutationType.Updated, data: channel });
+      publishNotification(pubsub, userId, {
+        changeNotification: {
+          __typename: 'ChangeChannelSubscriptionPayload',
+          mutation: MutationType.Updated,
+          data: channel,
+        },
+      });
     });
 
     return channel;
@@ -110,7 +140,13 @@ const Mutation: Resolvers['Mutation'] = {
     db.channels.splice(dataIdx, 1);
     channel.joinUsers.forEach((userId) => {
       if (user.id === userId) return;
-      publishNotification(pubsub, userId, { mutation: MutationType.Deleted, data: channel });
+      publishNotification(pubsub, userId, {
+        changeNotification: {
+          __typename: 'ChangeChannelSubscriptionPayload',
+          mutation: MutationType.Deleted,
+          data: channel,
+        },
+      });
     });
 
     return channel;
