@@ -1,3 +1,4 @@
+import { gql } from 'urql';
 import { cacheExchange, Cache } from '@urql/exchange-graphcache';
 import { docs, types, MutationType } from '@/hooks/api';
 
@@ -7,6 +8,11 @@ const cacheConfig = (): types.GraphCacheConfig => ({
       createChannel: (parent, args, cache) => {
         if (isAllKeyNotEmpty(parent.createChannel)) {
           addNewChannel(parent.createChannel, cache);
+        }
+      },
+      updateChannel(parent, args, cache) {
+        if (isAllKeyNotEmpty(parent.updateChannel)) {
+          updateChannel(parent.updateChannel, cache);
         }
       },
       createMessage: (parent, args, cache) => {
@@ -24,6 +30,12 @@ const cacheConfig = (): types.GraphCacheConfig => ({
           }
           if (data?.__typename === 'Channel') {
             addNewChannel(data, cache);
+          }
+        }
+
+        if (mutation === MutationType.Updated) {
+          if (data?.__typename === 'Channel') {
+            updateChannel(data, cache);
           }
         }
       },
@@ -49,6 +61,22 @@ const addNewChannel = (channel: types.CreateChannelMutation['createChannel'], ca
     data?.channels.push({ __typename: 'Channel', ...channel });
     return data;
   });
+};
+
+const updateChannel = (channel: types.Channel, cache: Cache) => {
+  cache.writeFragment(
+    gql`
+      fragment _ on Channel {
+        id
+        isDM
+        joinUsers
+        description
+        name
+        ownerId
+      }
+    `,
+    channel
+  );
 };
 
 const addNewMessage = (message: types.CreateMessageMutation['createMessage'], cache: Cache) => {

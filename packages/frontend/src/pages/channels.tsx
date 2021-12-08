@@ -3,17 +3,13 @@ import { NextPage } from 'next';
 import { useMyChannelsQuery, types } from '@/hooks/api';
 import { gql } from 'urql';
 import { CreateChannel, CreateChannelProps } from '@/components/CreateChannel';
-import { Link } from '@/components/Link';
-import { pagesPath } from '@/libs/$path';
+import { ChannelListItem } from '@/components/ChannelListItem';
 
 const Channels: React.FC<Pick<types.MyChannelsQuery, 'channels'>> = (props) => (
   <ul>
     {props.channels.map((channel) => (
-      <li key={channel.id}>
-        <Link href={pagesPath.channels._id(channel.id).$url()}>
-          <a>{channel.name}</a>
-        </Link>
-      </li>
+      // TODO: isOwnerはあとで
+      <ChannelListItem key={channel.id} id={channel.id} name={channel.name} isOwner={true} />
     ))}
   </ul>
 );

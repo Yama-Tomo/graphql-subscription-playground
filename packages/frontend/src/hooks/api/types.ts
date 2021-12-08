@@ -8,4 +8,5 @@ export type {
   ChangeNotificationSubscription,
   WithTypename,
   GraphCacheConfig,
+  Channel,
 } from './gql_generated';
