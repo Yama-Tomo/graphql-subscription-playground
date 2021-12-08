@@ -16,6 +16,10 @@ const Ui: React.FC<{ channelId: string }> = (props) => (
 const Container: NextPage = () => {
   const router = useRouter();
 
+  if (!router.query.id) {
+    return null;
+  }
+
   const uiProps = {
     channelId: String(router.query.id),
   };
