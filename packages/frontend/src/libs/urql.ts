@@ -3,6 +3,49 @@ import { cacheExchange, Cache } from '@urql/exchange-graphcache';
 import { docs, types, MutationType } from '@/hooks/api';
 
 const cacheConfig = (): types.GraphCacheConfig => ({
+  resolvers: {
+    Query: {
+      messages(parent, args, cache, info) {
+        const { parentKey: entityKey, fieldName } = info;
+
+        const edges: NonNullable<typeof parent.messages>['edges'] = [];
+
+        // カーソルが初期位置の場合はコンポーネントは必ずサーバからフェッチしなおすため、１ページ目以降のキャッシュは捨てる
+        const isPurgeAfterFirstPageCache = args.before == null;
+        const pageCaches = (() => {
+          const caches = cache.inspectFields(entityKey).filter((info) => {
+            return info.fieldName === fieldName && info.arguments?.channelId === args.channelId;
+          });
+          if (!isPurgeAfterFirstPageCache) {
+            return caches;
+          }
+
+          // 1ページ目以降のキャッシュを捨てつつ1ページ目だけのキャッシュを返す
+          return caches.filter((pageCache) => {
+            const isFirstPage = pageCache.arguments?.before == null;
+            if (!isFirstPage) {
+              // 1ページ目以降のキャッシュが残っているとそれが読み出されてしまうので削除
+              console.log('cache purge', pageCache.arguments);
+              cache.invalidate(entityKey, fieldName, pageCache.arguments);
+            }
+
+            return isFirstPage;
+          });
+        })();
+
+        pageCaches.forEach((pageCache) => {
+          const key = cache.resolve(entityKey, pageCache.fieldKey);
+          const data = cache.resolve(key as string, 'edges');
+          edges.unshift(...(data as typeof edges));
+        });
+
+        return {
+          __typename: 'MessageConnection',
+          edges,
+        };
+      },
+    },
+  },
   updates: {
     Mutation: {
       createChannel: (parent, args, cache) => {

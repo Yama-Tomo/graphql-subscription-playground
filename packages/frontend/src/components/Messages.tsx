@@ -1,13 +1,16 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { gql } from 'urql';
 import { types } from '@/hooks/api';
 import { useLatestMessagesQuery } from '@/hooks/api';
 
 type UiProps = {
+  hasPrevPage: boolean;
   messages?: types.LatestMessagesQuery['messages'];
+  onPrevClick: () => void;
 };
 const Ui: React.FC<UiProps> = (props) => (
   <React.Fragment>
+    {props.hasPrevPage && <button onClick={props.onPrevClick}>old message</button>}
     {!props.messages && 'loading...'}
     {props.messages &&
       props.messages.edges.map((message) => (
@@ -26,10 +29,28 @@ type ContainerProps = {
   channelId: string;
 };
 const Container: React.FC<ContainerProps> = (props) => {
-  const { data } = useLatestMessagesQuery({ variables: { channelId: props.channelId } });
+  const [state, setState] = useState<{ channelId: string; before?: string }>({
+    channelId: props.channelId,
+  });
+
+  const { data } = useLatestMessagesQuery({
+    variables: state,
+    ...(!state.before ? { fetchPolicy: 'network-only' } : {}),
+  });
+
+  useEffect(() => {
+    setState({ channelId: props.channelId });
+  }, [props.channelId]);
 
   const uiProps: UiProps = {
     messages: data?.messages,
+    hasPrevPage: !!data?.messages.pageInfo.hasPreviousPage,
+    onPrevClick: () => {
+      const before = data?.messages.pageInfo.startCursor;
+      if (before) {
+        setState((current) => ({ ...current, before }));
+      }
+    },
   };
 
   return <Ui {...uiProps} />;
@@ -41,6 +62,7 @@ gql`
       pageInfo {
         endCursor
         hasNextPage
+        hasPreviousPage
         endCursor
         startCursor
       }
