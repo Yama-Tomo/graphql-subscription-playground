@@ -18,10 +18,13 @@ const Query: Resolvers['Query'] = {
     const currentChannelMessages = db.messages.filter(
       (message) => message.channelId == args.channelId
     );
+    const reverseCurrentChannelMessage = [...currentChannelMessages].reverse();
 
     const nextCursor = (() => {
       if (args.before) {
-        const foundIdx = currentChannelMessages.findIndex((message) => message.id === args.before);
+        const foundIdx = reverseCurrentChannelMessage.findIndex(
+          (message) => message.id === args.before
+        );
         if (foundIdx !== -1) {
           return foundIdx + 1;
         }
@@ -30,7 +33,6 @@ const Query: Resolvers['Query'] = {
       return 0;
     })();
 
-    const reverseCurrentChannelMessage = [...currentChannelMessages].reverse();
     const withNextPageData = reverseCurrentChannelMessage.slice(
       nextCursor,
       nextCursor + args.last + 1
@@ -43,10 +45,10 @@ const Query: Resolvers['Query'] = {
 
     return {
       pageInfo: {
-        hasNextPage: !args.before,
+        hasNextPage: !!args.before,
         hasPreviousPage: withNextPageData.length !== data.length,
-        startCursor: data[0]?.id,
-        endCursor: data[data.length - 1]?.id,
+        startCursor: data[data.length - 1]?.id,
+        endCursor: data[0]?.id,
       },
       edges: data.reverse().map((node) => ({ cursor: node.id, node })),
     };
