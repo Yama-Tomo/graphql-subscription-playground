@@ -34,17 +34,16 @@ const Ui: React.FC<UiProps> = ({
   children,
 }) => (
   <main>
-    <h1>
-      channels{' '}
-      <button onClick={newChannelEditing ? onAddChannelCancelClick : onAddChannelClick}>
-        {newChannelEditing ? 'cancel' : 'add'}
-      </button>
-    </h1>
-    {newChannelEditing && <CreateChannel onChannelCreated={onChannelCreated} />}
     {loading && <span>loading...</span>}
     {!loading && (
       <Fragment>
-        <h2>channels</h2>
+        <h2>
+          channels
+          <button onClick={newChannelEditing ? onAddChannelCancelClick : onAddChannelClick}>
+            {newChannelEditing ? 'cancel' : 'add'}
+          </button>
+        </h2>
+        {newChannelEditing && <CreateChannel onChannelCreated={onChannelCreated} />}
         <Channels channels={channels.filter((channel) => !channel.isDM)} />
       </Fragment>
     )}
