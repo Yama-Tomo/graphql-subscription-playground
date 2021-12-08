@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from './Link';
 import { pagesPath } from '@/libs/$path';
 import { gql } from 'urql';
-import { useUpdateChannelNameMutation } from '@/hooks/api';
+import { useDeleteChannelMutation, useUpdateChannelNameMutation } from '@/hooks/api';
 
 type UiProps = {
   name: string;
@@ -13,6 +13,7 @@ type UiProps = {
   onEditClick: () => void;
   onSubmitClick: () => void;
   onCancelClick: () => void;
+  onDeleteChannelClick: () => void;
 };
 const Ui: React.FC<UiProps> = (props) => (
   <li>
@@ -29,7 +30,8 @@ const Ui: React.FC<UiProps> = (props) => (
     )}{' '}
     {props.isOwner && !props.isEditing && (
       <span style={{ float: 'right' }}>
-        <a onClick={props.onEditClick}>[edit]</a> <a>[remove]</a>
+        <a onClick={props.onEditClick}>[edit]</a>{' '}
+        <a onClick={props.onDeleteChannelClick}>[delete]</a>
       </span>
     )}
   </li>
@@ -39,6 +41,7 @@ type ContainerProps = Pick<UiProps, 'name' | 'id' | 'isOwner'>;
 const Container: React.FC<ContainerProps> = (props) => {
   const [state, setState] = useState({ name: props.name, isEditing: false });
   const [updateChannel] = useUpdateChannelNameMutation();
+  const [deleteChannel] = useDeleteChannelMutation();
 
   useEffect(() => {
     setState((current) => ({ ...current, name: props.name }));
@@ -64,6 +67,9 @@ const Container: React.FC<ContainerProps> = (props) => {
         }
       });
     },
+    onDeleteChannelClick: () => {
+      deleteChannel({ variables: { id: props.id } });
+    },
   };
 
   return <Ui {...uiProps} />;
@@ -72,6 +78,19 @@ const Container: React.FC<ContainerProps> = (props) => {
 gql`
   mutation UpdateChannelName($id: ID!, $name: String!) {
     updateChannel(data: { id: $id, name: $name }) {
+      id
+      isDM
+      joinUsers
+      description
+      name
+      ownerId
+    }
+  }
+`;
+
+gql`
+  mutation DeleteChannel($id: ID!) {
+    deleteChannel(id: $id) {
       id
       isDM
       joinUsers

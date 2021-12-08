@@ -38,6 +38,12 @@ const cacheConfig = (): types.GraphCacheConfig => ({
             updateChannel(data, cache);
           }
         }
+
+        if (mutation === MutationType.Deleted) {
+          if (data?.__typename === 'Channel') {
+            deleteChannel(data.id, cache);
+          }
+        }
       },
     },
   },
@@ -77,6 +83,20 @@ const updateChannel = (channel: types.Channel, cache: Cache) => {
     `,
     channel
   );
+};
+
+const deleteChannel = (channelId: types.Channel['id'], cache: Cache) => {
+  const channelCache = cache.inspectFields('Query').find((qc) => qc.fieldName === 'channels');
+  if (!channelCache) {
+    return;
+  }
+
+  cache.updateQuery<types.MyChannelsQuery>({ query: docs.MyChannelsDocument }, (data) => {
+    if (data?.channels) {
+      data.channels = data.channels.filter((item) => item.id !== channelId);
+    }
+    return data;
+  });
 };
 
 const addNewMessage = (message: types.CreateMessageMutation['createMessage'], cache: Cache) => {
