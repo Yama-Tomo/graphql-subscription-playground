@@ -13,7 +13,7 @@ const Ui: React.FC<{ channelId: string }> = (props) => (
   </Channel>
 );
 
-const Container: NextPage = (props) => {
+const Container: NextPage = () => {
   const router = useRouter();
 
   const uiProps = {
