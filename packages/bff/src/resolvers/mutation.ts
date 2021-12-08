@@ -99,8 +99,12 @@ const Mutation: Resolvers['Mutation'] = {
       throw new Error('channel not found');
     }
 
-    channel.name = data.name;
-    channel.description = data.description;
+    if (channel.name !== data.name) {
+      channel.name = data.name;
+    }
+    if (channel.description !== data.description) {
+      channel.description = data.description;
+    }
     channel.joinUsers.forEach((userId) => {
       publishNotification(pubsub, userId, {
         changeNotification: {
