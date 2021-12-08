@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { forwardRef, useEffect, useRef, useState } from 'react';
 import { gql } from 'urql';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { types } from '@/hooks/api';
@@ -9,13 +9,15 @@ type UiProps = {
   messages?: types.LatestMessagesQuery['messages'];
   onPrevClick: () => void;
 };
-const Ui: React.FC<UiProps> = (props) => (
+// eslint-disable-next-line react/display-name
+const Ui = forwardRef<HTMLDivElement, UiProps>((props, ref) => (
   <React.Fragment>
     {!props.messages && 'loading...'}
     {props.messages && (
       <div
         id="messages-container"
         style={{ overflow: 'auto', display: 'flex', flexDirection: 'column-reverse' }}
+        ref={ref}
       >
         <InfiniteScroll
           style={{ display: 'flex', flexDirection: 'column-reverse' }}
@@ -43,12 +45,13 @@ const Ui: React.FC<UiProps> = (props) => (
       </div>
     )}
   </React.Fragment>
-);
+));
 
 type ContainerProps = {
   channelId: string;
 };
 const Container: React.FC<ContainerProps> = (props) => {
+  const ref = useRef<HTMLDivElement>(null);
   const [state, setState] = useState<{ channelId: string; before?: string }>({
     channelId: props.channelId,
   });
@@ -60,6 +63,9 @@ const Container: React.FC<ContainerProps> = (props) => {
 
   useEffect(() => {
     setState({ channelId: props.channelId });
+    if (ref.current) {
+      ref.current.scrollTop = ref.current.scrollHeight;
+    }
   }, [props.channelId]);
 
   const uiProps: UiProps = {
@@ -73,7 +79,7 @@ const Container: React.FC<ContainerProps> = (props) => {
     },
   };
 
-  return <Ui {...uiProps} />;
+  return <Ui {...uiProps} ref={ref} />;
 };
 
 gql`
