@@ -1,39 +1,36 @@
 import { cacheExchange, Cache } from '@urql/exchange-graphcache';
-import { types, docs } from '@/hooks/api';
+import { docs, types } from '@/hooks/api';
 
-const setupCache = () =>
-  cacheExchange({
-    updates: {
-      Mutation: {
-        createChannel: (parent: types.CreateChannelMutation, _, cache) => {
-          cache.updateQuery<types.MyChannelsQuery>({ query: docs.MyChannelsDocument }, (data) => {
-            if (data) {
-              data.channels.push(parent.createChannel);
-            }
+const cacheConfig = (): types.GraphCacheConfig => ({
+  updates: {
+    Mutation: {
+      createChannel: (parent, args, cache) => {
+        cache.updateQuery<types.MyChannelsQuery>({ query: docs.MyChannelsDocument }, (data) => {
+          if (data?.channels && isAllKeyNotEmpty(parent.createChannel)) {
+            data.channels.push(parent.createChannel);
+          }
 
-            return data;
-          });
-        },
-        createMessage: (
-          parent: types.CreateMessageMutation,
-          vars: { data: types.CreateMessageMutationVariables },
-          cache
-        ) => {
-          addNewMessage(parent, vars, cache);
-        },
+          return data;
+        });
+      },
+      createMessage: (parent, args, cache) => {
+        if (isAllKeyNotEmpty(parent.createMessage)) {
+          addNewMessage(parent.createMessage, cache);
+        }
       },
     },
-  });
+  },
+});
 
-const addNewMessage = (
-  parent: types.CreateMessageMutation,
-  vars: { data: types.CreateMessageMutationVariables },
-  cache: Cache
-) => {
+const isAllKeyNotEmpty = <T extends Record<string, unknown>>(
+  arg: T | undefined
+): arg is Required<NonNullable<T>> => arg != null && !Object.values(arg).find((v) => v == null);
+
+const addNewMessage = (message: types.CreateMessageMutation['createMessage'], cache: Cache) => {
   const latestPageCache = cache.inspectFields('Query').find((queryCache) => {
     if (queryCache.fieldName === 'messages') {
       const arg = queryCache.arguments as types.LatestMessagesQueryVariables;
-      return arg.channelId === vars.data.channelId && arg.before == null;
+      return arg.channelId === message.channelId && arg.before == null;
     }
     return false;
   });
@@ -47,13 +44,15 @@ const addNewMessage = (
     (data) => {
       data?.messages.edges.push({
         __typename: 'MessageEdge',
-        cursor: parent.createMessage.id,
-        node: { __typename: 'Message', ...parent.createMessage },
+        cursor: message.id,
+        node: { __typename: 'Message', ...message },
       });
 
       return data;
     }
   );
 };
+
+const setupCache = () => cacheExchange(cacheConfig());
 
 export { setupCache };

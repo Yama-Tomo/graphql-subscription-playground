@@ -8,3 +8,5 @@ generates:
       - typescript
       - typescript-operations
       - typescript-urql
+      - typescript-urql-graphcache
+
