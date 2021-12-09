@@ -89,6 +89,9 @@ const cacheConfig = (): types.GraphCacheConfig => ({
           if (data?.__typename === 'Channel') {
             deleteChannel(data.id, cache);
           }
+          if (data?.__typename === 'Message') {
+            deleteMessage(data.id, cache);
+          }
         }
       },
     },
@@ -188,6 +191,23 @@ const updateMessage = (message: Partial<types.Message>, cache: Cache) => {
     `,
     message
   );
+};
+
+const deleteMessage = (messageId: types.Channel['id'], cache: Cache) => {
+  cache
+    .inspectFields('Query')
+    .filter((qc) => qc.fieldName === 'messages')
+    .forEach((qc) => {
+      cache.updateQuery<types.LatestMessagesQuery>(
+        { query: docs.LatestMessagesDocument, variables: qc.arguments ?? undefined },
+        (data) => {
+          if (data?.messages) {
+            data.messages.edges = data.messages.edges.filter((item) => item.node.id !== messageId);
+          }
+          return data;
+        }
+      );
+    });
 };
 
 const setupCache = () => cacheExchange(cacheConfig());

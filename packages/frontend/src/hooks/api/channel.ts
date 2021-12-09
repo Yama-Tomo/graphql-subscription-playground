@@ -4,6 +4,7 @@ import {
   useUpdateChannelNameMutation as useURQLUpdateChannelNameMutation,
   useDeleteChannelMutation as useURQLDeleteChannelMutation,
   useUpdateMessageMutation as useURQLUpdateMessageMutation,
+  useDeleteMessageMutation as useURQLDeleteMessageMutation,
 } from '@/hooks/api/gql_generated';
 import { toApolloClientIFUseMutation, toApolloClientIFUseQuery } from '@/hooks/api/adapter';
 
@@ -12,6 +13,7 @@ const useCreateChannelMutation = toApolloClientIFUseMutation(useURQLCreateChanne
 const useUpdateChannelNameMutation = toApolloClientIFUseMutation(useURQLUpdateChannelNameMutation);
 const useDeleteChannelMutation = toApolloClientIFUseMutation(useURQLDeleteChannelMutation);
 const useUpdateMessageMutation = toApolloClientIFUseMutation(useURQLUpdateMessageMutation);
+const useDeleteMessageMutation = toApolloClientIFUseMutation(useURQLDeleteMessageMutation);
 
 export {
   useMyChannelsQuery,
@@ -19,4 +21,5 @@ export {
   useUpdateChannelNameMutation,
   useDeleteChannelMutation,
   useUpdateMessageMutation,
+  useDeleteMessageMutation,
 };

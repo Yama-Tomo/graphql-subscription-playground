@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { gql } from 'urql';
-import { useUpdateMessageMutation } from '@/hooks/api';
+import { useUpdateMessageMutation, useDeleteMessageMutation } from '@/hooks/api';
 
 type UiProps = {
   message: string;
@@ -40,6 +40,7 @@ type ContainerProps = Pick<UiProps, 'message' | 'userName' | 'isOwner'> & { id: 
 const Container: React.FC<ContainerProps> = (props) => {
   const [state, setState] = useState({ message: props.message, isEditing: false });
   const [updateMessage] = useUpdateMessageMutation();
+  const [deleteMessage] = useDeleteMessageMutation();
 
   useEffect(() => {
     setState((current) => ({ ...current, message: props.message }));
@@ -65,7 +66,9 @@ const Container: React.FC<ContainerProps> = (props) => {
         }
       });
     },
-    onMessageDeleteClick: () => {},
+    onMessageDeleteClick: () => {
+      deleteMessage({ variables: { id: props.id } });
+    },
   };
 
   return <Ui {...uiProps} />;
@@ -74,6 +77,17 @@ const Container: React.FC<ContainerProps> = (props) => {
 gql`
   mutation UpdateMessage($id: ID!, $text: String!) {
     updateMessage(data: { id: $id, text: $text }) {
+      id
+      channelId
+      text
+      userId
+    }
+  }
+`;
+
+gql`
+  mutation DeleteMessage($id: ID!) {
+    deleteMessage(id: $id) {
       id
       channelId
       text
