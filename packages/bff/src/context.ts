@@ -8,7 +8,9 @@ const db = { messages, channels, users };
 
 const createAllRequestSharedContext = () => ({ db, pubsub: new PubSub() });
 
-type Context = ReturnType<typeof createAllRequestSharedContext> & { user: { id: string } };
+type UserCtx = { user: { id: string } };
+type Context = ReturnType<typeof createAllRequestSharedContext> & UserCtx;
+type UnAuthorizedContext = ReturnType<typeof createAllRequestSharedContext> & Partial<UserCtx>;
 
 export { createAllRequestSharedContext };
-export type { Context };
+export type { Context, UnAuthorizedContext };

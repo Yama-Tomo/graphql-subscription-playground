@@ -1,6 +1,7 @@
 import { MutationType, Resolvers, Channel } from '@/resolvers/generated';
 import { v4 } from 'uuid';
 import { publishNotification } from '@/resolvers/subscription';
+import { UnAuthorizedContext } from '@/context';
 
 const Mutation: Resolvers['Mutation'] = {
   createMessage(parent, { data }, { db, pubsub, user }) {
@@ -157,7 +158,7 @@ const Mutation: Resolvers['Mutation'] = {
 
     return channel;
   },
-  signup(parent, { name }, { db }) {
+  signup(parent, { name }, { db }: UnAuthorizedContext) {
     const id = v4();
     const user = { id, name };
 
