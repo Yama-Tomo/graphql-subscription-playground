@@ -6,7 +6,7 @@ import { execute, subscribe } from 'graphql';
 import { SubscriptionServer } from 'subscriptions-transport-ws';
 import { typeDefs } from '@/schema';
 import { resolvers } from '@/resolvers';
-import { Context, createAllRequestSharedContext } from '@/context';
+import { UnAuthorizedContext, createAllRequestSharedContext } from '@/context';
 
 const startServer = async (opts?: Partial<{ port: number; path: string }>) => {
   const path = opts?.path || '/graphql';
@@ -20,8 +20,13 @@ const startServer = async (opts?: Partial<{ port: number; path: string }>) => {
       schema,
       execute,
       subscribe,
-      onConnect(): Context {
-        return { ...sharedContext, user: { id: 'todo' } };
+      onConnect(params: Record<string, unknown>): UnAuthorizedContext {
+        const userId = params['user_id'] ? String(params['user_id']) : undefined;
+        if (!userId) {
+          throw new Error('unauthorized');
+        }
+
+        return { ...sharedContext, user: { id: userId } };
       },
     },
     { server: fastifyApp.server, path: path }
@@ -29,9 +34,11 @@ const startServer = async (opts?: Partial<{ port: number; path: string }>) => {
 
   const server = new ApolloServer({
     schema,
-    // TODO: トークンがない場合は認証エラーにする
-    context(): Context {
-      return { ...sharedContext, user: { id: 'todo' } };
+    context(param): UnAuthorizedContext {
+      const userId = param.request.headers['user_id']
+        ? String(param.request.headers['user_id'])
+        : undefined;
+      return { ...sharedContext, ...(userId ? { user: { id: userId } } : {}) };
     },
     plugins: [
       ApolloServerPluginDrainHttpServer({ httpServer: fastifyApp.server }),
