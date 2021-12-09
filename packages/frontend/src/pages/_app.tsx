@@ -38,6 +38,7 @@ const AuthenticatedLayout: React.FC<AppProps> = ({ Component, pageProps }) => {
 const setupSubscription = () => {
   const subscriptionClient = new SubscriptionClient(process.env.NEXT_PUBLIC_WS_GRAPHQL_URL || '', {
     reconnect: true,
+    lazy: true,
     connectionParams() {
       return { user_id: getUserId() };
     },
