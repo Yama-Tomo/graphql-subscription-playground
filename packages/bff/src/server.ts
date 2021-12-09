@@ -29,6 +29,7 @@ const startServer = async (opts?: Partial<{ port: number; path: string }>) => {
 
   const server = new ApolloServer({
     schema,
+    // TODO: トークンがない場合は認証エラーにする
     context(): Context {
       return { ...sharedContext, user: { id: 'todo' } };
     },

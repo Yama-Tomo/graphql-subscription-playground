@@ -137,7 +137,6 @@ const Mutation: Resolvers['Mutation'] = {
 
     return channel;
   },
-
   deleteChannel(parent, { id }, { db, pubsub, user }) {
     const dataIdx = db.channels.findIndex((channel) => channel.id === id);
     const channel = db.channels[dataIdx];
@@ -157,6 +156,25 @@ const Mutation: Resolvers['Mutation'] = {
     });
 
     return channel;
+  },
+  signup(parent, { name }, { db }) {
+    const id = v4();
+    const user = { id, name };
+
+    db.users.push(user);
+
+    if (!db.channels.find((channel) => channel.ownerId === id && channel.isDM)) {
+      db.channels.push({
+        id: v4(),
+        name: name,
+        description: '',
+        isDM: true,
+        ownerId: user.id,
+        joinUsers: [user.id],
+      });
+    }
+
+    return user;
   },
 };
 

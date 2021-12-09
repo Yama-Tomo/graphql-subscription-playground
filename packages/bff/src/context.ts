@@ -1,9 +1,10 @@
-import { Message, Channel } from '@/resolvers';
+import { Message, Channel, User } from '@/resolvers';
 import { PubSub } from 'graphql-subscriptions';
 
 const messages: Message[] = [];
 const channels: Channel[] = [];
-const db = { messages, channels };
+const users: User[] = [];
+const db = { messages, channels, users };
 
 const createAllRequestSharedContext = () => ({ db, pubsub: new PubSub() });
 
