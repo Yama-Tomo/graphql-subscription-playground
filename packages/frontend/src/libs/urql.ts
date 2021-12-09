@@ -80,6 +80,9 @@ const cacheConfig = (): types.GraphCacheConfig => ({
           if (data?.__typename === 'Channel') {
             updateChannel(data, cache);
           }
+          if (data?.__typename === 'Message') {
+            updateMessage(data, cache);
+          }
         }
 
         if (mutation === MutationType.Deleted) {
@@ -112,10 +115,10 @@ const addNewChannel = (channel: types.CreateChannelMutation['createChannel'], ca
   });
 };
 
-const updateChannel = (channel: types.Channel, cache: Cache) => {
+const updateChannel = (channel: Partial<types.Channel>, cache: Cache) => {
   cache.writeFragment(
     gql`
-      fragment _ on Channel {
+      fragment ChannelFragment on Channel {
         id
         isDM
         joinUsers
@@ -170,6 +173,20 @@ const addNewMessage = (message: types.CreateMessageMutation['createMessage'], ca
 
       return data;
     }
+  );
+};
+
+const updateMessage = (message: Partial<types.Message>, cache: Cache) => {
+  cache.writeFragment(
+    gql`
+      fragment MessageFragment on Message {
+        id
+        channelId
+        text
+        userId
+      }
+    `,
+    message
   );
 };
 

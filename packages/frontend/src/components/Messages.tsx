@@ -3,6 +3,7 @@ import { gql } from 'urql';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { types } from '@/hooks/api';
 import { useLatestMessagesQuery } from '@/hooks/api';
+import { MessageListItem } from '@/components/MessageListItem';
 
 type UiProps = {
   hasPrevPage: boolean;
@@ -33,13 +34,14 @@ const Ui = forwardRef<HTMLDivElement, UiProps>((props, ref) => (
           }
         >
           {[...props.messages.edges].reverse().map((message, idx) => (
-            <div key={idx}>
-              <div style={{ marginBottom: '1rem' }}>
-                {/* TODO: ユーザ名に変換 */}
-                <b>{message.node.id}</b>
-                <div>{message.node.text}</div>
-              </div>
-            </div>
+            // TODO: ユーザ名, owner はあとで
+            <MessageListItem
+              key={idx}
+              message={message.node.text}
+              userName={message.node.userId}
+              isOwner={true}
+              id={message.node.id}
+            />
           ))}
         </InfiniteScroll>
       </div>
