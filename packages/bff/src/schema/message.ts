@@ -34,7 +34,7 @@ const message = gql`
   type Message {
     id: ID!
     channelId: ID!
-    userId: String!
+    user: User!
     text: String!
   }
 

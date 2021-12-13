@@ -34,7 +34,7 @@ const channel = gql`
     id: ID!
     name: String!
     description: String
-    joinUsers: [ID!]!
+    joinUsers: [User!]!
     ownerId: ID!
     isDM: Boolean!
   }
