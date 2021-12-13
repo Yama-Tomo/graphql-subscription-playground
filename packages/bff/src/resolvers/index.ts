@@ -1,7 +1,7 @@
 import { GraphQLResolveInfo } from 'graphql';
 import { MutationResolvers, QueryResolvers, Resolvers } from '@/resolvers/generated';
 import { Query } from '@/resolvers/query';
-import { Date } from '@/resolvers/scalers';
+import { Date, DateTime } from '@/resolvers/scalers';
 import { Mutation } from '@/resolvers/mutation';
 import { Subscription } from '@/resolvers/subscription';
 import { Context, UnAuthorizedContext } from '@/context';
@@ -39,6 +39,7 @@ const skipAuthCheck: Partial<{
 
 const resolvers: Resolvers = {
   Date,
+  DateTime,
   Query: Object.entries(Query || {}).reduce((res, [name, val]) => {
     const resolver = typeof val === 'function' ? withAuthCheck(val) : val;
     return { ...res, [name]: resolver };

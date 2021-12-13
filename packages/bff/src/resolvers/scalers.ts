@@ -1,6 +1,7 @@
 import { Resolvers } from '@/resolvers/generated';
-import { DateResolver } from 'graphql-scalars';
+import { DateResolver, DateTimeResolver } from 'graphql-scalars';
 
 const Date: Resolvers['Date'] = DateResolver;
+const DateTime: Resolvers['DateTime'] = DateTimeResolver;
 
-export { Date };
+export { Date, DateTime };

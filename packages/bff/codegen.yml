@@ -9,6 +9,7 @@ generates:
       contextType: ../context#Context
       scalars:
         Date: Date
+        DateTime: Date
     plugins:
       - typescript
       - typescript-resolvers

@@ -1,5 +1,5 @@
 import { gql } from 'apollo-server-fastify';
-import { DateTypeDefinition } from 'graphql-scalars';
+import { DateTypeDefinition, DateTimeTypeDefinition } from 'graphql-scalars';
 import { message } from './message';
 import { channel } from './channel';
 import { user } from './user';
@@ -10,6 +10,7 @@ const typeDefs = gql`
   }
 
   ${DateTypeDefinition}
+  ${DateTimeTypeDefinition}
 
   enum MutationType {
     CREATED

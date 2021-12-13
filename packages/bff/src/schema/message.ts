@@ -36,6 +36,7 @@ const message = gql`
     channelId: ID!
     user: User!
     text: String!
+    date: DateTime!
   }
 
   type ChangeMessageSubscriptionPayload {
