@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import Channel from '@/pages/channels';
 import { Messages, MessagesProps } from '@/components/Messages';
 import { CreateMessage } from '@/components/CreateMessage';
-import { useMyProfileQuery } from '@/hooks/api';
+import { useMyChannelsQuery } from '@/hooks/api';
 
 type UiProps = { channelId: string } & MessagesProps;
 const Ui: React.FC<UiProps> = (props) => (
@@ -17,7 +17,7 @@ const Ui: React.FC<UiProps> = (props) => (
 
 const Container: NextPage = () => {
   const router = useRouter();
-  const { data } = useMyProfileQuery();
+  const { data } = useMyChannelsQuery();
 
   if (!router.query.id) {
     return null;
