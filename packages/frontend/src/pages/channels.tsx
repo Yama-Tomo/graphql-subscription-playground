@@ -27,7 +27,9 @@ const Channels: React.FC<Pick<types.MyChannelsQuery, 'channels'>> = (props) => (
   </ul>
 );
 
-type UiProps = Pick<types.MyChannelsQuery, 'channels'> & {
+type UiProps = {
+  channels: types.MyChannelsQuery['channels'];
+  DMChannels: types.MyChannelsQuery['channels'];
   loading: boolean;
   onAddChannelClick: () => void;
   onAddChannelCancelClick: () => void;
@@ -42,6 +44,7 @@ type UiProps = Pick<types.MyChannelsQuery, 'channels'> & {
 } & CreateChannelProps;
 const Ui: React.FC<UiProps> = ({
   channels,
+  DMChannels,
   loading,
   onAddChannelClick,
   onAddChannelCancelClick,
@@ -67,7 +70,7 @@ const Ui: React.FC<UiProps> = ({
           </button>
         </h2>
         {newChannelEditing && <CreateChannel onChannelCreated={onChannelCreated} />}
-        <Channels channels={channels.filter((channel) => !channel.isDM)} />
+        <Channels channels={channels} />
       </Fragment>
     )}
     {!loading && (
@@ -90,7 +93,7 @@ const Ui: React.FC<UiProps> = ({
             </ul>
           </React.Fragment>
         )}
-        {!newDMEditing && <Channels channels={channels.filter((channel) => channel.isDM)} />}
+        {!newDMEditing && <Channels channels={DMChannels} />}
       </Fragment>
     )}
     {children}
@@ -122,7 +125,8 @@ const Container: NextPage = (props) => {
   const uiProps: UiProps = {
     ...props,
     ...state,
-    channels: data?.channels || [],
+    channels: data?.channels ? data.channels.filter((channel) => !channel.isDM) : [],
+    DMChannels: data?.channels ? data.channels.filter((channel) => channel.isDM) : [],
     loading,
     onAddChannelClick: () => {
       setState((current) => ({ ...current, newChannelEditing: true }));
