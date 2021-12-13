@@ -10,4 +10,5 @@ export type {
   GraphCacheConfig,
   Channel,
   Message,
+  SearchUsersQuery,
 } from './gql_generated';
