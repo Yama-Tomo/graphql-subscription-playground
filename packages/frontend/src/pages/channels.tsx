@@ -126,7 +126,14 @@ const Container: NextPage = (props) => {
     ...props,
     ...state,
     channels: data?.channels ? data.channels.filter((channel) => !channel.isDM) : [],
-    DMChannels: data?.channels ? data.channels.filter((channel) => channel.isDM) : [],
+    DMChannels: data?.channels
+      ? data.channels
+          .filter((channel) => channel.isDM)
+          .map((channel) => {
+            const joinUserName = channel.joinUsers.find((u) => u.id !== data.myProfile.id)?.name;
+            return { ...channel, name: joinUserName || channel.name };
+          })
+      : [],
     loading,
     onAddChannelClick: () => {
       setState((current) => ({ ...current, newChannelEditing: true }));
