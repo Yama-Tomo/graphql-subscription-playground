@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment, useState } from 'react';
 import { NextPage } from 'next';
 import { useMyChannelAndProfileQuery, types, useCreateChannelMutation } from '@/hooks/api';
 import { CreateChannel, CreateChannelProps } from '@/components/CreateChannel';
@@ -8,15 +8,16 @@ import { pagesPath } from '@/libs/$path';
 import { useSearchUsers } from '@/hooks/user';
 import { getDMChannelName } from '@/libs/channel';
 
-const Channels: React.FC<Pick<types.MyChannelAndProfileQuery, 'channels'>> = (props) => (
+const Channels: React.FC<
+  Pick<types.MyChannelAndProfileQuery, 'channels'> & { myUserId: string }
+> = (props) => (
   <ul>
     {props.channels.map((channel) => (
-      // TODO: isOwnerはあとで
       <ChannelListItem
         key={channel.id}
         id={channel.id}
         name={channel.name}
-        isOwner={true}
+        isOwner={channel.ownerId === props.myUserId}
         isDM={channel.isDM}
       />
     ))}
@@ -26,6 +27,7 @@ const Channels: React.FC<Pick<types.MyChannelAndProfileQuery, 'channels'>> = (pr
 type UiProps = {
   channels: types.MyChannelAndProfileQuery['channels'];
   DMChannels: types.MyChannelAndProfileQuery['channels'];
+  myUserId: string;
   loading: boolean;
   onAddChannelClick: () => void;
   onAddChannelCancelClick: () => void;
@@ -41,6 +43,7 @@ type UiProps = {
 const Ui: React.FC<UiProps> = ({
   channels,
   DMChannels,
+  myUserId,
   loading,
   onAddChannelClick,
   onAddChannelCancelClick,
@@ -66,7 +69,7 @@ const Ui: React.FC<UiProps> = ({
           </button>
         </h2>
         {newChannelEditing && <CreateChannel onChannelCreated={onChannelCreated} />}
-        <Channels channels={channels} />
+        <Channels channels={channels} myUserId={myUserId} />
       </Fragment>
     )}
     {!loading && (
@@ -89,7 +92,7 @@ const Ui: React.FC<UiProps> = ({
             </ul>
           </React.Fragment>
         )}
-        {!newDMEditing && <Channels channels={DMChannels} />}
+        {!newDMEditing && <Channels channels={DMChannels} myUserId={myUserId} />}
       </Fragment>
     )}
     {children}
@@ -106,6 +109,7 @@ const Container: NextPage = (props) => {
   const uiProps: UiProps = {
     ...props,
     ...state,
+    myUserId: data?.myProfile.id || '',
     channels: data?.channels ? data.channels.filter((channel) => !channel.isDM) : [],
     DMChannels: data?.channels
       ? data.channels
