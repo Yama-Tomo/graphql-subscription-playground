@@ -78,7 +78,7 @@ const cacheConfig = (): types.GraphCacheConfig => ({
 
         if (mutation === MutationType.Updated) {
           if (data?.__typename === 'Channel') {
-            updateChannel(data, cache);
+            !addNewChannel(data, cache) && updateChannel(data, cache);
           }
           if (data?.__typename === 'Message') {
             updateMessage(data, cache);
@@ -108,6 +108,7 @@ const addNewChannel = (channel: types.CreateChannelMutation['createChannel'], ca
     return;
   }
 
+  let added = false;
   cache.updateQuery<types.MyChannelAndProfileQuery>(
     { query: docs.MyChannelAndProfileDocument },
     (data) => {
@@ -115,10 +116,13 @@ const addNewChannel = (channel: types.CreateChannelMutation['createChannel'], ca
         return data;
       }
 
+      added = true;
       data?.channels.push({ __typename: 'Channel', ...channel });
       return data;
     }
   );
+
+  return added;
 };
 
 const updateChannel = (channel: Partial<types.Channel>, cache: Cache) => {
