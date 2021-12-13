@@ -53,6 +53,18 @@ const Query: Resolvers['Query'] = {
       edges: data.reverse().map((node) => ({ cursor: node.id, node })),
     };
   },
+  myProfile: (parent, args, { user, db }) => {
+    const userId = user.id;
+    const currentUser = db.users.find((user) => user.id === userId);
+    if (!currentUser) {
+      throw new Error('user not found');
+    }
+
+    return currentUser;
+  },
+  searchUsers: (parent, args, { db }) => {
+    return db.users.filter((user) => user.name.includes(args.name));
+  },
 };
 
 export { Query };

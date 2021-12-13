@@ -5,6 +5,11 @@ const user = gql`
     signup(name: String!): User!
   }
 
+  type Query {
+    myProfile: User!
+    searchUsers(name: String!): [User!]!
+  }
+
   type User {
     id: ID!
     name: ID!
