@@ -108,14 +108,17 @@ const addNewChannel = (channel: types.CreateChannelMutation['createChannel'], ca
     return;
   }
 
-  cache.updateQuery<types.MyChannelsQuery>({ query: docs.MyChannelsDocument }, (data) => {
-    if (data?.channels.find((item) => item.id === channel.id)) {
+  cache.updateQuery<types.MyChannelAndProfileQuery>(
+    { query: docs.MyChannelAndProfileDocument },
+    (data) => {
+      if (data?.channels.find((item) => item.id === channel.id)) {
+        return data;
+      }
+
+      data?.channels.push({ __typename: 'Channel', ...channel });
       return data;
     }
-
-    data?.channels.push({ __typename: 'Channel', ...channel });
-    return data;
-  });
+  );
 };
 
 const updateChannel = (channel: Partial<types.Channel>, cache: Cache) => {
@@ -143,12 +146,15 @@ const deleteChannel = (channelId: types.Channel['id'], cache: Cache) => {
     return;
   }
 
-  cache.updateQuery<types.MyChannelsQuery>({ query: docs.MyChannelsDocument }, (data) => {
-    if (data?.channels) {
-      data.channels = data.channels.filter((item) => item.id !== channelId);
+  cache.updateQuery<types.MyChannelAndProfileQuery>(
+    { query: docs.MyChannelAndProfileDocument },
+    (data) => {
+      if (data?.channels) {
+        data.channels = data.channels.filter((item) => item.id !== channelId);
+      }
+      return data;
     }
-    return data;
-  });
+  );
 };
 
 const addNewMessage = (message: types.CreateMessageMutation['createMessage'], cache: Cache) => {

@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { NextPage } from 'next';
 import {
-  useMyChannelsQuery,
+  useMyChannelAndProfileQuery,
   types,
   useSearchUsersQuery,
   useCreateChannelMutation,
@@ -11,7 +11,7 @@ import { ChannelListItem } from '@/components/ChannelListItem';
 import { useRouter } from 'next/router';
 import { pagesPath } from '@/libs/$path';
 
-const Channels: React.FC<Pick<types.MyChannelsQuery, 'channels'>> = (props) => (
+const Channels: React.FC<Pick<types.MyChannelAndProfileQuery, 'channels'>> = (props) => (
   <ul>
     {props.channels.map((channel) => (
       // TODO: isOwnerはあとで
@@ -27,8 +27,8 @@ const Channels: React.FC<Pick<types.MyChannelsQuery, 'channels'>> = (props) => (
 );
 
 type UiProps = {
-  channels: types.MyChannelsQuery['channels'];
-  DMChannels: types.MyChannelsQuery['channels'];
+  channels: types.MyChannelAndProfileQuery['channels'];
+  DMChannels: types.MyChannelAndProfileQuery['channels'];
   loading: boolean;
   onAddChannelClick: () => void;
   onAddChannelCancelClick: () => void;
@@ -102,7 +102,7 @@ const Ui: React.FC<UiProps> = ({
 const Container: NextPage = (props) => {
   const [state, setState] = useState({ newChannelEditing: false, newDMEditing: false });
   const [searchVars, setSearchVars] = useState({ name: '' });
-  const { data, loading } = useMyChannelsQuery();
+  const { data, loading } = useMyChannelAndProfileQuery();
   const { data: users, refetch } = useSearchUsersQuery({
     variables: searchVars,
     skip: true,

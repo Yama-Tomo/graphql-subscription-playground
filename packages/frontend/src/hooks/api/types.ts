@@ -1,5 +1,5 @@
 export type {
-  MyChannelsQuery,
+  MyChannelAndProfileQuery,
   CreateChannelMutation,
   LatestMessagesQuery,
   CreateMessageMutation,

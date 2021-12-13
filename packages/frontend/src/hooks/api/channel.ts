@@ -1,5 +1,5 @@
 import {
-  useMyChannelsQuery as useURQLMyChannelsQuery,
+  useMyChannelAndProfileQuery as useURQLMyChannelAndProfileQuery,
   useCreateChannelMutation as useURQLCreateChannelMutation,
   useUpdateChannelNameMutation as useURQLUpdateChannelNameMutation,
   useDeleteChannelMutation as useURQLDeleteChannelMutation,
@@ -8,7 +8,7 @@ import { toApolloClientIFUseMutation, toApolloClientIFUseQuery } from '@/hooks/a
 import { gql } from 'urql';
 
 gql`
-  query MyChannels {
+  query MyChannelAndProfile {
     channels {
       id
       name
@@ -25,7 +25,7 @@ gql`
     }
   }
 `;
-const useMyChannelsQuery = toApolloClientIFUseQuery(useURQLMyChannelsQuery, true);
+const useMyChannelAndProfileQuery = toApolloClientIFUseQuery(useURQLMyChannelAndProfileQuery, true);
 
 gql`
   mutation CreateChannel($name: String!, $description: String, $isDM: Boolean!, $joinUsers: [ID!]) {
@@ -81,7 +81,7 @@ gql`
 const useDeleteChannelMutation = toApolloClientIFUseMutation(useURQLDeleteChannelMutation);
 
 export {
-  useMyChannelsQuery,
+  useMyChannelAndProfileQuery,
   useCreateChannelMutation,
   useUpdateChannelNameMutation,
   useDeleteChannelMutation,

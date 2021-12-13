@@ -1,5 +1,5 @@
 export {
-  MyChannelsDocument,
+  MyChannelAndProfileDocument,
   CreateChannelDocument,
   LatestMessagesDocument,
   ChangeNotificationDocument,
