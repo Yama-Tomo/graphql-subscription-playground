@@ -4,6 +4,9 @@ documents:
   - ./src/**/*.ts
 generates:
   ./src/hooks/api/gql_generated.ts:
+    config:
+      scalars:
+        Date: string
     plugins:
       - typescript
       - typescript-operations

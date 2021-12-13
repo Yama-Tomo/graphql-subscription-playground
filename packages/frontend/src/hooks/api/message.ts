@@ -22,6 +22,7 @@ gql`
         node {
           channelId
           id
+          date
           user {
             id
             name
@@ -39,6 +40,7 @@ gql`
     createMessage(data: { channelId: $channelId, text: $text }) {
       id
       channelId
+      date
       text
       user {
         id
@@ -54,6 +56,7 @@ gql`
     updateMessage(data: { id: $id, text: $text }) {
       id
       channelId
+      date
       text
       user {
         id
@@ -69,6 +72,7 @@ gql`
     deleteMessage(id: $id) {
       id
       channelId
+      date
       text
       user {
         id

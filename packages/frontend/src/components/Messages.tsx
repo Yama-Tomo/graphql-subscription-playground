@@ -36,6 +36,7 @@ const Ui = forwardRef<HTMLDivElement, UiProps>((props, ref) => (
           {[...props.messages.edges].reverse().map((message, idx) => (
             <MessageListItem
               key={idx}
+              date={message.node.date}
               message={message.node.text}
               userName={message.node.user.name}
               isOwner={props.myUserId === message.node.user.id}

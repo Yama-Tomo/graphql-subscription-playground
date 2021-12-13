@@ -3,6 +3,7 @@ import { useUpdateMessageMutation, useDeleteMessageMutation } from '@/hooks/api'
 
 type UiProps = {
   message: string;
+  date: string;
   userName: string;
   isOwner: boolean;
   isEditing: boolean;
@@ -23,6 +24,7 @@ const Ui: React.FC<UiProps> = (props) => (
     ) : (
       <div style={{ marginBottom: '1rem' }}>
         <b>{props.userName}</b>
+        <span style={{ marginInlineStart: '0.4rem', color: '#999' }}>{props.date}</span>
         <div>{props.message}</div>
         {props.isOwner && !props.isEditing && (
           <span style={{ float: 'right' }}>
@@ -35,7 +37,7 @@ const Ui: React.FC<UiProps> = (props) => (
   </React.Fragment>
 );
 
-type ContainerProps = Pick<UiProps, 'message' | 'userName' | 'isOwner'> & { id: string };
+type ContainerProps = Pick<UiProps, 'message' | 'userName' | 'isOwner' | 'date'> & { id: string };
 const Container: React.FC<ContainerProps> = (props) => {
   const [state, setState] = useState({ message: props.message, isEditing: false });
   const [updateMessage] = useUpdateMessageMutation();
@@ -47,6 +49,7 @@ const Container: React.FC<ContainerProps> = (props) => {
 
   const uiProps: UiProps = {
     ...state,
+    date: props.date,
     userName: props.userName,
     isOwner: props.isOwner,
     onEditClick: () => {
