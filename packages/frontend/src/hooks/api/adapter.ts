@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import {
   OperationContext,
   OperationResult,
@@ -61,8 +62,10 @@ const toApolloClientIFUseMutation = <T extends (args: unknown) => UseMutationRes
   return function useMutationWrapper(...options: Parameters<T>): UseMutationWrapperReturnType<T> {
     const [res, execute] = useMutationFn(options);
 
-    const wrappedExecute: WrappedExecute = ({ variables, ...context }) =>
-      execute(variables, context);
+    const wrappedExecute: WrappedExecute = useCallback(
+      ({ variables, ...context }) => execute(variables, context),
+      [execute]
+    );
 
     const result: CustomResult = {
       data: res.data,
