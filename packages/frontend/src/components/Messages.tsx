@@ -9,6 +9,7 @@ type UiProps = {
   hasPrevPage: boolean;
   messages?: types.LatestMessagesQuery['messages'];
   onPrevClick: () => void;
+  myUserId: string;
 };
 // eslint-disable-next-line react/display-name
 const Ui = forwardRef<HTMLDivElement, UiProps>((props, ref) => (
@@ -34,12 +35,11 @@ const Ui = forwardRef<HTMLDivElement, UiProps>((props, ref) => (
           }
         >
           {[...props.messages.edges].reverse().map((message, idx) => (
-            // TODO: owner はあとで
             <MessageListItem
               key={idx}
               message={message.node.text}
               userName={message.node.user.name}
-              isOwner={true}
+              isOwner={props.myUserId === message.node.user.id}
               id={message.node.id}
             />
           ))}
@@ -51,7 +51,7 @@ const Ui = forwardRef<HTMLDivElement, UiProps>((props, ref) => (
 
 type ContainerProps = {
   channelId: string;
-};
+} & Pick<UiProps, 'myUserId'>;
 const Container: React.FC<ContainerProps> = (props) => {
   const ref = useRef<HTMLDivElement>(null);
   const [state, setState] = useState<{ channelId: string; before?: string }>({
@@ -71,6 +71,7 @@ const Container: React.FC<ContainerProps> = (props) => {
   }, [props.channelId]);
 
   const uiProps: UiProps = {
+    myUserId: props.myUserId,
     messages: data?.messages,
     hasPrevPage: !!data?.messages.pageInfo.hasPreviousPage,
     onPrevClick: () => {
