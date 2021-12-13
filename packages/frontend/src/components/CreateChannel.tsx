@@ -36,14 +36,14 @@ const Container: React.FC<ContainerProps> = (props) => {
     onDescriptionChange: ({ target: { value } }) =>
       setState((current) => ({ ...current, description: value })),
     onCreateClick: () => {
-      createChannel({ variables: { name: state.name, description: state.description } }).then(
-        (res) => {
-          if (!res.error && res.data?.createChannel) {
-            setState({ name: '', description: '' });
-            props.onChannelCreated?.(res.data.createChannel);
-          }
+      createChannel({
+        variables: { name: state.name, description: state.description, isDM: false },
+      }).then((res) => {
+        if (!res.error && res.data?.createChannel) {
+          setState({ name: '', description: '' });
+          props.onChannelCreated?.(res.data.createChannel);
         }
-      );
+      });
     },
   };
 
@@ -51,8 +51,10 @@ const Container: React.FC<ContainerProps> = (props) => {
 };
 
 gql`
-  mutation CreateChannel($name: String!, $description: String) {
-    createChannel(data: { name: $name, description: $description }) {
+  mutation CreateChannel($name: String!, $description: String, $isDM: Boolean!, $joinUsers: [ID!]) {
+    createChannel(
+      data: { name: $name, description: $description, isDM: $isDM, joinUsers: $joinUsers }
+    ) {
       id
       isDM
       joinUsers

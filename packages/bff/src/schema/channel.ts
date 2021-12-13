@@ -15,6 +15,8 @@ const channel = gql`
   input CreateChannelInput {
     name: String!
     description: String
+    isDM: Boolean!
+    joinUsers: [ID!]
   }
 
   input InviteChannelInput {

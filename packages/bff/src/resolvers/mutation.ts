@@ -76,9 +76,9 @@ const Mutation: Resolvers['Mutation'] = {
   createChannel(parent, { data }, { db, user, pubsub }) {
     const channel: Channel = {
       ...data,
-      joinUsers: [user.id],
+      joinUsers: (data.joinUsers || []).concat(user.id),
       id: v4(),
-      isDM: false,
+      isDM: data.isDM,
       ownerId: user.id,
     };
     db.channels.push(channel);
