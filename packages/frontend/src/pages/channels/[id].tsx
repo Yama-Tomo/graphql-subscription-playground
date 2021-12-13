@@ -23,6 +23,11 @@ const Container: NextPage = () => {
     return null;
   }
 
+  const currentChannel = data && data.channels.find((ch) => ch.id == router.query.id);
+  if (!currentChannel) {
+    return <div>page not found..</div>;
+  }
+
   const uiProps: UiProps = {
     channelId: String(router.query.id),
     myUserId: data?.myProfile.id || '',
