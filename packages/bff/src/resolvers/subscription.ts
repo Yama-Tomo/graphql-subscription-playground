@@ -1,4 +1,4 @@
-import { PubSub, withFilter } from 'graphql-subscriptions';
+import { PubSub } from 'graphql-subscriptions';
 import { Resolvers, Subscription } from '@/resolvers/generated';
 import { Context } from '@/context';
 
