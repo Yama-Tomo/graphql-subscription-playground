@@ -1,4 +1,4 @@
-import { MutationType, Resolvers, Channel } from '@/resolvers/generated';
+import { MutationType, Resolvers } from '@/resolvers/generated';
 import { v4 } from 'uuid';
 import { publishNotification } from '@/resolvers/subscription';
 import { UnAuthorizedContext } from '@/context';
@@ -10,19 +10,27 @@ const Mutation: Resolvers['Mutation'] = {
     if (!channel) {
       throw new Error('channel not found');
     }
+    const targetUser = db.users.find((u) => u.id === user.id);
+    if (!targetUser) {
+      throw new Error('user not found');
+    }
 
     db.messages.push(message);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { userId: _, ...rest } = message;
+    const payload = { ...rest, user: targetUser };
+
     channel.joinUsers.forEach((userId) => {
       publishNotification(pubsub, userId, {
         changeNotification: {
           __typename: 'ChangeMessageSubscriptionPayload',
           mutation: MutationType.Created,
-          data: message,
+          data: payload,
         },
       });
     });
 
-    return message;
+    return payload;
   },
   updateMessage(parent, { data }, { db, pubsub, user }) {
     const message = db.messages.find((mes) => mes.id === data.id);
@@ -35,18 +43,27 @@ const Mutation: Resolvers['Mutation'] = {
       throw new Error('channel not found');
     }
 
+    const targetUser = db.users.find((u) => u.id === user.id);
+    if (!targetUser) {
+      throw new Error('user not found');
+    }
+
     message.text = data.text;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { userId: _, ...rest } = message;
+    const payload = { ...rest, user: targetUser };
+
     channel.joinUsers.forEach((userId) => {
       publishNotification(pubsub, userId, {
         changeNotification: {
           __typename: 'ChangeMessageSubscriptionPayload',
           mutation: MutationType.Updated,
-          data: message,
+          data: payload,
         },
       });
     });
 
-    return message;
+    return payload;
   },
   deleteMessage(parent, { id }, { db, pubsub, user }) {
     const dataIdx = db.messages.findIndex((mes) => mes.id === id);
@@ -60,41 +77,66 @@ const Mutation: Resolvers['Mutation'] = {
       throw new Error('channel not found');
     }
 
+    const targetUser = db.users.find((u) => u.id === user.id);
+    if (!targetUser) {
+      throw new Error('user not found');
+    }
+
     db.messages.splice(dataIdx, 1);
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { userId: _, ...rest } = message;
+    const payload = { ...rest, user: targetUser };
+
     channel.joinUsers.forEach((userId) => {
       publishNotification(pubsub, userId, {
         changeNotification: {
           __typename: 'ChangeMessageSubscriptionPayload',
           mutation: MutationType.Deleted,
-          data: message,
+          data: payload,
         },
       });
     });
 
-    return message;
+    return payload;
   },
   createChannel(parent, { data }, { db, user, pubsub }) {
-    const channel: Channel = {
-      ...data,
+    const targetUser = db.users.find((u) => u.id === user.id);
+    if (!targetUser) {
+      throw new Error('user not found');
+    }
+
+    const channel = {
+      name: data.name,
+      description: data.description ?? undefined,
       joinUsers: (data.joinUsers || []).concat(user.id),
       id: v4(),
       isDM: data.isDM,
       ownerId: user.id,
     };
     db.channels.push(channel);
+
+    const { joinUsers, ...rest } = channel;
+    const payload = { ...rest, joinUsers: db.users.filter((u) => joinUsers.includes(u.id)) };
+
     channel.joinUsers.forEach((userId) => {
       publishNotification(pubsub, userId, {
         changeNotification: {
           __typename: 'ChangeChannelSubscriptionPayload',
           mutation: MutationType.Created,
-          data: channel,
+          data: payload,
         },
       });
     });
 
-    return channel;
+    return payload;
   },
   updateChannel(parent, { data }, { db, pubsub, user }) {
+    const targetUser = db.users.find((u) => u.id === user.id);
+    if (!targetUser) {
+      throw new Error('user not found');
+    }
+
     const channel = db.channels.find((channel) => channel.id === data.id);
     if (!channel) {
       throw new Error('channel not found');
@@ -104,21 +146,31 @@ const Mutation: Resolvers['Mutation'] = {
       channel.name = data.name;
     }
     if (channel.description !== data.description) {
-      channel.description = data.description;
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      channel.description = data.description!;
     }
+
+    const { joinUsers, ...rest } = channel;
+    const payload = { ...rest, joinUsers: db.users.filter((u) => joinUsers.includes(u.id)) };
+
     channel.joinUsers.forEach((userId) => {
       publishNotification(pubsub, userId, {
         changeNotification: {
           __typename: 'ChangeChannelSubscriptionPayload',
           mutation: MutationType.Updated,
-          data: channel,
+          data: payload,
         },
       });
     });
 
-    return channel;
+    return payload;
   },
   inviteChannel(parent, { data }, { db, pubsub, user }) {
+    const targetUser = db.users.find((u) => u.id === user.id);
+    if (!targetUser) {
+      throw new Error('user not found');
+    }
+
     const channel = db.channels.find((channel) => channel.id === data.id);
     if (!channel) {
       throw new Error('channel not found');
@@ -126,19 +178,27 @@ const Mutation: Resolvers['Mutation'] = {
 
     channel.joinUsers.push(data.userId);
 
+    const { joinUsers, ...rest } = channel;
+    const payload = { ...rest, joinUsers: db.users.filter((u) => joinUsers.includes(u.id)) };
+
     channel.joinUsers.forEach((userId) => {
       publishNotification(pubsub, userId, {
         changeNotification: {
           __typename: 'ChangeChannelSubscriptionPayload',
           mutation: MutationType.Updated,
-          data: channel,
+          data: payload,
         },
       });
     });
 
-    return channel;
+    return payload;
   },
   deleteChannel(parent, { id }, { db, pubsub, user }) {
+    const targetUser = db.users.find((u) => u.id === user.id);
+    if (!targetUser) {
+      throw new Error('user not found');
+    }
+
     const dataIdx = db.channels.findIndex((channel) => channel.id === id);
     const channel = db.channels[dataIdx];
     if (!channel) {
@@ -146,17 +206,21 @@ const Mutation: Resolvers['Mutation'] = {
     }
 
     db.channels.splice(dataIdx, 1);
+
+    const { joinUsers, ...rest } = channel;
+    const payload = { ...rest, joinUsers: db.users.filter((u) => joinUsers.includes(u.id)) };
+
     channel.joinUsers.forEach((userId) => {
       publishNotification(pubsub, userId, {
         changeNotification: {
           __typename: 'ChangeChannelSubscriptionPayload',
           mutation: MutationType.Deleted,
-          data: channel,
+          data: payload,
         },
       });
     });
 
-    return channel;
+    return payload;
   },
   signup(parent, { name }, { db }: UnAuthorizedContext) {
     const id = v4();

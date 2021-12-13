@@ -5,7 +5,11 @@ const Query: Resolvers['Query'] = {
     return `Hello world`;
   },
   channels: (parent, args, { db, user }) => {
-    return db.channels.filter((channel) => channel.joinUsers.includes(user.id));
+    return db.channels
+      .filter((channel) => channel.joinUsers.includes(user.id))
+      .map(({ joinUsers, ...rest }) => {
+        return { ...rest, joinUsers: db.users.filter((user) => joinUsers.includes(user.id)) };
+      });
   },
   messages: (parent, args, { db, user }) => {
     const isJoinedChannel = db.channels
@@ -50,7 +54,13 @@ const Query: Resolvers['Query'] = {
         startCursor: data[data.length - 1]?.id,
         endCursor: data[0]?.id,
       },
-      edges: data.reverse().map((node) => ({ cursor: node.id, node })),
+      edges: data.reverse().map(({ userId, ...rest }) => {
+        const user = db.users.find((user) => user.id === userId);
+        if (!user) {
+          throw new Error('not found user');
+        }
+        return { cursor: rest.id, node: { ...rest, user } };
+      }),
     };
   },
   myProfile: (parent, args, { user, db }) => {
