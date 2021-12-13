@@ -1,15 +1,11 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { NextPage } from 'next';
-import {
-  useMyChannelAndProfileQuery,
-  types,
-  useSearchUsersQuery,
-  useCreateChannelMutation,
-} from '@/hooks/api';
+import { useMyChannelAndProfileQuery, types, useCreateChannelMutation } from '@/hooks/api';
 import { CreateChannel, CreateChannelProps } from '@/components/CreateChannel';
 import { ChannelListItem } from '@/components/ChannelListItem';
 import { useRouter } from 'next/router';
 import { pagesPath } from '@/libs/$path';
+import { useSearchUsers } from '@/hooks/user';
 
 const Channels: React.FC<Pick<types.MyChannelAndProfileQuery, 'channels'>> = (props) => (
   <ul>
@@ -101,25 +97,10 @@ const Ui: React.FC<UiProps> = ({
 
 const Container: NextPage = (props) => {
   const [state, setState] = useState({ newChannelEditing: false, newDMEditing: false });
-  const [searchVars, setSearchVars] = useState({ name: '' });
+  const { data: users, search, input, reset } = useSearchUsers();
   const { data, loading } = useMyChannelAndProfileQuery();
-  const { data: users, refetch } = useSearchUsersQuery({
-    variables: searchVars,
-    skip: true,
-  });
   const [createChannel] = useCreateChannelMutation();
   const router = useRouter();
-
-  useEffect(() => {
-    if (!searchVars.name) {
-      return;
-    }
-
-    const timeout = setTimeout(refetch, 300);
-    return function cancelExecuteSearch() {
-      clearTimeout(timeout);
-    };
-  }, [refetch, searchVars.name]);
 
   const uiProps: UiProps = {
     ...props,
@@ -150,7 +131,7 @@ const Container: NextPage = (props) => {
       setState((current) => ({ ...current, newDMEditing: false }));
     },
     onSearchUserNameChange: ({ target: { value } }) => {
-      setSearchVars((current) => ({ ...current, name: value }));
+      search(value);
     },
     onUserClick: (user) => {
       if (!data) {
@@ -172,10 +153,11 @@ const Container: NextPage = (props) => {
       }).then((res) => {
         if (!res.error && res.data) {
           setState((current) => ({ ...current, newDMEditing: false }));
+          reset();
         }
       });
     },
-    searchUserName: searchVars.name,
+    searchUserName: input,
     users: users?.searchUsers
       ? users.searchUsers.filter((user) => user.id != data?.myProfile.id)
       : [],
