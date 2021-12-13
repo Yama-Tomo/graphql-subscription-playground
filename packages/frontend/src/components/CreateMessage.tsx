@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { gql } from 'urql';
 import { useCreateMessageMutation } from '@/hooks/api';
 
 type UiProps = {
@@ -39,20 +38,6 @@ const Container: React.FC<ContainerProps> = (props) => {
 
   return <Ui {...uiProps} />;
 };
-
-gql`
-  mutation CreateMessage($channelId: ID!, $text: String!) {
-    createMessage(data: { channelId: $channelId, text: $text }) {
-      id
-      channelId
-      text
-      user {
-        id
-        name
-      }
-    }
-  }
-`;
 
 export { Container as CreateMessage };
 export type { ContainerProps as CreateMessageProps };

@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { gql } from 'urql';
 import { types, useCreateChannelMutation } from '@/hooks/api';
 
 type UiProps = {
@@ -49,24 +48,6 @@ const Container: React.FC<ContainerProps> = (props) => {
 
   return <Ui {...uiProps} />;
 };
-
-gql`
-  mutation CreateChannel($name: String!, $description: String, $isDM: Boolean!, $joinUsers: [ID!]) {
-    createChannel(
-      data: { name: $name, description: $description, isDM: $isDM, joinUsers: $joinUsers }
-    ) {
-      id
-      isDM
-      joinUsers {
-        id
-        name
-      }
-      description
-      name
-      ownerId
-    }
-  }
-`;
 
 export { Container as CreateChannel };
 export type { ContainerProps as CreateChannelProps };

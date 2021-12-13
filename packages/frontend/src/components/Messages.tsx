@@ -1,5 +1,4 @@
 import React, { forwardRef, useEffect, useRef, useState } from 'react';
-import { gql } from 'urql';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { types } from '@/hooks/api';
 import { useLatestMessagesQuery } from '@/hooks/api';
@@ -84,32 +83,6 @@ const Container: React.FC<ContainerProps> = (props) => {
 
   return <Ui {...uiProps} ref={ref} />;
 };
-
-gql`
-  query LatestMessages($channelId: ID!, $last: Int = 10, $before: String) {
-    messages(channelId: $channelId, before: $before, last: $last) {
-      pageInfo {
-        endCursor
-        hasNextPage
-        hasPreviousPage
-        endCursor
-        startCursor
-      }
-      edges {
-        cursor
-        node {
-          channelId
-          id
-          user {
-            id
-            name
-          }
-          text
-        }
-      }
-    }
-  }
-`;
 
 export { Container as Messages };
 export type { ContainerProps as MessagesProps };

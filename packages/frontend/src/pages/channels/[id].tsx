@@ -4,7 +4,6 @@ import { useRouter } from 'next/router';
 import Channel from '@/pages/channels';
 import { Messages, MessagesProps } from '@/components/Messages';
 import { CreateMessage } from '@/components/CreateMessage';
-import { gql } from 'urql';
 import { useMyProfileQuery } from '@/hooks/api';
 
 type UiProps = { channelId: string } & MessagesProps;
@@ -31,14 +30,5 @@ const Container: NextPage = () => {
 
   return <Ui {...uiProps} />;
 };
-
-gql`
-  query MyProfile {
-    myProfile {
-      id
-      name
-    }
-  }
-`;
 
 export default Container;

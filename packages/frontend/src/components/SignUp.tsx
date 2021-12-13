@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { gql } from 'urql';
 import { Router } from 'next/router';
 import { useSignUpMutation } from '@/hooks/api';
 import { pagesPath } from '@/libs/$path';
@@ -53,14 +52,5 @@ const Container: React.FC<{ router: Router }> = (props) => {
 
   return <Ui {...uiProps} />;
 };
-
-gql`
-  mutation SignUp($name: String!) {
-    signup(name: $name) {
-      id
-      name
-    }
-  }
-`;
 
 export { Container as SignUp };

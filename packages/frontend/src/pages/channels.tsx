@@ -6,7 +6,6 @@ import {
   useSearchUsersQuery,
   useCreateChannelMutation,
 } from '@/hooks/api';
-import { gql } from 'urql';
 import { CreateChannel, CreateChannelProps } from '@/components/CreateChannel';
 import { ChannelListItem } from '@/components/ChannelListItem';
 import { useRouter } from 'next/router';
@@ -183,33 +182,5 @@ const Container: NextPage = (props) => {
   };
   return <Ui {...uiProps} />;
 };
-
-gql`
-  query MyChannels {
-    channels {
-      id
-      name
-      isDM
-      joinUsers {
-        id
-        name
-      }
-      ownerId
-    }
-    myProfile {
-      id
-      name
-    }
-  }
-`;
-
-gql`
-  query SearchUsers($name: String!) {
-    searchUsers(name: $name) {
-      id
-      name
-    }
-  }
-`;
 
 export default Container;

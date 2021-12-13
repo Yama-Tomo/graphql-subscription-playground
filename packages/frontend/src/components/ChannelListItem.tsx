@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from './Link';
 import { pagesPath } from '@/libs/$path';
-import { gql } from 'urql';
 import { useDeleteChannelMutation, useUpdateChannelNameMutation } from '@/hooks/api';
 
 type UiProps = {
@@ -76,38 +75,6 @@ const Container: React.FC<ContainerProps> = (props) => {
 
   return <Ui {...uiProps} />;
 };
-
-gql`
-  mutation UpdateChannelName($id: ID!, $name: String!) {
-    updateChannel(data: { id: $id, name: $name }) {
-      id
-      isDM
-      joinUsers {
-        id
-        name
-      }
-      description
-      name
-      ownerId
-    }
-  }
-`;
-
-gql`
-  mutation DeleteChannel($id: ID!) {
-    deleteChannel(id: $id) {
-      id
-      isDM
-      joinUsers {
-        id
-        name
-      }
-      description
-      name
-      ownerId
-    }
-  }
-`;
 
 export { Container as ChannelListItem };
 export type { ContainerProps as ChannelListItemProps };

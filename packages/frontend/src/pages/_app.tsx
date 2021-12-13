@@ -2,7 +2,7 @@ import '../styles/globals.css';
 import React, { useEffect, useState } from 'react';
 import { withUrqlClient } from 'next-urql';
 import type { AppProps } from 'next/app';
-import { dedupExchange, fetchExchange, gql, subscriptionExchange } from 'urql';
+import { dedupExchange, fetchExchange, subscriptionExchange } from 'urql';
 import { SubscriptionClient } from 'subscriptions-transport-ws';
 import { SignUp } from '@/components/SignUp';
 import { setupCache } from '@/libs/urql';
@@ -64,37 +64,3 @@ export default withUrqlClient(
   }),
   { ssr: false }
 )(MyApp);
-
-gql`
-  subscription ChangeNotification {
-    changeNotification {
-      ... on ChangeChannelSubscriptionPayload {
-        mutation
-        data {
-          id
-          description
-          isDM
-          joinUsers {
-            id
-            name
-          }
-          name
-          ownerId
-        }
-      }
-
-      ... on ChangeMessageSubscriptionPayload {
-        mutation
-        data {
-          id
-          channelId
-          text
-          user {
-            id
-            name
-          }
-        }
-      }
-    }
-  }
-`;

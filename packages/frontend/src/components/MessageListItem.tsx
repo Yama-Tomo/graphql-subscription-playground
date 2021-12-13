@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { gql } from 'urql';
 import { useUpdateMessageMutation, useDeleteMessageMutation } from '@/hooks/api';
 
 type UiProps = {
@@ -73,34 +72,6 @@ const Container: React.FC<ContainerProps> = (props) => {
 
   return <Ui {...uiProps} />;
 };
-
-gql`
-  mutation UpdateMessage($id: ID!, $text: String!) {
-    updateMessage(data: { id: $id, text: $text }) {
-      id
-      channelId
-      text
-      user {
-        id
-        name
-      }
-    }
-  }
-`;
-
-gql`
-  mutation DeleteMessage($id: ID!) {
-    deleteMessage(id: $id) {
-      id
-      channelId
-      text
-      user {
-        id
-        name
-      }
-    }
-  }
-`;
 
 export { Container as MessageListItem };
 export type { ContainerProps as MessageListItemProps };
