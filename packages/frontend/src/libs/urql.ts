@@ -124,7 +124,10 @@ const updateChannel = (channel: Partial<types.Channel>, cache: Cache) => {
       fragment ChannelFragment on Channel {
         id
         isDM
-        joinUsers
+        joinUsers {
+          id
+          name
+        }
         description
         name
         ownerId
@@ -186,7 +189,10 @@ const updateMessage = (message: Partial<types.Message>, cache: Cache) => {
         id
         channelId
         text
-        userId
+        user {
+          id
+          name
+        }
       }
     `,
     message

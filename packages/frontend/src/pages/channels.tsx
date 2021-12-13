@@ -148,7 +148,7 @@ const Container: NextPage = (props) => {
       }
 
       const existsDM = data.channels.find(
-        (channel) => channel.isDM && channel.joinUsers.includes(user.id)
+        (channel) => channel.isDM && channel.joinUsers.find((u) => u.id == user.id)
       );
       if (existsDM) {
         setState((current) => ({ ...current, newDMEditing: false }));
@@ -179,7 +179,10 @@ gql`
       id
       name
       isDM
-      joinUsers
+      joinUsers {
+        id
+        name
+      }
       ownerId
     }
     myProfile {

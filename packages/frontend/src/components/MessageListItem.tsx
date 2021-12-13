@@ -80,7 +80,10 @@ gql`
       id
       channelId
       text
-      userId
+      user {
+        id
+        name
+      }
     }
   }
 `;
@@ -91,7 +94,10 @@ gql`
       id
       channelId
       text
-      userId
+      user {
+        id
+        name
+      }
     }
   }
 `;

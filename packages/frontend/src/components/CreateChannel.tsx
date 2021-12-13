@@ -57,7 +57,10 @@ gql`
     ) {
       id
       isDM
-      joinUsers
+      joinUsers {
+        id
+        name
+      }
       description
       name
       ownerId

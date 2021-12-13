@@ -82,7 +82,10 @@ gql`
     updateChannel(data: { id: $id, name: $name }) {
       id
       isDM
-      joinUsers
+      joinUsers {
+        id
+        name
+      }
       description
       name
       ownerId
@@ -95,7 +98,10 @@ gql`
     deleteChannel(id: $id) {
       id
       isDM
-      joinUsers
+      joinUsers {
+        id
+        name
+      }
       description
       name
       ownerId

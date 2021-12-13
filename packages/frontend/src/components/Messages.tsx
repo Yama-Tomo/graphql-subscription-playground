@@ -99,7 +99,10 @@ gql`
         node {
           channelId
           id
-          userId
+          user {
+            id
+            name
+          }
           text
         }
       }

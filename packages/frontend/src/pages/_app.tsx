@@ -74,7 +74,10 @@ gql`
           id
           description
           isDM
-          joinUsers
+          joinUsers {
+            id
+            name
+          }
           name
           ownerId
         }
@@ -86,7 +89,10 @@ gql`
           id
           channelId
           text
-          userId
+          user {
+            id
+            name
+          }
         }
       }
     }

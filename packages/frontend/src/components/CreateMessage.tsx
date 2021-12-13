@@ -46,7 +46,10 @@ gql`
       id
       channelId
       text
-      userId
+      user {
+        id
+        name
+      }
     }
   }
 `;
