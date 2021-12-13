@@ -1,8 +1,27 @@
-import { Message, Channel, User } from '@/resolvers';
 import { PubSub } from 'graphql-subscriptions';
 
+type Message = {
+  channelId: string;
+  id: string;
+  text: string;
+  userId: string;
+};
 const messages: Message[] = [];
+
+type Channel = {
+  description?: string;
+  id: string;
+  isDM: boolean;
+  joinUsers: string[];
+  name: string;
+  ownerId: string;
+};
 const channels: Channel[] = [];
+
+type User = {
+  id: string;
+  name: string;
+};
 const users: User[] = [];
 const db = { messages, channels, users };
 
