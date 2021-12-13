@@ -6,6 +6,7 @@ import { ChannelListItem } from '@/components/ChannelListItem';
 import { useRouter } from 'next/router';
 import { pagesPath } from '@/libs/$path';
 import { useSearchUsers } from '@/hooks/user';
+import { getDMChannelName } from '@/libs/channel';
 
 const Channels: React.FC<Pick<types.MyChannelAndProfileQuery, 'channels'>> = (props) => (
   <ul>
@@ -109,10 +110,7 @@ const Container: NextPage = (props) => {
     DMChannels: data?.channels
       ? data.channels
           .filter((channel) => channel.isDM)
-          .map((channel) => {
-            const joinUserName = channel.joinUsers.find((u) => u.id !== data.myProfile.id)?.name;
-            return { ...channel, name: joinUserName || channel.name };
-          })
+          .map((channel) => ({ ...channel, name: getDMChannelName(channel, data.myProfile.id) }))
       : [],
     loading,
     onAddChannelClick: () => {
