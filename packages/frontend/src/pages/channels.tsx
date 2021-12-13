@@ -166,7 +166,9 @@ const Container: NextPage = (props) => {
       });
     },
     searchUserName: searchVars.name,
-    users: users?.searchUsers || [],
+    users: users?.searchUsers
+      ? users.searchUsers.filter((user) => user.id != data?.myProfile.id)
+      : [],
   };
   return <Ui {...uiProps} />;
 };
