@@ -16,7 +16,13 @@ const Channels: React.FC<Pick<types.MyChannelsQuery, 'channels'>> = (props) => (
   <ul>
     {props.channels.map((channel) => (
       // TODO: isOwnerはあとで
-      <ChannelListItem key={channel.id} id={channel.id} name={channel.name} isOwner={true} />
+      <ChannelListItem
+        key={channel.id}
+        id={channel.id}
+        name={channel.name}
+        isOwner={true}
+        isDM={channel.isDM}
+      />
     ))}
   </ul>
 );

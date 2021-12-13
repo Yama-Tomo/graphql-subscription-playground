@@ -14,6 +14,7 @@ type UiProps = {
   onSubmitClick: () => void;
   onCancelClick: () => void;
   onDeleteChannelClick: () => void;
+  isDM: boolean;
 };
 const Ui: React.FC<UiProps> = (props) => (
   <li>
@@ -28,7 +29,7 @@ const Ui: React.FC<UiProps> = (props) => (
         <a>{props.name}</a>
       </Link>
     )}{' '}
-    {props.isOwner && !props.isEditing && (
+    {!props.isDM && props.isOwner && !props.isEditing && (
       <span style={{ float: 'right' }}>
         <a onClick={props.onEditClick}>[edit]</a>{' '}
         <a onClick={props.onDeleteChannelClick}>[delete]</a>
@@ -37,7 +38,7 @@ const Ui: React.FC<UiProps> = (props) => (
   </li>
 );
 
-type ContainerProps = Pick<UiProps, 'name' | 'id' | 'isOwner'>;
+type ContainerProps = Pick<UiProps, 'name' | 'id' | 'isOwner' | 'isDM'>;
 const Container: React.FC<ContainerProps> = (props) => {
   const [state, setState] = useState({ name: props.name, isEditing: false });
   const [updateChannel] = useUpdateChannelNameMutation();
@@ -49,6 +50,7 @@ const Container: React.FC<ContainerProps> = (props) => {
 
   const uiProps: UiProps = {
     ...state,
+    isDM: props.isDM,
     isOwner: props.isOwner,
     id: props.id,
     onEditClick: () => {
