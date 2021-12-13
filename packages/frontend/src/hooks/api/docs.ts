@@ -3,4 +3,6 @@ export {
   CreateChannelDocument,
   LatestMessagesDocument,
   ChangeNotificationDocument,
+  ChannelFragmentFragmentDoc,
+  MessageFragmentFragmentDoc,
 } from './gql_generated';

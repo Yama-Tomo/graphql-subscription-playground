@@ -8,21 +8,28 @@ import {
 import { toApolloClientIFUseMutation, toApolloClientIFUseQuery } from '@/hooks/api/adapter';
 import { gql } from 'urql';
 
+// ----------- fragment -----------
+gql`
+  fragment ChannelFragment on Channel {
+    id
+    name
+    description
+    isDM
+    joinUsers {
+      ...UserFragment
+    }
+    ownerId
+  }
+`;
+// ----------- fragment -----------
+
 gql`
   query MyChannelAndProfile {
     channels {
-      id
-      name
-      isDM
-      joinUsers {
-        id
-        name
-      }
-      ownerId
+      ...ChannelFragment
     }
     myProfile {
-      id
-      name
+      ...UserFragment
     }
   }
 `;
@@ -33,15 +40,7 @@ gql`
     createChannel(
       data: { name: $name, description: $description, isDM: $isDM, joinUsers: $joinUsers }
     ) {
-      id
-      isDM
-      joinUsers {
-        id
-        name
-      }
-      description
-      name
-      ownerId
+      ...ChannelFragment
     }
   }
 `;
@@ -50,15 +49,7 @@ const useCreateChannelMutation = toApolloClientIFUseMutation(useURQLCreateChanne
 gql`
   mutation UpdateChannelName($id: ID!, $name: String!) {
     updateChannel(data: { id: $id, name: $name }) {
-      id
-      isDM
-      joinUsers {
-        id
-        name
-      }
-      description
-      name
-      ownerId
+      ...ChannelFragment
     }
   }
 `;
@@ -67,15 +58,7 @@ const useUpdateChannelNameMutation = toApolloClientIFUseMutation(useURQLUpdateCh
 gql`
   mutation DeleteChannel($id: ID!) {
     deleteChannel(id: $id) {
-      id
-      isDM
-      joinUsers {
-        id
-        name
-      }
-      description
-      name
-      ownerId
+      ...ChannelFragment
     }
   }
 `;
@@ -84,15 +67,7 @@ const useDeleteChannelMutation = toApolloClientIFUseMutation(useURQLDeleteChanne
 gql`
   mutation InviteChannel($id: ID!, $userId: ID!) {
     inviteChannel(data: { id: $id, userId: $userId }) {
-      id
-      isDM
-      joinUsers {
-        id
-        name
-      }
-      description
-      name
-      ownerId
+      ...ChannelFragment
     }
   }
 `;

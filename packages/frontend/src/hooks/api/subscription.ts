@@ -6,28 +6,14 @@ gql`
       ... on ChangeChannelSubscriptionPayload {
         mutation
         data {
-          id
-          description
-          isDM
-          joinUsers {
-            id
-            name
-          }
-          name
-          ownerId
+          ...ChannelFragment
         }
       }
 
       ... on ChangeMessageSubscriptionPayload {
         mutation
         data {
-          id
-          channelId
-          text
-          user {
-            id
-            name
-          }
+          ...MessageFragment
         }
       }
     }

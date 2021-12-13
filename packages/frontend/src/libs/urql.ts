@@ -1,4 +1,3 @@
-import { gql } from 'urql';
 import { cacheExchange, Cache } from '@urql/exchange-graphcache';
 import { docs, types, MutationType } from '@/hooks/api';
 
@@ -126,22 +125,7 @@ const addNewChannel = (channel: types.CreateChannelMutation['createChannel'], ca
 };
 
 const updateChannel = (channel: Partial<types.Channel>, cache: Cache) => {
-  cache.writeFragment(
-    gql`
-      fragment ChannelFragment on Channel {
-        id
-        isDM
-        joinUsers {
-          id
-          name
-        }
-        description
-        name
-        ownerId
-      }
-    `,
-    channel
-  );
+  cache.writeFragment(docs.ChannelFragmentFragmentDoc, channel);
 };
 
 const deleteChannel = (channelId: types.Channel['id'], cache: Cache) => {
@@ -193,20 +177,7 @@ const addNewMessage = (message: types.CreateMessageMutation['createMessage'], ca
 };
 
 const updateMessage = (message: Partial<types.Message>, cache: Cache) => {
-  cache.writeFragment(
-    gql`
-      fragment MessageFragment on Message {
-        id
-        channelId
-        text
-        user {
-          id
-          name
-        }
-      }
-    `,
-    message
-  );
+  cache.writeFragment(docs.MessageFragmentFragmentDoc, message);
 };
 
 const deleteMessage = (messageId: types.Channel['id'], cache: Cache) => {

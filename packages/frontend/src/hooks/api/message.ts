@@ -7,6 +7,20 @@ import {
 import { toApolloClientIFUseMutation, toApolloClientIFUseQuery } from '@/hooks/api/adapter';
 import { gql } from 'urql';
 
+// ----------- fragment -----------
+gql`
+  fragment MessageFragment on Message {
+    id
+    channelId
+    text
+    date
+    user {
+      ...UserFragment
+    }
+  }
+`;
+// ----------- fragment -----------
+
 gql`
   query LatestMessages($channelId: ID!, $last: Int = 10, $before: String) {
     messages(channelId: $channelId, before: $before, last: $last) {
@@ -20,14 +34,7 @@ gql`
       edges {
         cursor
         node {
-          channelId
-          id
-          date
-          user {
-            id
-            name
-          }
-          text
+          ...MessageFragment
         }
       }
     }
@@ -38,14 +45,7 @@ const useLatestMessagesQuery = toApolloClientIFUseQuery(useURQLLatestMessagesQue
 gql`
   mutation CreateMessage($channelId: ID!, $text: String!) {
     createMessage(data: { channelId: $channelId, text: $text }) {
-      id
-      channelId
-      date
-      text
-      user {
-        id
-        name
-      }
+      ...MessageFragment
     }
   }
 `;
@@ -54,14 +54,7 @@ const useCreateMessageMutation = toApolloClientIFUseMutation(useURQLCreateMessag
 gql`
   mutation UpdateMessage($id: ID!, $text: String!) {
     updateMessage(data: { id: $id, text: $text }) {
-      id
-      channelId
-      date
-      text
-      user {
-        id
-        name
-      }
+      ...MessageFragment
     }
   }
 `;
@@ -70,14 +63,7 @@ const useUpdateMessageMutation = toApolloClientIFUseMutation(useURQLUpdateMessag
 gql`
   mutation DeleteMessage($id: ID!) {
     deleteMessage(id: $id) {
-      id
-      channelId
-      date
-      text
-      user {
-        id
-        name
-      }
+      ...MessageFragment
     }
   }
 `;
