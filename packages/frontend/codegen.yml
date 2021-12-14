@@ -1,4 +1,4 @@
-schema: ${NEXT_PUBLIC_GRAPHQL_URL}
+schema: ${GRAPHQL_URL_FOR_CODEGEN}
 documents:
   - ./src/**/*.tsx
   - ./src/**/*.ts
