@@ -56,7 +56,7 @@ const startServer = async (opts?: Partial<{ port: number; path: string }>) => {
 
   await server.start();
   fastifyApp.register(server.createHandler({ path }));
-  const listenHost = await fastifyApp.listen(opts?.port || 4000);
+  const listenHost = await fastifyApp.listen(opts?.port || 4000, '0.0.0.0');
 
   return { server, fastifyApp, publicUrl: listenHost + path };
 };
