@@ -1,1 +1,4 @@
 node_modules
+.pnpm-store
+.env
+docker-compose.override.yml

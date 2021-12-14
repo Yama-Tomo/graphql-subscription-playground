@@ -1,0 +1,41 @@
+version: "3.9"
+
+x-node-apps: &node-apps
+  build:
+    context: ./docker/node
+  profiles:
+    - apps
+  volumes:
+    - ./:/app
+    - ./docker/node/entrypoint.sh:/entrypoint.sh:ro
+  entrypoint: /entrypoint.sh
+  env_file:
+    - ./.env
+  command: sh -c 'pnpm i && pnpm dev'
+  tty: true
+
+services:
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./docker/nginx/templates:/etc/nginx/templates
+    environment:
+      - NEXT_URL=${NEXT_URL:-http://next:3000}
+      - APOLLO_URL=${APOLLO_URL:-http://apollo:4000}
+    ports:
+      - ${NGINX_EXPOSE_PORT:-3100}:80
+    depends_on:
+      - next
+
+  next:
+    <<: *node-apps
+    working_dir: /app/packages/frontend
+    environment:
+      GRAPHQL_URL_FOR_CODEGEN: http://apollo:4000/graphql
+    depends_on:
+      # monorepoなので `pnpm i` が同時に走ってnode_modulesに不整合が起きないようにする
+      - apollo
+
+  apollo:
+    <<: *node-apps
+    working_dir: /app/packages/bff
