@@ -8,9 +8,11 @@ import { getDMChannelName } from '@/libs/channel';
 import { useMyChannelAndProfileQuery, types, useCreateChannelMutation } from '@/hooks/api';
 import { useSearchUsers } from '@/hooks/user';
 
-const Channels: React.FC<
-  Pick<types.MyChannelAndProfileQuery, 'channels'> & { myUserId: string }
-> = (props) => (
+type ChannelsUiProps = Pick<types.MyChannelAndProfileQuery, 'channels'> & {
+  myUserId: string;
+  activeChId?: string;
+};
+const Channels: React.FC<ChannelsUiProps> = (props) => (
   <ul>
     {props.channels.map((channel) => (
       <ChannelListItem
@@ -20,15 +22,15 @@ const Channels: React.FC<
         isOwner={channel.ownerId === props.myUserId}
         isDM={channel.isDM}
         unReadCount={channel.unReadMessageCount}
+        active={props.activeChId === channel.id}
       />
     ))}
   </ul>
 );
 
 type UiProps = {
-  channels: types.MyChannelAndProfileQuery['channels'];
-  DMChannels: types.MyChannelAndProfileQuery['channels'];
-  myUserId: string;
+  channels: ChannelsUiProps['channels'];
+  DMChannels: ChannelsUiProps['channels'];
   loading: boolean;
   onAddChannelClick: () => void;
   onAddChannelCancelClick: () => void;
@@ -40,11 +42,13 @@ type UiProps = {
   onSearchUserNameChange: JSX.IntrinsicElements['input']['onChange'];
   onUserClick: (user: types.SearchUsersQuery['searchUsers'][number]) => void;
   users: types.SearchUsersQuery['searchUsers'];
-} & CreateChannelProps;
+} & CreateChannelProps &
+  Pick<ChannelsUiProps, 'myUserId' | 'activeChId'>;
 const Ui: React.FC<UiProps> = ({
   channels,
   DMChannels,
   myUserId,
+  activeChId,
   loading,
   onAddChannelClick,
   onAddChannelCancelClick,
@@ -70,7 +74,7 @@ const Ui: React.FC<UiProps> = ({
           </button>
         </h2>
         {newChannelEditing && <CreateChannel onChannelCreated={onChannelCreated} />}
-        <Channels channels={channels} myUserId={myUserId} />
+        <Channels channels={channels} myUserId={myUserId} activeChId={activeChId} />
       </Fragment>
     )}
     {!loading && (
@@ -93,14 +97,17 @@ const Ui: React.FC<UiProps> = ({
             </ul>
           </React.Fragment>
         )}
-        {!newDMEditing && <Channels channels={DMChannels} myUserId={myUserId} />}
+        {!newDMEditing && (
+          <Channels channels={DMChannels} myUserId={myUserId} activeChId={activeChId} />
+        )}
       </Fragment>
     )}
     {children}
   </main>
 );
 
-const Container: NextPage = (props) => {
+type ContainerProps = Pick<UiProps, 'activeChId'>;
+const Container: NextPage<ContainerProps> = (props) => {
   const [state, setState] = useState({ newChannelEditing: false, newDMEditing: false });
   const { data: users, search, input, reset } = useSearchUsers();
   const { data, loading, refetch } = useMyChannelAndProfileQuery();

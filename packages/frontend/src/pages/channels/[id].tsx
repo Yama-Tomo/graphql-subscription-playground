@@ -22,7 +22,7 @@ type UiProps = {
   joinedUserIds: string[];
 } & MessagesProps;
 const Ui: React.FC<UiProps> = (props) => (
-  <Channel>
+  <Channel activeChId={props.channelId}>
     <hr style={{ width: '100%' }} />
     <h2>
       # {props.channelName}

@@ -5,6 +5,7 @@ import { useDeleteChannelMutation, useUpdateChannelNameMutation } from '@/hooks/
 
 type UiProps = {
   name: string;
+  active?: boolean;
   id: string;
   isOwner: boolean;
   isEditing: boolean;
@@ -28,7 +29,11 @@ const Ui: React.FC<UiProps> = (props) => (
       <Link href={pagesPath.channels._id(props.id).$url()}>
         <a>
           {props.name}
-          {props.unReadCount ? `(${props.unReadCount})` : ``}
+          {props.unReadCount ? (
+            <span className={props.active ? `delayed-visible` : ``}>({props.unReadCount})</span>
+          ) : (
+            ``
+          )}
         </a>
       </Link>
     )}{' '}
@@ -41,7 +46,7 @@ const Ui: React.FC<UiProps> = (props) => (
   </li>
 );
 
-type ContainerProps = Pick<UiProps, 'name' | 'id' | 'isOwner' | 'isDM' | 'unReadCount'>;
+type ContainerProps = Pick<UiProps, 'name' | 'id' | 'isOwner' | 'isDM' | 'unReadCount' | 'active'>;
 const Container: React.FC<ContainerProps> = (props) => {
   const [state, setState] = useState({ name: props.name, isEditing: false });
   const [updateChannel] = useUpdateChannelNameMutation();
