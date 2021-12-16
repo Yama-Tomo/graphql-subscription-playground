@@ -47,20 +47,6 @@ const cacheConfig = (): types.GraphCacheConfig => ({
   },
   updates: {
     Mutation: {
-      createChannel: (parent, args, cache) => {
-        if (isAllKeyNotEmpty(parent.createChannel)) {
-          addNewChannel(parent.createChannel, cache);
-        }
-      },
-      updateChannel(parent, args, cache) {
-        if (isAllKeyNotEmpty(parent.updateChannel)) {
-          updateChannel(parent.updateChannel, cache);
-        }
-      },
-      createMessage: (parent, args, cache) => {
-        if (isAllKeyNotEmpty(parent.createMessage)) {
-          addNewMessage(parent.createMessage, cache);
-        }
       readMessages(parent, args, cache) {
         // 同一ユーザが複数ウインドウ開いていてもそれぞれのウインドウの状態を更新できるようにargsの値を使ってキャッシュを更新するのがミソ
         args.data.forEach(({ id }) => {
@@ -121,10 +107,6 @@ const cacheConfig = (): types.GraphCacheConfig => ({
     },
   },
 });
-
-const isAllKeyNotEmpty = <T extends Record<string, unknown>>(
-  arg: T | undefined
-): arg is Required<NonNullable<T>> => arg != null && !Object.values(arg).find((v) => v == null);
 
 const addNewChannel = (channel: types.CreateChannelMutation['createChannel'], cache: Cache) => {
   const channelCache = cache.inspectFields('Query').find((qc) => qc.fieldName === 'channels');
