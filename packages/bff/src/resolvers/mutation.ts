@@ -3,36 +3,46 @@ import { v4 } from 'uuid';
 import { publishNotification } from '@/resolvers/subscription';
 import { UnAuthorizedContext } from '@/context';
 
+const isRead = (currentUserId: string, messageOwnerId: string, readUserIds: string[]) => {
+  const isMessageOwner = currentUserId === messageOwnerId;
+  return isMessageOwner || readUserIds.includes(currentUserId);
+};
+
 const Mutation: Resolvers['Mutation'] = {
-  createMessage(parent, { data }, { db, pubsub, user }) {
-    const message = { id: v4(), date: new Date(), userId: user.id, ...data };
+  createMessage(parent, { data }, { db, pubsub, user: currentUser }) {
+    const message = {
+      id: v4(),
+      date: new Date(),
+      userId: currentUser.id,
+      readUserIds: [],
+      ...data,
+    };
     const channel = db.channels.find((channel) => channel.id == message.channelId);
     if (!channel) {
       throw new Error('channel not found');
     }
-    const targetUser = db.users.find((u) => u.id === user.id);
+    const targetUser = db.users.find((u) => u.id === currentUser.id);
     if (!targetUser) {
       throw new Error('user not found');
     }
 
     db.messages.push(message);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { userId: _, ...rest } = message;
-    const payload = { ...rest, user: targetUser };
+    const { userId: messageOwnerId, readUserIds, ...rest } = message;
+    const payload = { ...rest, user: targetUser, readUsers: [] };
 
-    channel.joinUsers.forEach((userId) => {
-      publishNotification(pubsub, userId, {
+    channel.joinUsers.forEach((joinUserId) => {
+      publishNotification(pubsub, joinUserId, {
         changeNotification: {
           __typename: 'ChangeMessageSubscriptionPayload',
           mutation: MutationType.Created,
-          data: payload,
+          data: { ...payload, isRead: isRead(joinUserId, messageOwnerId, readUserIds) },
         },
       });
     });
 
-    return payload;
+    return { ...payload, isRead: isRead(currentUser.id, messageOwnerId, readUserIds) };
   },
-  updateMessage(parent, { data }, { db, pubsub, user }) {
+  updateMessage(parent, { data }, { db, pubsub, user: currentUser }) {
     const message = db.messages.find((mes) => mes.id === data.id);
     if (!message) {
       throw new Error('message not found');
@@ -43,29 +53,29 @@ const Mutation: Resolvers['Mutation'] = {
       throw new Error('channel not found');
     }
 
-    const targetUser = db.users.find((u) => u.id === user.id);
+    const targetUser = db.users.find((u) => u.id === currentUser.id);
     if (!targetUser) {
       throw new Error('user not found');
     }
 
     message.text = data.text;
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { userId: _, ...rest } = message;
-    const payload = { ...rest, user: targetUser };
+    const { userId: messageOwnerId, readUserIds, ...rest } = message;
+    const readUsers = db.users.filter((u) => readUserIds.includes(u.id));
+    const payload = { ...rest, user: targetUser, readUsers };
 
-    channel.joinUsers.forEach((userId) => {
-      publishNotification(pubsub, userId, {
+    channel.joinUsers.forEach((joinUserId) => {
+      publishNotification(pubsub, joinUserId, {
         changeNotification: {
           __typename: 'ChangeMessageSubscriptionPayload',
           mutation: MutationType.Updated,
-          data: payload,
+          data: { ...payload, isRead: isRead(joinUserId, messageOwnerId, readUserIds) },
         },
       });
     });
 
-    return payload;
+    return { ...payload, isRead: isRead(currentUser.id, messageOwnerId, readUserIds) };
   },
-  deleteMessage(parent, { id }, { db, pubsub, user }) {
+  deleteMessage(parent, { id }, { db, pubsub, user: currentUser }) {
     const dataIdx = db.messages.findIndex((mes) => mes.id === id);
     const message = db.messages[dataIdx];
     if (!message) {
@@ -77,28 +87,28 @@ const Mutation: Resolvers['Mutation'] = {
       throw new Error('channel not found');
     }
 
-    const targetUser = db.users.find((u) => u.id === user.id);
+    const targetUser = db.users.find((u) => u.id === currentUser.id);
     if (!targetUser) {
       throw new Error('user not found');
     }
 
     db.messages.splice(dataIdx, 1);
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { userId: _, ...rest } = message;
-    const payload = { ...rest, user: targetUser };
+    const { userId: messageOwnerId, readUserIds, ...rest } = message;
+    const readUsers = db.users.filter((u) => readUserIds.includes(u.id));
+    const payload = { ...rest, user: targetUser, readUsers };
 
-    channel.joinUsers.forEach((userId) => {
-      publishNotification(pubsub, userId, {
+    channel.joinUsers.forEach((joinUserId) => {
+      publishNotification(pubsub, joinUserId, {
         changeNotification: {
           __typename: 'ChangeMessageSubscriptionPayload',
           mutation: MutationType.Deleted,
-          data: payload,
+          data: { ...payload, isRead: isRead(joinUserId, messageOwnerId, readUserIds) },
         },
       });
     });
 
-    return payload;
+    return { ...payload, isRead: isRead(currentUser.id, messageOwnerId, readUserIds) };
   },
   createChannel(parent, { data }, { db, user, pubsub }) {
     const targetUser = db.users.find((u) => u.id === user.id);
@@ -243,4 +253,4 @@ const Mutation: Resolvers['Mutation'] = {
   },
 };
 
-export { Mutation };
+export { Mutation, isRead };

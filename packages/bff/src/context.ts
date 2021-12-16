@@ -6,6 +6,7 @@ type Message = {
   text: string;
   userId: string;
   date: Date;
+  readUserIds: string[];
 };
 const messages: Message[] = [];
 

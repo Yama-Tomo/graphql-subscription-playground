@@ -37,6 +37,8 @@ const message = gql`
     user: User!
     text: String!
     date: DateTime!
+    isRead: Boolean!
+    readUsers: [User!]!
   }
 
   type ChangeMessageSubscriptionPayload {

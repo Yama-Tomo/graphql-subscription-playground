@@ -1,4 +1,5 @@
 import { Resolvers } from '@/resolvers/generated';
+import { isRead } from '@/resolvers/mutation';
 
 const Query: Resolvers['Query'] = {
   hello: () => {
@@ -19,10 +20,10 @@ const Query: Resolvers['Query'] = {
         };
       });
   },
-  messages: (parent, args, { db, user }) => {
+  messages: (parent, args, { db, user: currentUser }) => {
     const isJoinedChannel = db.channels
       .find((channel) => channel.id === args.channelId)
-      ?.joinUsers.includes(user.id);
+      ?.joinUsers.includes(currentUser.id);
     if (!isJoinedChannel) {
       throw new Error('permission error');
     }
@@ -62,12 +63,18 @@ const Query: Resolvers['Query'] = {
         startCursor: data[data.length - 1]?.id,
         endCursor: data[0]?.id,
       },
-      edges: data.reverse().map(({ userId, ...rest }) => {
-        const user = db.users.find((user) => user.id === userId);
+      edges: data.reverse().map(({ userId: messageOwnerId, readUserIds, ...rest }) => {
+        const user = db.users.find((user) => user.id === messageOwnerId);
         if (!user) {
           throw new Error('not found user');
         }
-        return { cursor: rest.id, node: { ...rest, user } };
+        const readUsers = readUserIds
+          .map((id) => db.users.find((user) => user.id == id))
+          .filter(Boolean) as typeof db.users;
+
+        const read = isRead(currentUser.id, messageOwnerId, readUserIds);
+
+        return { cursor: rest.id, node: { ...rest, user, readUsers, isRead: read } };
       }),
     };
   },
