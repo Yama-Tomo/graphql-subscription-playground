@@ -65,9 +65,11 @@ const Container: React.FC<ContainerProps> = (props) => {
 
   useEffect(() => {
     setState({ channelId: props.channelId });
-    if (ref.current) {
-      ref.current.scrollTop = ref.current.scrollHeight;
-    }
+    setTimeout(() => {
+      if (ref.current) {
+        ref.current.scrollTop = ref.current.scrollHeight;
+      }
+    }, 10);
   }, [props.channelId]);
 
   const uiProps: UiProps = {
