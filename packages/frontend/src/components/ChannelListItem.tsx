@@ -14,6 +14,7 @@ type UiProps = {
   onCancelClick: () => void;
   onDeleteChannelClick: () => void;
   isDM: boolean;
+  unReadCount?: number;
 };
 const Ui: React.FC<UiProps> = (props) => (
   <li>
@@ -25,7 +26,10 @@ const Ui: React.FC<UiProps> = (props) => (
       </React.Fragment>
     ) : (
       <Link href={pagesPath.channels._id(props.id).$url()}>
-        <a>{props.name}</a>
+        <a>
+          {props.name}
+          {props.unReadCount ? `(${props.unReadCount})` : ``}
+        </a>
       </Link>
     )}{' '}
     {!props.isDM && props.isOwner && !props.isEditing && (
@@ -37,7 +41,7 @@ const Ui: React.FC<UiProps> = (props) => (
   </li>
 );
 
-type ContainerProps = Pick<UiProps, 'name' | 'id' | 'isOwner' | 'isDM'>;
+type ContainerProps = Pick<UiProps, 'name' | 'id' | 'isOwner' | 'isDM' | 'unReadCount'>;
 const Container: React.FC<ContainerProps> = (props) => {
   const [state, setState] = useState({ name: props.name, isEditing: false });
   const [updateChannel] = useUpdateChannelNameMutation();
@@ -48,10 +52,8 @@ const Container: React.FC<ContainerProps> = (props) => {
   }, [props.name]);
 
   const uiProps: UiProps = {
+    ...props,
     ...state,
-    isDM: props.isDM,
-    isOwner: props.isOwner,
-    id: props.id,
     onEditClick: () => {
       setState((current) => ({ ...current, isEditing: true }));
     },

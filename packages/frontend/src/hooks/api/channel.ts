@@ -26,7 +26,15 @@ gql`
 gql`
   query MyChannelAndProfile {
     channels {
-      ...ChannelFragment
+      id
+      name
+      description
+      isDM
+      joinUsers {
+        ...UserFragment
+      }
+      ownerId
+      unReadMessageCount
     }
     myProfile {
       ...UserFragment
