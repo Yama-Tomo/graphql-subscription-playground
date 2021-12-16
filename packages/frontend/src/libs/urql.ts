@@ -187,11 +187,11 @@ const addNewMessage = (message: types.CreateMessageMutation['createMessage'], ca
   );
 };
 
-const updateMessage = (message: Partial<types.Message>, cache: Cache) => {
-  cache.writeFragment(docs.MessageFragmentFragmentDoc, message);
+const updateMessage = (message: types.Message, cache: Cache) => {
+  cache.writeFragment<types.Message>(docs.MessageFragmentFragmentDoc, message);
 };
 
-const deleteMessage = (messageId: types.Channel['id'], cache: Cache) => {
+const deleteMessage = (messageId: types.Message['id'], cache: Cache) => {
   cache
     .inspectFields('Query')
     .filter((qc) => qc.fieldName === 'messages')
