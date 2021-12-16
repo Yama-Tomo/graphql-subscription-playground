@@ -100,6 +100,12 @@ const cacheConfig = (): types.GraphCacheConfig => ({
           if (data?.__typename === 'Message') {
             updateMessage(data, cache);
           }
+          if (data?.__typename === 'ReadMessageUsers') {
+            updateMessageReadUsers(
+              { __typename: 'Message', id: data.id, readUsers: data.readUsers },
+              cache
+            );
+          }
         }
 
         if (mutation === MutationType.Deleted) {
@@ -241,6 +247,13 @@ const updateUnReadMessageCount = (
 
       return data;
     }
+  );
+};
+
+const updateMessageReadUsers = (message: types.MessageReadUsersFragmentFragment, cache: Cache) => {
+  cache.writeFragment<types.MessageReadUsersFragmentFragment>(
+    docs.MessageReadUsersFragmentFragmentDoc,
+    message
   );
 };
 

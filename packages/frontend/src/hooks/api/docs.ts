@@ -5,4 +5,5 @@ export {
   ChangeNotificationDocument,
   ChannelFragmentFragmentDoc,
   MessageFragmentFragmentDoc,
+  MessageReadUsersFragmentFragmentDoc,
 } from './gql_generated';

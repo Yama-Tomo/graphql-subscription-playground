@@ -19,6 +19,18 @@ gql`
     user {
       ...UserFragment
     }
+    readUsers {
+      ...UserFragment
+    }
+  }
+`;
+
+gql`
+  fragment MessageReadUsersFragment on Message {
+    id
+    readUsers {
+      ...UserFragment
+    }
   }
 `;
 // ----------- fragment -----------

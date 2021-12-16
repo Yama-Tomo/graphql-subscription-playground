@@ -16,6 +16,16 @@ gql`
           ...MessageFragment
         }
       }
+
+      ... on ChangeMessageReadStateSubscriptionPayload {
+        mutation
+        data {
+          id
+          readUsers {
+            ...UserFragment
+          }
+        }
+      }
     }
   }
 `;

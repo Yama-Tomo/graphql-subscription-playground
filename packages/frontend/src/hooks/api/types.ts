@@ -11,5 +11,7 @@ export type {
   Channel,
   ChannelWithPersonalizedData,
   Message,
+  ReadMessageUsers,
+  MessageReadUsersFragmentFragment,
   SearchUsersQuery,
 } from './gql_generated';
