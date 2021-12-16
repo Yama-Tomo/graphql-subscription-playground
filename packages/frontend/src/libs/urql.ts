@@ -116,7 +116,11 @@ const addNewChannel = (channel: types.CreateChannelMutation['createChannel'], ca
       }
 
       added = true;
-      data?.channels.push({ __typename: 'Channel', ...channel });
+      data?.channels.push({
+        ...channel,
+        unReadMessageCount: 0,
+        __typename: 'ChannelWithPersonalizedData',
+      });
       return data;
     }
   );
@@ -124,8 +128,15 @@ const addNewChannel = (channel: types.CreateChannelMutation['createChannel'], ca
   return added;
 };
 
-const updateChannel = (channel: Partial<types.Channel>, cache: Cache) => {
-  cache.writeFragment(docs.ChannelFragmentFragmentDoc, channel);
+const updateChannel = (channel: types.Channel, cache: Cache) => {
+  // cache.writeFragment: ドキュメントのフィールドと更新しようとするデータのフィールドがすべてあっていないと警告が出るので注意
+  cache.writeFragment<Omit<types.ChannelWithPersonalizedData, 'unReadMessageCount'>>(
+    docs.ChannelFragmentFragmentDoc,
+    {
+      ...channel,
+      __typename: 'ChannelWithPersonalizedData',
+    }
+  );
 };
 
 const deleteChannel = (channelId: types.Channel['id'], cache: Cache) => {

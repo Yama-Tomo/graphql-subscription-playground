@@ -9,6 +9,7 @@ export type {
   WithTypename,
   GraphCacheConfig,
   Channel,
+  ChannelWithPersonalizedData,
   Message,
   SearchUsersQuery,
 } from './gql_generated';
