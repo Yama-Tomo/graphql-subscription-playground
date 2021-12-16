@@ -8,7 +8,15 @@ const Query: Resolvers['Query'] = {
     return db.channels
       .filter((channel) => channel.joinUsers.includes(user.id))
       .map(({ joinUsers, ...rest }) => {
-        return { ...rest, joinUsers: db.users.filter((user) => joinUsers.includes(user.id)) };
+        const unReadMessageCount = db.messages.filter(
+          (mes) => mes.channelId == rest.id && !isRead(user.id, mes.userId, mes.readUserIds)
+        ).length;
+
+        return {
+          ...rest,
+          joinUsers: db.users.filter((user) => joinUsers.includes(user.id)),
+          unReadMessageCount,
+        };
       });
   },
   messages: (parent, args, { db, user }) => {

@@ -1,8 +1,17 @@
 import { gql } from 'apollo-server-fastify';
 
+const baseChannelProps = `
+  id: ID!
+  name: String!
+  description: String
+  joinUsers: [User!]!
+  ownerId: ID!
+  isDM: Boolean!
+`;
+
 const channel = gql`
   type Query {
-    channels: [Channel!]!
+    channels: [ChannelWithPersonalizedData!]!
   }
 
   type Mutation {
@@ -31,12 +40,12 @@ const channel = gql`
   }
 
   type Channel {
-    id: ID!
-    name: String!
-    description: String
-    joinUsers: [User!]!
-    ownerId: ID!
-    isDM: Boolean!
+    ${baseChannelProps}
+  }
+
+  type ChannelWithPersonalizedData {
+    ${baseChannelProps}
+    unReadMessageCount: Int!
   }
 
   type ChangeChannelSubscriptionPayload {
