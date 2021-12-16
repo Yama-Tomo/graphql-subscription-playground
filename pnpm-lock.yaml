@@ -82,6 +82,7 @@ importers:
       react: ^17.0.2
       react-dom: ^17.0.2
       react-infinite-scroll-component: ^6.1.0
+      react-intersection-observer: ^8.33.0
       subscriptions-transport-ws: ^0.11.0
       typescript: ^4.5.3
       urql: ^2.0.6
@@ -92,6 +93,7 @@ importers:
       react: 17.0.2
       react-dom: 17.0.2_react@17.0.2
       react-infinite-scroll-component: 6.1.0_react@17.0.2
+      react-intersection-observer: 8.33.0_react@17.0.2
       subscriptions-transport-ws: 0.11.0
       urql: 2.0.6_react@17.0.2
     devDependencies:
@@ -6465,6 +6467,14 @@ packages:
     dependencies:
       react: 17.0.2
       throttle-debounce: 2.3.0
+    dev: false
+
+  /react-intersection-observer/8.33.0_react@17.0.2:
+    resolution: {integrity: sha512-slsqrtsUhHT01aySxAcY0JcjLRdVJOwatKeyk5r4IQ9c8SU+x1mKr1kPxwElYHRCIbHS7t2KD15/4/FzNJGUNg==}
+    peerDependencies:
+      react: ^15.0.0 || ^16.0.0 || ^17.0.0|| ^18.0.0
+    dependencies:
+      react: 17.0.2
     dev: false
 
   /react-is/16.13.1:

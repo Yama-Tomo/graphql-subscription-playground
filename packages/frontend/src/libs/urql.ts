@@ -61,6 +61,23 @@ const cacheConfig = (): types.GraphCacheConfig => ({
         if (isAllKeyNotEmpty(parent.createMessage)) {
           addNewMessage(parent.createMessage, cache);
         }
+      readMessages(parent, args, cache) {
+        // 同一ユーザが複数ウインドウ開いていてもそれぞれのウインドウの状態を更新できるようにargsの値を使ってキャッシュを更新するのがミソ
+        args.data.forEach(({ id }) => {
+          const messageFromCache = cache.readFragment<Partial<types.Message>>(
+            docs.MessageFragmentFragmentDoc,
+            { id }
+          );
+          if (messageFromCache?.channelId) {
+            const updateData = {
+              __typename: 'Message',
+              id,
+              channelId: messageFromCache.channelId,
+              isRead: !!messageFromCache.isRead,
+            };
+            updateUnReadMessageCount(updateData, 'decrement', cache);
+          }
+        });
       },
     },
     Subscription: {

@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { forwardRef, useEffect, useState } from 'react';
 import { useUpdateMessageMutation, useDeleteMessageMutation } from '@/hooks/api';
+import { useInView } from 'react-intersection-observer';
 
 type UiProps = {
   message: string;
@@ -13,7 +14,8 @@ type UiProps = {
   onCancelClick: () => void;
   onMessageDeleteClick: () => void;
 };
-const Ui: React.FC<UiProps> = (props) => (
+// eslint-disable-next-line react/display-name
+const Ui = forwardRef<HTMLDivElement, UiProps>((props, ref) => (
   <React.Fragment>
     {props.isOwner && props.isEditing ? (
       <div>
@@ -22,7 +24,7 @@ const Ui: React.FC<UiProps> = (props) => (
         <button onClick={props.onCancelClick}>cancel</button>
       </div>
     ) : (
-      <div style={{ marginBottom: '1rem' }}>
+      <div style={{ marginBottom: '1rem' }} ref={ref}>
         <b>{props.userName}</b>
         <span style={{ marginInlineStart: '0.4rem', color: '#999' }}>{props.date}</span>
         <div>{props.message}</div>
@@ -35,13 +37,26 @@ const Ui: React.FC<UiProps> = (props) => (
       </div>
     )}
   </React.Fragment>
-);
+));
 
-type ContainerProps = Pick<UiProps, 'message' | 'userName' | 'isOwner' | 'date'> & { id: string };
+type ContainerProps = Pick<UiProps, 'message' | 'userName' | 'isOwner' | 'date'> & {
+  id: string;
+  isRead: boolean;
+  onReadMessage: (id: string) => void;
+};
 const Container: React.FC<ContainerProps> = (props) => {
   const [state, setState] = useState({ message: props.message, isEditing: false });
   const [updateMessage] = useUpdateMessageMutation();
   const [deleteMessage] = useDeleteMessageMutation();
+
+  const { ref, inView } = useInView({ rootMargin: '-350px 0px 0px 0px', triggerOnce: true });
+  const { id, onReadMessage } = props;
+
+  useEffect(() => {
+    if (inView && !props.isOwner && !props.isRead) {
+      onReadMessage(id);
+    }
+  }, [inView, onReadMessage, props.isOwner, props.isRead, id]);
 
   useEffect(() => {
     setState((current) => ({ ...current, message: props.message }));
@@ -73,7 +88,7 @@ const Container: React.FC<ContainerProps> = (props) => {
     },
   };
 
-  return <Ui {...uiProps} />;
+  return <Ui {...uiProps} ref={ref} />;
 };
 
 export { Container as MessageListItem };

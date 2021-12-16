@@ -1,15 +1,16 @@
-import React, { forwardRef, useEffect, useRef, useState } from 'react';
+import React, { forwardRef, useCallback, useEffect, useRef, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { types } from '@/hooks/api';
+import { types, useReadMessagesMutation } from '@/hooks/api';
 import { useLatestMessagesQuery } from '@/hooks/api';
-import { MessageListItem } from '@/components/MessageListItem';
+import { MessageListItem, MessageListItemProps } from '@/components/MessageListItem';
+import { useMessageReadStateUpdate } from '@/hooks/message';
 
 type UiProps = {
   hasPrevPage: boolean;
   messages?: types.LatestMessagesQuery['messages'];
   onPrevClick: () => void;
   myUserId: string;
-};
+} & Pick<MessageListItemProps, 'onReadMessage'>;
 // eslint-disable-next-line react/display-name
 const Ui = forwardRef<HTMLDivElement, UiProps>((props, ref) => (
   <React.Fragment>
@@ -36,11 +37,13 @@ const Ui = forwardRef<HTMLDivElement, UiProps>((props, ref) => (
           {[...props.messages.edges].reverse().map((message, idx) => (
             <MessageListItem
               key={idx}
+              onReadMessage={props.onReadMessage}
               date={message.node.date}
               message={message.node.text}
               userName={message.node.user.name}
               isOwner={props.myUserId === message.node.user.id}
               id={message.node.id}
+              isRead={message.node.isRead}
             />
           ))}
         </InfiniteScroll>
@@ -57,6 +60,14 @@ const Container: React.FC<ContainerProps> = (props) => {
   const [state, setState] = useState<{ channelId: string; before?: string }>({
     channelId: props.channelId,
   });
+  const [messageReadStateUpdater] = useReadMessagesMutation();
+  const wrappedMessageReadStateUpdater = useCallback(
+    (ids: string[]) => {
+      messageReadStateUpdater({ variables: { data: ids.map((id) => ({ id })) } });
+    },
+    [messageReadStateUpdater]
+  );
+  const onReadMessage = useMessageReadStateUpdate(wrappedMessageReadStateUpdater);
 
   const { data } = useLatestMessagesQuery({
     variables: state,
@@ -73,6 +84,7 @@ const Container: React.FC<ContainerProps> = (props) => {
   }, [props.channelId]);
 
   const uiProps: UiProps = {
+    onReadMessage,
     myUserId: props.myUserId,
     messages: data?.messages,
     hasPrevPage: !!data?.messages.pageInfo.hasPreviousPage,

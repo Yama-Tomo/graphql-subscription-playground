@@ -3,6 +3,7 @@ import {
   useCreateMessageMutation as useURQLCreateMessageMutation,
   useUpdateMessageMutation as useURQLUpdateMessageMutation,
   useDeleteMessageMutation as useURQLDeleteMessageMutation,
+  useReadMessagesMutation as useURQLReadMessagesMutation,
 } from '@/hooks/api/gql_generated';
 import { toApolloClientIFUseMutation, toApolloClientIFUseQuery } from '@/hooks/api/adapter';
 import { gql } from 'urql';
@@ -14,6 +15,7 @@ gql`
     channelId
     text
     date
+    isRead
     user {
       ...UserFragment
     }
@@ -69,9 +71,19 @@ gql`
 `;
 const useDeleteMessageMutation = toApolloClientIFUseMutation(useURQLDeleteMessageMutation);
 
+gql`
+  mutation ReadMessages($data: [ReadMessageInput!]!) {
+    readMessages(data: $data) {
+      id
+    }
+  }
+`;
+const useReadMessagesMutation = toApolloClientIFUseMutation(useURQLReadMessagesMutation);
+
 export {
   useLatestMessagesQuery,
   useUpdateMessageMutation,
   useCreateMessageMutation,
   useDeleteMessageMutation,
+  useReadMessagesMutation,
 };
