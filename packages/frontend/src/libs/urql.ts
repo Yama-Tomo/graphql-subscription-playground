@@ -69,6 +69,7 @@ const cacheConfig = (): types.GraphCacheConfig => ({
         if (mutation === MutationType.Created) {
           if (data?.__typename === 'Message') {
             addNewMessage(data, cache);
+            updateUnReadMessageCount(data, 'increment', cache);
           }
           if (data?.__typename === 'Channel') {
             addNewChannel(data, cache);
@@ -90,6 +91,7 @@ const cacheConfig = (): types.GraphCacheConfig => ({
           }
           if (data?.__typename === 'Message') {
             deleteMessage(data.id, cache);
+            updateUnReadMessageCount(data, 'decrement', cache);
           }
         }
       },
@@ -189,6 +191,40 @@ const addNewMessage = (message: types.CreateMessageMutation['createMessage'], ca
 
 const updateMessage = (message: types.Message, cache: Cache) => {
   cache.writeFragment<types.Message>(docs.MessageFragmentFragmentDoc, message);
+};
+
+const updateUnReadMessageCount = (
+  payload: Pick<types.Message, 'channelId' | 'isRead'>,
+  action: 'increment' | 'decrement',
+  cache: Cache
+) => {
+  if (payload.isRead) {
+    return;
+  }
+
+  cache.updateQuery<types.MyChannelAndProfileQuery>(
+    { query: docs.MyChannelAndProfileDocument },
+    (data) => {
+      if (!data) {
+        return data;
+      }
+
+      const message = data.channels.find((ch) => ch.id === payload.channelId);
+      if (!message) {
+        return data;
+      }
+
+      if (action === 'increment') {
+        message.unReadMessageCount += 1;
+      }
+
+      if (action === 'decrement') {
+        message.unReadMessageCount -= 1;
+      }
+
+      return data;
+    }
+  );
 };
 
 const deleteMessage = (messageId: types.Message['id'], cache: Cache) => {
