@@ -1,12 +1,12 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { NextPage } from 'next';
-import { useMyChannelAndProfileQuery, types, useCreateChannelMutation } from '@/hooks/api';
+import { useRouter } from 'next/router';
 import { CreateChannel, CreateChannelProps } from '@/components/CreateChannel';
 import { ChannelListItem } from '@/components/ChannelListItem';
-import { useRouter } from 'next/router';
 import { pagesPath } from '@/libs/$path';
-import { useSearchUsers } from '@/hooks/user';
 import { getDMChannelName } from '@/libs/channel';
+import { useMyChannelAndProfileQuery, types, useCreateChannelMutation } from '@/hooks/api';
+import { useSearchUsers } from '@/hooks/user';
 
 const Channels: React.FC<
   Pick<types.MyChannelAndProfileQuery, 'channels'> & { myUserId: string }
@@ -19,6 +19,7 @@ const Channels: React.FC<
         name={channel.name}
         isOwner={channel.ownerId === props.myUserId}
         isDM={channel.isDM}
+        unReadCount={channel.unReadMessageCount}
       />
     ))}
   </ul>
@@ -102,9 +103,15 @@ const Ui: React.FC<UiProps> = ({
 const Container: NextPage = (props) => {
   const [state, setState] = useState({ newChannelEditing: false, newDMEditing: false });
   const { data: users, search, input, reset } = useSearchUsers();
-  const { data, loading } = useMyChannelAndProfileQuery();
+  const { data, loading, refetch } = useMyChannelAndProfileQuery();
   const [createChannel] = useCreateChannelMutation();
   const router = useRouter();
+
+  useEffect(() => {
+    router.events.on('routeChangeStart', () => {
+      refetch({ requestPolicy: 'network-only' });
+    });
+  }, [router, refetch]);
 
   const uiProps: UiProps = {
     ...props,

@@ -123,6 +123,9 @@ const addNewChannel = (channel: types.CreateChannelMutation['createChannel'], ca
       }
 
       added = true;
+      // サーバから未読数が返ってこないので0から始める。
+      // すでにメッセージのやり取りが始まっているチャンネルに招待されてもそれまでのメッセージは未読数に含まれない。
+      // チャンネルを移動したら最新のチャンネル一覧と未読状態をリフェッチして整合性を合わせる
       data?.channels.push({
         ...channel,
         unReadMessageCount: 0,
