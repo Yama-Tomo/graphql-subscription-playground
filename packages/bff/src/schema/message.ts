@@ -19,6 +19,7 @@ const message = gql`
     createMessage(data: CreateMessageInput!): Message!
     deleteMessage(id: ID!): Message!
     updateMessage(data: UpdateMessageInput!): Message!
+    readMessages(data: [ReadMessageInput!]!): [ReadMessage!]!
   }
 
   input CreateMessageInput {
@@ -31,6 +32,10 @@ const message = gql`
     text: String!
   }
 
+  input ReadMessageInput {
+    id: ID!
+  }
+
   type Message {
     id: ID!
     channelId: ID!
@@ -41,9 +46,23 @@ const message = gql`
     readUsers: [User!]!
   }
 
+  type ReadMessage {
+    id: ID!
+  }
+
+  type ReadMessageUsers {
+    id: ID!
+    readUsers: [User!]!
+  }
+
   type ChangeMessageSubscriptionPayload {
     mutation: MutationType!
     data: Message!
+  }
+
+  type ChangeMessageReadStateSubscriptionPayload {
+    mutation: MutationType!
+    data: ReadMessageUsers!
   }
 `;
 

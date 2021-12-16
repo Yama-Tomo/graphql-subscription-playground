@@ -251,6 +251,66 @@ const Mutation: Resolvers['Mutation'] = {
 
     return user;
   },
+  readMessages(parent, { data }, { user: currentUser, db, pubsub }) {
+    const findCache: {
+      channels: Record<string, typeof db.channels[number]>;
+      users: Record<string, typeof db.users[number]>;
+    } = { channels: {}, users: {} };
+
+    const findChannel = (id: string) => {
+      const channel =
+        findCache.channels[id] ||
+        db.channels.find((ch) => ch.id === id && ch.joinUsers.includes(currentUser.id));
+      if (!channel) {
+        throw new Error('not allowed channel');
+      }
+
+      findCache.channels[id] = channel;
+      return channel;
+    };
+
+    const findUser = (id: string) => {
+      const user = findCache.users[id] || db.users.find((u) => u.id === id);
+      if (!user) {
+        throw new Error('user not found');
+      }
+
+      findCache.users[id] = user;
+      return user;
+    };
+
+    const rows = data.map(({ id: messageId }) => {
+      const message = db.messages.find((mes) => mes.id == messageId);
+      if (!message) {
+        throw new Error('message not found');
+      }
+
+      const channel = findChannel(message.channelId);
+      const joinUsers = channel.joinUsers.map((joinUserId) => findUser(joinUserId));
+      return { message, channel: { ...channel, joinUsers } };
+    });
+
+    const unReadMessages = rows.filter(({ message }) => {
+      const isMessageOwner = message.userId === currentUser.id;
+      return !isMessageOwner && !message.readUserIds.includes(currentUser.id);
+    });
+    unReadMessages.forEach(({ message }) => message.readUserIds.push(currentUser.id));
+
+    unReadMessages.forEach(({ message, channel }) => {
+      const readUsers = message.readUserIds.map((readUserid) => findUser(readUserid));
+      channel.joinUsers.forEach((joinUser) => {
+        publishNotification(pubsub, joinUser.id, {
+          changeNotification: {
+            __typename: 'ChangeMessageReadStateSubscriptionPayload',
+            mutation: MutationType.Updated,
+            data: { id: message.id, readUsers },
+          },
+        });
+      });
+    });
+
+    return unReadMessages.map(({ message }) => ({ id: message.id }));
+  },
 };
 
 export { Mutation, isRead };

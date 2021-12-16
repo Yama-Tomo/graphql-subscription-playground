@@ -32,6 +32,7 @@ const typeDefs = gql`
   union ChangeNotificationSubscriptionPayload =
       ChangeMessageSubscriptionPayload
     | ChangeChannelSubscriptionPayload
+    | ChangeMessageReadStateSubscriptionPayload
 
   type Subscription {
     changeNotification: ChangeNotificationSubscriptionPayload!
