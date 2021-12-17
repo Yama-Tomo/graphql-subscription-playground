@@ -1,5 +1,6 @@
 import { GraphQLResolveInfo } from 'graphql';
 import { MutationResolvers, QueryResolvers, Resolvers } from '@/resolvers/generated';
+import * as ObjectsResolvers from '@/resolvers/objects';
 import { Query } from '@/resolvers/query';
 import { Date, DateTime } from '@/resolvers/scalers';
 import { Mutation } from '@/resolvers/mutation';
@@ -38,6 +39,7 @@ const skipAuthCheck: Partial<{
 };
 
 const resolvers: Resolvers = {
+  ...ObjectsResolvers,
   Date,
   DateTime,
   Query: Object.entries(Query || {}).reduce((res, [name, val]) => {

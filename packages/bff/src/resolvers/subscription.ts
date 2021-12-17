@@ -1,18 +1,19 @@
 import { PubSub } from 'graphql-subscriptions';
-import { Resolvers, Subscription } from '@/resolvers/generated';
+import { Resolvers, ResolversTypes, Subscription } from '@/resolvers/generated';
 import { Context } from '@/context';
-
-// NOTE: ペイロードがユニオンタイプの場合はどのデータなのか区別するために __typename フィールドを必ず含める必要がある
-type RequiredTypenameSubscription = Pick<Subscription, '__typename'> & {
-  changeNotification: Required<Subscription['changeNotification']>;
-};
 
 const publishNotification = (
   pubsub: PubSub,
   userId: Context['user']['id'],
-  payload: RequiredTypenameSubscription
+  // NOTE: ペイロードがユニオンタイプの場合はどのデータなのか区別するために __typename フィールドを必ず含める必要がある
+  typename: Required<Subscription['changeNotification']>['__typename'],
+  payload: { changeNotification: ResolversTypes['ChangeNotificationSubscriptionPayload'] }
 ) => {
-  return pubsub.publish(userId, payload);
+  const { changeNotification, ...rest } = payload;
+  return pubsub.publish(userId, {
+    ...rest,
+    changeNotification: { ...changeNotification, __typename: typename },
+  });
 };
 
 const Subscription: Resolvers['Subscription'] = {

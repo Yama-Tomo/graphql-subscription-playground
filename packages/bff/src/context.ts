@@ -14,7 +14,7 @@ type Channel = {
   description?: string;
   id: string;
   isDM: boolean;
-  joinUsers: string[];
+  joinUserIds: string[];
   name: string;
   ownerId: string;
 };

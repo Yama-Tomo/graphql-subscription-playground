@@ -7,6 +7,7 @@ importers:
 
   packages/bff:
     specifiers:
+      '@graphql-codegen/add': ^3.1.0
       '@graphql-codegen/cli': ^2.3.0
       '@graphql-codegen/typescript': ^2.4.1
       '@graphql-codegen/typescript-resolvers': ^2.4.2
@@ -30,6 +31,7 @@ importers:
       prettier: ^2.5.1
       source-map-support: ^0.5.21
       subscriptions-transport-ws: ^0.11.0
+      utility-types: ^3.10.0
       uuid: ^8.3.2
     dependencies:
       '@graphql-tools/schema': 8.3.1_graphql@16.1.0
@@ -42,6 +44,7 @@ importers:
       subscriptions-transport-ws: 0.11.0_graphql@16.1.0
       uuid: 8.3.2
     devDependencies:
+      '@graphql-codegen/add': 3.1.0_graphql@16.1.0
       '@graphql-codegen/cli': 2.3.0_graphql@16.1.0
       '@graphql-codegen/typescript': 2.4.1_graphql@16.1.0
       '@graphql-codegen/typescript-resolvers': 2.4.2_graphql@16.1.0
@@ -57,6 +60,7 @@ importers:
       npm-run-all: 4.1.5
       prettier: 2.5.1
       source-map-support: 0.5.21
+      utility-types: 3.10.0
 
   packages/frontend:
     specifiers:
@@ -778,6 +782,16 @@ packages:
     dependencies:
       ajv: 6.12.6
     dev: false
+
+  /@graphql-codegen/add/3.1.0_graphql@16.1.0:
+    resolution: {integrity: sha512-vRRHpuUFadYXnPrb5RNiIzm3Ao39UxjvrdX760lEfXh2qeG7YddM5QFC+ev2BH3X452R15gv/gf/rXy0+Hqm1A==}
+    peerDependencies:
+      graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0
+    dependencies:
+      '@graphql-codegen/plugin-helpers': 2.3.1_graphql@16.1.0
+      graphql: 16.1.0
+      tslib: 2.3.1
+    dev: true
 
   /@graphql-codegen/cli/2.3.0_74e588db5264178750052e53ffe97b8f:
     resolution: {integrity: sha512-5pgrcnBFeOJbDGfZwhnytwMqpwFDrmdaAgD6HYywT9Fggsrx2yWSkVrxoAjEcbDMFLhxzjxECwfJYklm967AKA==}
@@ -7556,6 +7570,11 @@ packages:
       safe-buffer: 5.2.1
       which-typed-array: 1.1.7
     dev: false
+
+  /utility-types/3.10.0:
+    resolution: {integrity: sha512-O11mqxmi7wMKCo6HKFt5AhO4BwY3VV68YU07tgxfz8zJTIxr4BpsezN49Ffwy9j3ZpwwJp4fkRwjRzq3uWE6Rg==}
+    engines: {node: '>= 4'}
+    dev: true
 
   /uuid/8.3.2:
     resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}

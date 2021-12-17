@@ -6,6 +6,8 @@ schema:
 generates:
   ./src/resolvers/generated.ts:
     config:
+      useIndexSignature: true
+      defaultMapper: DeepPartial<{T}>
       contextType: ../context#Context
       scalars:
         Date: Date
@@ -13,3 +15,5 @@ generates:
     plugins:
       - typescript
       - typescript-resolvers
+      - add:
+          content: "import { DeepPartial } from 'utility-types';"

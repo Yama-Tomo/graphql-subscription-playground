@@ -1,5 +1,5 @@
 import { Resolvers } from '@/resolvers/generated';
-import { isRead } from '@/resolvers/mutation';
+import { isMessageRead } from '@/resolvers/libs/message';
 
 const Query: Resolvers['Query'] = {
   hello: () => {
@@ -7,23 +7,19 @@ const Query: Resolvers['Query'] = {
   },
   channels: (parent, args, { db, user }) => {
     return db.channels
-      .filter((channel) => channel.joinUsers.includes(user.id))
-      .map(({ joinUsers, ...rest }) => {
+      .filter((channel) => channel.joinUserIds.includes(user.id))
+      .map(({ joinUserIds, ...rest }) => {
         const unReadMessageCount = db.messages.filter(
-          (mes) => mes.channelId == rest.id && !isRead(user.id, mes.userId, mes.readUserIds)
+          (mes) => mes.channelId == rest.id && !isMessageRead(user.id, mes.userId, mes.readUserIds)
         ).length;
 
-        return {
-          ...rest,
-          joinUsers: db.users.filter((user) => joinUsers.includes(user.id)),
-          unReadMessageCount,
-        };
+        return { ...rest, joinUserIds, unReadMessageCount };
       });
   },
   messages: (parent, args, { db, user: currentUser }) => {
     const isJoinedChannel = db.channels
       .find((channel) => channel.id === args.channelId)
-      ?.joinUsers.includes(currentUser.id);
+      ?.joinUserIds.includes(currentUser.id);
     if (!isJoinedChannel) {
       throw new Error('permission error');
     }
@@ -63,18 +59,8 @@ const Query: Resolvers['Query'] = {
         startCursor: data[data.length - 1]?.id,
         endCursor: data[0]?.id,
       },
-      edges: data.reverse().map(({ userId: messageOwnerId, readUserIds, ...rest }) => {
-        const user = db.users.find((user) => user.id === messageOwnerId);
-        if (!user) {
-          throw new Error('not found user');
-        }
-        const readUsers = readUserIds
-          .map((id) => db.users.find((user) => user.id == id))
-          .filter(Boolean) as typeof db.users;
-
-        const read = isRead(currentUser.id, messageOwnerId, readUserIds);
-
-        return { cursor: rest.id, node: { ...rest, user, readUsers, isRead: read } };
+      edges: data.reverse().map(({ userId, readUserIds, ...rest }) => {
+        return { cursor: rest.id, node: { ...rest, userId, readUserIds } };
       }),
     };
   },
