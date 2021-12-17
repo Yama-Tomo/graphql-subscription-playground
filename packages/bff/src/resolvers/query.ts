@@ -59,9 +59,7 @@ const Query: Resolvers['Query'] = {
         startCursor: data[data.length - 1]?.id,
         endCursor: data[0]?.id,
       },
-      edges: data.reverse().map(({ userId, readUserIds, ...rest }) => {
-        return { cursor: rest.id, node: { ...rest, userId, readUserIds } };
-      }),
+      edges: data.reverse().map((mess) => ({ cursor: mess.id, node: mess })),
     };
   },
   myProfile: (parent, args, { user, db }) => {

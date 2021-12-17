@@ -7,8 +7,13 @@ generates:
   ./src/resolvers/generated.ts:
     config:
       useIndexSignature: true
-      defaultMapper: DeepPartial<{T}>
       contextType: ../context#Context
+      mapperTypeSuffix: Model
+      mappers:
+        Message: ../context#MessageModel
+        Channel: ../context#ChannelModel
+        ChannelWithPersonalizedData: ../context#ChannelWithPersonalizedDataModel
+        ReadMessageUsers: ../context#ReadMessageUsersModel
       scalars:
         Date: Date
         DateTime: Date

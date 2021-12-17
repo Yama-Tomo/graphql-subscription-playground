@@ -8,7 +8,6 @@ type Message = {
   date: Date;
   readUserIds: string[];
 };
-const messages: Message[] = [];
 
 type Channel = {
   description?: string;
@@ -18,12 +17,21 @@ type Channel = {
   name: string;
   ownerId: string;
 };
-const channels: Channel[] = [];
+
+type ChannelWithPersonalizedData = Channel & { unReadMessageCount: number };
 
 type User = {
   id: string;
   name: string;
 };
+
+type ReadMessageUsers = {
+  id: string;
+  readUserIds: string[];
+};
+
+const messages: Message[] = [];
+const channels: Channel[] = [];
 const users: User[] = [];
 const db = { messages, channels, users };
 
@@ -34,4 +42,11 @@ type Context = ReturnType<typeof createAllRequestSharedContext> & UserCtx;
 type UnAuthorizedContext = ReturnType<typeof createAllRequestSharedContext> & Partial<UserCtx>;
 
 export { createAllRequestSharedContext };
-export type { Context, UnAuthorizedContext };
+export type {
+  Context,
+  UnAuthorizedContext,
+  Channel,
+  Message,
+  ChannelWithPersonalizedData,
+  ReadMessageUsers,
+};
