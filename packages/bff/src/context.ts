@@ -18,7 +18,7 @@ type Channel = {
   ownerId: string;
 };
 
-type ChannelWithPersonalizedData = Channel & { unReadMessageCount: number };
+type ChannelWithPersonalizedData = Channel;
 
 type User = {
   id: string;

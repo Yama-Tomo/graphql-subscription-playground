@@ -1,20 +1,11 @@
 import { Resolvers } from '@/resolvers/generated';
-import { isMessageRead } from '@/resolvers/libs/message';
 
 const Query: Resolvers['Query'] = {
   hello: () => {
     return `Hello world`;
   },
   channels: (parent, args, { db, user }) => {
-    return db.channels
-      .filter((channel) => channel.joinUserIds.includes(user.id))
-      .map(({ joinUserIds, ...rest }) => {
-        const unReadMessageCount = db.messages.filter(
-          (mes) => mes.channelId == rest.id && !isMessageRead(user.id, mes.userId, mes.readUserIds)
-        ).length;
-
-        return { ...rest, joinUserIds, unReadMessageCount };
-      });
+    return db.channels.filter((channel) => channel.joinUserIds.includes(user.id));
   },
   messages: (parent, args, { db, user: currentUser }) => {
     const isJoinedChannel = db.channels

@@ -24,6 +24,12 @@ const ObjectsResolvers: Resolvers = {
     joinUsers(parent, args, { db }) {
       return db.users.filter((usr) => parent.joinUserIds.includes(usr.id));
     },
+    unReadMessageCount(parent, args, { db, user: currentUser }) {
+      return db.messages.filter(
+        (mes) =>
+          mes.channelId == parent.id && !isMessageRead(currentUser.id, mes.userId, mes.readUserIds)
+      ).length;
+    },
   },
   Channel: {
     joinUsers(parent, args, { db }) {
