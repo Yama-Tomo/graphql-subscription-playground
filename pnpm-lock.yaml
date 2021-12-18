@@ -16,8 +16,11 @@ importers:
       '@types/uuid': ^8.3.3
       '@typescript-eslint/eslint-plugin': ^5.6.0
       '@typescript-eslint/parser': ^5.6.0
+      apollo-datasource: ^3.3.0
+      apollo-server-caching: ^3.3.0
       apollo-server-core: ^3.5.0
       apollo-server-fastify: ^3.5.0
+      dataloader: ^2.0.0
       esbuild: ^0.14.3
       esbuild-node-externals: ^1.4.1
       eslint: ^7.32.0
@@ -35,8 +38,11 @@ importers:
       uuid: ^8.3.2
     dependencies:
       '@graphql-tools/schema': 8.3.1_graphql@16.1.0
+      apollo-datasource: 3.3.0
+      apollo-server-caching: 3.3.0
       apollo-server-core: 3.5.0_graphql@16.1.0
       apollo-server-fastify: 3.5.0_fastify@3.24.1+graphql@16.1.0
+      dataloader: 2.0.0
       fastify: 3.24.1
       graphql: 16.1.0
       graphql-scalars: 1.14.1_graphql@16.1.0
@@ -3348,7 +3354,6 @@ packages:
 
   /dataloader/2.0.0:
     resolution: {integrity: sha512-YzhyDAwA4TaQIhM5go+vCLmU0UikghC/t9DTQYZR2M/UvZ1MdOhPezSDZcjj9uqQJOMqjLcpWtyW2iNINdlatQ==}
-    dev: true
 
   /date-fns/1.30.1:
     resolution: {integrity: sha512-hBSVCvSmWC+QypYObzwGOd9wqdDpOt+0wl0KbU+R+uuZBS1jN8VsD1ss3irQDknRj5NvxiTF6oj/nDRnN/UQNw==}

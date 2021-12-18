@@ -4,20 +4,17 @@ const Query: Resolvers['Query'] = {
   hello: () => {
     return `Hello world`;
   },
-  channels: (parent, args, { db, user }) => {
-    return db.channels.filter((channel) => channel.joinUserIds.includes(user.id));
+  async channels(parent, args, { user, dataSources }) {
+    return dataSources.channel.getJoinedChannels(user.id);
   },
-  messages: (parent, args, { db, user: currentUser }) => {
-    const isJoinedChannel = db.channels
-      .find((channel) => channel.id === args.channelId)
-      ?.joinUserIds.includes(currentUser.id);
-    if (!isJoinedChannel) {
+  messages: async (parent, args, { user: currentUser, dataSources }) => {
+    const channel = await dataSources.channel.getById(args.channelId);
+    channel.joinUserIds.includes(currentUser.id);
+    if (!channel.joinUserIds.includes(currentUser.id)) {
       throw new Error('permission error');
     }
 
-    const currentChannelMessages = db.messages.filter(
-      (message) => message.channelId == args.channelId
-    );
+    const currentChannelMessages = await dataSources.message.getByChannelId(args.channelId);
     const reverseCurrentChannelMessage = [...currentChannelMessages].reverse();
 
     const nextCursor = (() => {
@@ -53,17 +50,11 @@ const Query: Resolvers['Query'] = {
       edges: data.reverse().map((mess) => ({ cursor: mess.id, node: mess })),
     };
   },
-  myProfile: (parent, args, { user, db }) => {
-    const userId = user.id;
-    const currentUser = db.users.find((user) => user.id === userId);
-    if (!currentUser) {
-      throw new Error('user not found');
-    }
-
-    return currentUser;
+  async myProfile(parent, args, { user, dataSources }) {
+    return dataSources.user.getById(user.id);
   },
-  searchUsers: (parent, args, { db }) => {
-    return db.users.filter((user) => user.name.includes(args.name));
+  searchUsers: async (parent, args, { dataSources }) => {
+    return dataSources.user.getByName(args.name);
   },
 };
 

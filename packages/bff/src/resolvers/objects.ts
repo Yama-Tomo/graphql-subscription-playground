@@ -3,42 +3,38 @@ import { isMessageRead } from '@/resolvers/libs/message';
 
 const ObjectsResolvers: Resolvers = {
   Message: {
-    user(parent, args, { db }) {
-      const user = db.users.find((usr) => usr.id === parent.userId);
-      if (!user) {
-        throw new Error('user not found');
-      }
-
-      return user;
+    user: async (parent, args, { dataSources }) => {
+      return dataSources.user.getById(parent.userId);
     },
-    readUsers({ readUserIds }, args, { db }) {
-      return readUserIds
-        .map((id) => db.users.find((usr) => usr.id == id))
-        .filter(Boolean) as typeof db.users;
+    readUsers({ readUserIds }, args, { dataSources }) {
+      return dataSources.user.getByIds(readUserIds);
     },
     isRead(parent, args, { user: currentUser }) {
       return isMessageRead(currentUser.id, parent.userId, parent.readUserIds);
     },
   },
   ChannelWithPersonalizedData: {
-    joinUsers(parent, args, { db }) {
-      return db.users.filter((usr) => parent.joinUserIds.includes(usr.id));
+    joinUsers(parent, args, { dataSources }) {
+      return dataSources.user.getByIds(parent.joinUserIds);
     },
-    unReadMessageCount(parent, args, { db, user: currentUser }) {
-      return db.messages.filter(
-        (mes) =>
-          mes.channelId == parent.id && !isMessageRead(currentUser.id, mes.userId, mes.readUserIds)
-      ).length;
+    unReadMessageCount(parent, args, { user: currentUser, dataSources }) {
+      return dataSources.message
+        .getByChannelId(parent.id)
+        .then(
+          (messages) =>
+            messages.filter((mess) => !isMessageRead(currentUser.id, mess.userId, mess.readUserIds))
+              .length
+        );
     },
   },
   Channel: {
-    joinUsers(parent, args, { db }) {
-      return db.users.filter((usr) => parent.joinUserIds.includes(usr.id));
+    joinUsers(parent, args, { dataSources }) {
+      return dataSources.user.getByIds(parent.joinUserIds);
     },
   },
   ReadMessageUsers: {
-    readUsers(parent, args, { db }) {
-      return db.users.filter((usr) => parent.readUserIds.includes(usr.id));
+    readUsers(parent, args, { dataSources }) {
+      return dataSources.user.getByIds(parent.readUserIds);
     },
   },
 };

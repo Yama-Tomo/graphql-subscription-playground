@@ -10,10 +10,10 @@ generates:
       contextType: ../context#Context
       mapperTypeSuffix: Model
       mappers:
-        Message: ../context#MessageModel
-        Channel: ../context#ChannelModel
-        ChannelWithPersonalizedData: ../context#ChannelWithPersonalizedDataModel
-        ReadMessageUsers: ../context#ReadMessageUsersModel
+        Message: ../data#Message
+        Channel: ../data#Channel
+        ChannelWithPersonalizedData: ../data#ChannelWithPersonalizedData
+        ReadMessageUsers: ../data#ReadMessageUsers
       scalars:
         Date: Date
         DateTime: Date
