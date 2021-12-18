@@ -22,10 +22,8 @@ const initDataSources = async (context: DataSourceContext, cache: Cache, options
   return ds;
 };
 
-export { dataSources, initDataSources };
-// todo: あとでこれ消す
-export * from './db';
-export { db } from './db';
-
 type DataSources = ReturnType<typeof dataSources>;
+
+export { dataSources, initDataSources };
+export * from './db';
 export type { DataSources };
