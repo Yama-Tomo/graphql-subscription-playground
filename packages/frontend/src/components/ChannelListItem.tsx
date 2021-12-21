@@ -36,10 +36,11 @@ type UiProps = {
   className?: string;
 };
 const Ui: React.FC<UiProps> = (props) => (
-  <ListItem className={props.className} display="flex">
+  <ListItem className={props.className} display="flex" bg={props.active ? 'teal.50' : ''}>
     <>
       <Link href={pagesPath.channels._id(props.id).$url()}>
         <ChakraUILink flex={1} textOverflow={'ellipsis'} whiteSpace={'nowrap'} overflow={'hidden'}>
+          {!props.isDM && '# '}
           {props.name}
           {props.unReadCount != null && props.unReadCount > 0 && (
             <Box

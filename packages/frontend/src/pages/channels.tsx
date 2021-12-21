@@ -27,7 +27,7 @@ const Container: NextPage<ContainerProps> = (props) => {
     sideNavStyle: {
       padding: 2,
       w: '170px',
-      height: 'calc(100vh - 8.125rem)',
+      height: 'calc(100vh - 5.75rem)',
       overflowY: 'auto',
       position: 'sticky',
       borderRight: '1px solid',
