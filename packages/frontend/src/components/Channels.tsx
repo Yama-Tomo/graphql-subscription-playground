@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { Box, BoxProps, Heading, IconButton, List, ListItem } from '@chakra-ui/react';
-import { CreateChannel, CreateChannelProps } from '@/components/CreateChannel';
+import { CreateChannelModal, CreateChannelModalProps } from '@/components/CreateChannelModal';
 import { ChannelListItem } from '@/components/ChannelListItem';
 import { AddCircleOutline } from '@/components/Icons';
 import { ListSkeleton } from '@/components/ListSkelton';
-import { CreateDMChannel, CreateDMChannelProps } from '@/components/CreateDMChannel';
+import { CreateDMChannelModal, CreateDMChannelModalProps } from '@/components/CreateDMChannelModal';
 import { getDMChannelName } from '@/libs/channel';
 import { types } from '@/hooks/api';
 
@@ -15,10 +15,10 @@ type UiProps = {
   loading: boolean;
   editingChannelType: ChannelTypes;
   onCreateClick: (channelType: ChannelTypes) => void;
-  onChannelCreated: CreateChannelProps['onCreated'];
-  onChannelCreateCancel: CreateChannelProps['onCreateCancel'];
-  onDMChannelCreated: CreateDMChannelProps['onCreated'];
-  onDMChannelCreateCancel: CreateDMChannelProps['onCreateCancel'];
+  onChannelCreated: CreateChannelModalProps['onCreated'];
+  onChannelCreateCancel: CreateChannelModalProps['onCreateCancel'];
+  onDMChannelCreated: CreateDMChannelModalProps['onCreated'];
+  onDMChannelCreateCancel: CreateDMChannelModalProps['onCreateCancel'];
   myUserId: string;
   sideNavStyle?: BoxProps;
   activeChId?: string;
@@ -89,10 +89,10 @@ const Ui: React.FC<UiProps> = ({
     </Box>
     <Box flex="1">{children}</Box>
     {editingChannelType === 'channel' && (
-      <CreateChannel onCreateCancel={onChannelCreateCancel} onCreated={onChannelCreated} />
+      <CreateChannelModal onCreateCancel={onChannelCreateCancel} onCreated={onChannelCreated} />
     )}
     {editingChannelType === 'DM' && (
-      <CreateDMChannel
+      <CreateDMChannelModal
         onCreateCancel={onDMChannelCreateCancel}
         onCreated={onDMChannelCreated}
       />

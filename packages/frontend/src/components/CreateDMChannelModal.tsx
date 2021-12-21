@@ -41,5 +41,5 @@ const Container: React.FC<ContainerProps> = (props) => {
   return <SearchUserModal {...uiProps} />;
 };
 
-export { Container as CreateDMChannel };
-export type { ContainerProps as CreateDMChannelProps };
+export { Container as CreateDMChannelModal };
+export type { ContainerProps as CreateDMChannelModalProps };

@@ -33,5 +33,5 @@ const Container: React.FC<ContainerProps> = (props) => {
   return <ChannelFormModal {...uiProps} />;
 };
 
-export { Container as CreateChannel };
-export type { ContainerProps as CreateChannelProps };
+export { Container as CreateChannelModal };
+export type { ContainerProps as CreateChannelModalProps };
