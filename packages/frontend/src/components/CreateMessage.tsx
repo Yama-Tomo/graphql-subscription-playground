@@ -1,16 +1,27 @@
 import React, { useState } from 'react';
+import { Box, Textarea, Flex, IconButton, TextareaProps } from '@chakra-ui/react';
 import { useCreateMessageMutation } from '@/hooks/api';
+import { Send } from '@/components/Icons';
 
 type UiProps = {
-  message: JSX.IntrinsicElements['textarea']['value'];
-  onMessageChange: JSX.IntrinsicElements['textarea']['onChange'];
+  message: TextareaProps['value'];
+  onMessageChange: TextareaProps['onChange'];
   onSendClick: () => void;
 };
 const Ui: React.FC<UiProps> = (props) => (
-  <div>
-    <textarea value={props.message} onChange={props.onMessageChange} />
-    <button onClick={props.onSendClick}>send</button>
-  </div>
+  <Box p={3}>
+    <Flex alignItems={'flex-end'}>
+      <Textarea value={props.message} onChange={props.onMessageChange} flex={1} />
+      <IconButton
+        ms={1}
+        colorScheme={'blue'}
+        aria-label="send message"
+        icon={<Send />}
+        size={'sm'}
+        onClick={props.onSendClick}
+      />
+    </Flex>
+  </Box>
 );
 
 type ContainerProps = {

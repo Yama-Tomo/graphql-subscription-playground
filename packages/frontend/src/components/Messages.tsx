@@ -1,5 +1,6 @@
 import React, { forwardRef, useCallback, useEffect, useRef, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import { Box, Center, Flex } from '@chakra-ui/react';
 import { types, useReadMessagesMutation } from '@/hooks/api';
 import { useLatestMessagesQuery } from '@/hooks/api';
 import { MessageListItem, MessageListItemProps } from '@/components/MessageListItem';
@@ -13,43 +14,49 @@ type UiProps = {
 } & Pick<MessageListItemProps, 'onReadMessage'>;
 // eslint-disable-next-line react/display-name
 const Ui = forwardRef<HTMLDivElement, UiProps>((props, ref) => (
-  <React.Fragment>
-    {!props.messages && 'loading...'}
-    {props.messages && (
-      <div
-        id="messages-container"
-        style={{ overflow: 'auto', display: 'flex', flexDirection: 'column-reverse' }}
-        ref={ref}
-      >
-        <InfiniteScroll
-          style={{ display: 'flex', flexDirection: 'column-reverse' }}
-          scrollableTarget="messages-container"
-          dataLength={props.messages.edges.length}
-          next={props.onPrevClick}
-          hasMore={props.hasPrevPage}
-          inverse={true}
-          loader={
-            <div className="loader" key={0}>
-              Loading ...
-            </div>
-          }
-        >
-          {[...props.messages.edges].reverse().map((message, idx) => (
-            <MessageListItem
-              key={idx}
-              onReadMessage={props.onReadMessage}
-              date={message.node.date}
-              message={message.node.text}
-              userName={message.node.user.name}
-              isOwner={props.myUserId === message.node.user.id}
-              id={message.node.id}
-              isRead={message.node.isRead}
-            />
-          ))}
-        </InfiniteScroll>
-      </div>
+  <Flex
+    id="messages-container"
+    overflow={'auto'}
+    flex={1}
+    flexDirection={'column-reverse'}
+    ref={ref}
+    p={2}
+  >
+    {!props.messages && (
+      <Box className="loader" key={0} color={'gray.600'}>
+        <Center fontSize={'sm'}>Loading ...</Center>
+      </Box>
     )}
-  </React.Fragment>
+
+    {props.messages && (
+      <InfiniteScroll
+        style={{ display: 'flex', flexDirection: 'column-reverse' }}
+        scrollableTarget="messages-container"
+        dataLength={props.messages.edges.length}
+        next={props.onPrevClick}
+        hasMore={props.hasPrevPage}
+        inverse={true}
+        loader={
+          <Box className="loader" key={0} color={'gray.600'}>
+            <Center fontSize={'sm'}>Loading ...</Center>
+          </Box>
+        }
+      >
+        {[...props.messages.edges].reverse().map((message, idx) => (
+          <MessageListItem
+            key={idx}
+            onReadMessage={props.onReadMessage}
+            date={message.node.date}
+            message={message.node.text}
+            userName={message.node.user.name}
+            isOwner={props.myUserId === message.node.user.id}
+            id={message.node.id}
+            isRead={message.node.isRead}
+          />
+        ))}
+      </InfiniteScroll>
+    )}
+  </Flex>
 ));
 
 type ContainerProps = {
