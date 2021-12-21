@@ -31,7 +31,7 @@ const Container: NextPage<ContainerProps> = (props) => {
       overflowY: 'auto',
       position: 'sticky',
       borderRight: '1px solid',
-      borderColor: 'gray.300',
+      borderColor: 'gray.200',
       top: '64px',
     },
     onChannelCreated: gotoChannel,

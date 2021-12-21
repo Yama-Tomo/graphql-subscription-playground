@@ -87,7 +87,9 @@ const Ui: React.FC<UiProps> = ({
           ))}
       </List>
     </Box>
-    <Box flex="1">{children}</Box>
+    <Box flex="1" display={'flex'} flexDirection={'column'}>
+      {children}
+    </Box>
     {editingChannelType === 'channel' && (
       <CreateChannelModal onCreateCancel={onChannelCreateCancel} onCreated={onChannelCreated} />
     )}

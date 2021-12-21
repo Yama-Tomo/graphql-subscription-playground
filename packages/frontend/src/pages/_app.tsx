@@ -50,7 +50,8 @@ const AuthorizedContainer: React.FC<AppProps> = ({ Component, pageProps }) => {
   return (
     <>
       <Header />
-      <Flex flex={'1 0 auto'} as="main">
+      {/* minHeight=0 => https://note.com/takamoso/n/n32c4e6904cf7 */}
+      <Flex flex={'1'} minHeight={0} as="main">
         <Component {...pageProps} />
       </Flex>
     </>
