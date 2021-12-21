@@ -5,6 +5,7 @@
     "dev": "FORCE_COLOR=true run-p -l -c dev:*",
     "dev:serve": "next dev",
     "dev:gen-gql-codes": "./scripts/gen_gql_codes.sh --watch",
+    "dev:chakra-ui-typings": "chakra-cli tokens src/libs/theme.ts",
     "dev:path": "pathpida -o src/libs --ignorePath .gitignore --watch",
     "build": "next build",
     "start": "next start",
@@ -31,6 +32,8 @@
     "urql": "^2.0.6"
   },
   "devDependencies": {
+    "@chakra-ui/cli": "^1.6.0",
+    "@chakra-ui/styled-system": "^1.15.0",
     "@graphql-codegen/cli": "^2.3.0",
     "@graphql-codegen/typescript": "^2.4.1",
     "@graphql-codegen/typescript-operations": "^2.2.1",
