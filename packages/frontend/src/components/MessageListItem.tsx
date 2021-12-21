@@ -18,6 +18,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { MoreVert } from '@/components/Icons';
+import { withKeyboardShortcut } from '@/libs/keyboard';
 
 type UiProps = {
   message: string;
@@ -26,6 +27,7 @@ type UiProps = {
   isOwner: boolean;
   isEditing: boolean;
   onMessageChange: TextareaProps['onChange'];
+  onMessageKeyDown?: TextareaProps['onKeyDown'];
   onEditClick: () => void;
   onSubmitClick: () => void;
   onCancelClick: () => void;
@@ -75,7 +77,13 @@ const Ui = forwardRef<HTMLDivElement, UiProps>((props, ref) => (
         )}
         {props.isOwner && props.isEditing && (
           <>
-            <Textarea value={props.message} onChange={props.onMessageChange} flex={1} autoFocus />
+            <Textarea
+              value={props.message}
+              onKeyDown={props.onMessageKeyDown}
+              onChange={props.onMessageChange}
+              flex={1}
+              autoFocus
+            />
             <VStack
               ms={1}
               justifyContent={'space-around'}
@@ -119,6 +127,18 @@ const Container: React.FC<ContainerProps> = (props) => {
     setState((current) => ({ ...current, message: props.message }));
   }, [props.message]);
 
+  const onCancelClick = () => {
+    setState((current) => ({ ...current, isEditing: false }));
+  };
+
+  const onSubmitClick = () => {
+    updateMessage({ variables: { id: props.id, text: state.message } }).then((res) => {
+      if (res.data && !res.error) {
+        setState((current) => ({ ...current, isEditing: false }));
+      }
+    });
+  };
+
   const uiProps: UiProps = {
     ...state,
     date: props.date,
@@ -127,19 +147,12 @@ const Container: React.FC<ContainerProps> = (props) => {
     onEditClick: () => {
       setState((current) => ({ ...current, isEditing: true }));
     },
-    onCancelClick: () => {
-      setState((current) => ({ ...current, isEditing: false }));
-    },
+    onCancelClick,
     onMessageChange: ({ target: { value } }) => {
       setState((current) => ({ ...current, message: value }));
     },
-    onSubmitClick: () => {
-      updateMessage({ variables: { id: props.id, text: state.message } }).then((res) => {
-        if (res.data && !res.error) {
-          setState((current) => ({ ...current, isEditing: false }));
-        }
-      });
-    },
+    onMessageKeyDown: withKeyboardShortcut({ submit: onSubmitClick, cancel: onCancelClick }),
+    onSubmitClick,
     onMessageDeleteClick: () => {
       deleteMessage({ variables: { id: props.id } });
     },

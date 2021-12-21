@@ -1,17 +1,24 @@
 import React, { useState } from 'react';
-import { Box, Textarea, Flex, IconButton, TextareaProps } from '@chakra-ui/react';
+import { Box, Textarea, Flex, IconButton, TextareaProps, Kbd } from '@chakra-ui/react';
 import { useCreateMessageMutation } from '@/hooks/api';
 import { Send } from '@/components/Icons';
+import { withKeyboardShortcut } from '@/libs/keyboard';
 
 type UiProps = {
   message: TextareaProps['value'];
   onMessageChange: TextareaProps['onChange'];
+  onMessageKeyDown?: TextareaProps['onKeyDown'];
   onSendClick: () => void;
 };
 const Ui: React.FC<UiProps> = (props) => (
   <Box p={3}>
     <Flex alignItems={'flex-end'}>
-      <Textarea value={props.message} onChange={props.onMessageChange} flex={1} />
+      <Textarea
+        value={props.message}
+        onKeyDown={props.onMessageKeyDown}
+        onChange={props.onMessageChange}
+        flex={1}
+      />
       <IconButton
         ms={1}
         colorScheme={'blue'}
@@ -21,6 +28,9 @@ const Ui: React.FC<UiProps> = (props) => (
         onClick={props.onSendClick}
       />
     </Flex>
+    <Box textAlign={'right'} fontSize={'xs'} color={'gray.500'}>
+      <Kbd>shift</Kbd> + <Kbd>Enter</Kbd> to add a new line
+    </Box>
   </Box>
 );
 
@@ -31,20 +41,23 @@ const Container: React.FC<ContainerProps> = (props) => {
   const [state, setState] = useState({ message: '' });
   const [createMessage] = useCreateMessageMutation();
 
+  const onSendClick = () => {
+    createMessage({ variables: { text: state.message, channelId: props.channelId } }).then(
+      (res) => {
+        if (!res.error && res.data?.createMessage) {
+          setState({ message: '' });
+        }
+      }
+    );
+  };
+
   const uiProps: UiProps = {
     ...state,
     onMessageChange: ({ target: { value } }) => {
       setState((current) => ({ ...current, message: value }));
     },
-    onSendClick: () => {
-      createMessage({ variables: { text: state.message, channelId: props.channelId } }).then(
-        (res) => {
-          if (!res.error && res.data?.createMessage) {
-            setState({ message: '' });
-          }
-        }
-      );
-    },
+    onMessageKeyDown: withKeyboardShortcut({ submit: onSendClick }),
+    onSendClick,
   };
 
   return <Ui {...uiProps} />;
