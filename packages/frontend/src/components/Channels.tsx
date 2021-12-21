@@ -95,7 +95,6 @@ const Ui: React.FC<UiProps> = ({
       <CreateDMChannel
         onCreateCancel={onDMChannelCreateCancel}
         onCreated={onDMChannelCreated}
-        myUserId={myUserId}
       />
     )}
   </>
