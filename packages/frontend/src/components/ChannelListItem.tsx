@@ -38,29 +38,44 @@ type UiProps = {
   className?: string;
 };
 const Ui: React.FC<UiProps> = (props) => (
-  <ListItem className={props.className} display="flex" bg={props.active ? 'teal.100' : ''}>
+  <ListItem
+    className={props.className}
+    display="flex"
+    bg={props.active ? 'teal.100' : ''}
+    alignItems={'center'}
+  >
     <>
       <Link href={pagesPath.channels._id(props.id).$url()}>
-        <ChakraUILink flex={1} textOverflow={'ellipsis'} whiteSpace={'nowrap'} overflow={'hidden'}>
+        <ChakraUILink
+          flex={1}
+          textOverflow={'ellipsis'}
+          whiteSpace={'nowrap'}
+          overflow={'hidden'}
+          minWidth={0}
+          alignItems={'center'}
+        >
           {!props.isDM && '# '}
           {props.name}
-          {props.unReadCount != null && props.unReadCount > 0 && (
-            <Box
-              backgroundColor={'#d62b5c'}
-              color={'white'}
-              display={'inline-block'}
-              borderRadius={'10px'}
-              width={'28px'}
-              textAlign={'center'}
-              fontSize={'xs'}
-              ml={1}
-            >
-              {props.unReadCount}
-            </Box>
-          )}
         </ChakraUILink>
       </Link>
-      {!props.isDM && props.isOwner && !props.isEditing && (
+      {props.unReadCount != null && props.unReadCount > 0 && (
+        <Box
+          backgroundColor={'#d62b5c'}
+          color={'white'}
+          display={'flex'}
+          borderRadius={'10px'}
+          alignItems={'center'}
+          justifyContent={'center'}
+          width={6}
+          height={4}
+          textAlign={'center'}
+          fontSize={'xs'}
+          ml={1}
+        >
+          {props.unReadCount}
+        </Box>
+      )}
+      {!props.isDM && props.isOwner && !props.isEditing ? (
         <Menu>
           <MenuButton
             size={'xs'}
@@ -74,6 +89,8 @@ const Ui: React.FC<UiProps> = (props) => (
             <MenuItem onClick={props.onDeleteChannelClick}>remove</MenuItem>
           </MenuList>
         </Menu>
+      ) : (
+        <Box width={6} />
       )}
     </>
     {props.isOwner && (
