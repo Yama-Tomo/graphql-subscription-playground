@@ -41,7 +41,7 @@ const Ui: React.FC<UiProps> = (props) => (
             autoFocus
           />
         </FormControl>
-        <FormControl marginBlockStart={'1rem'}>
+        <FormControl marginBlockStart={4}>
           <FormLabel htmlFor={`channel-description-form`}>description</FormLabel>
           <Input
             id={`channel-description-form`}

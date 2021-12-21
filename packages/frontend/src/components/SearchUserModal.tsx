@@ -46,7 +46,7 @@ const Ui: React.FC<UiProps> = (props) => (
             placeholder={'search user name...'}
             autoFocus
           />
-          <Box mt={'1rem'} mb={'1rem'}>
+          <Box mt={4} mb={4}>
             {!props.loading &&
               props.userName !== '' &&
               props.searchResults &&
