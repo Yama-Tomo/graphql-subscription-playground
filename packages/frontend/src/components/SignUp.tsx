@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
-import { Router } from 'next/router';
 import { Box, Flex, Heading, IconButton, Input } from '@chakra-ui/react';
 import { useSignUpMutation } from '@/hooks/api';
-import { pagesPath } from '@/libs/$path';
 import { setUserId } from '@/libs/user';
 import { ArrowAltCircleRight } from '@/components/Icons';
 
@@ -50,7 +48,8 @@ const Ui: React.FC<UiProps> = (props) => (
   </Box>
 );
 
-const Container: React.FC<{ router: Router }> = (props) => {
+type ContainerProps = { onAuthorized: () => void };
+const Container: React.FC<ContainerProps> = (props) => {
   const [state, setState] = useState({ name: '' });
   const [signup] = useSignUpMutation();
 
@@ -64,7 +63,7 @@ const Container: React.FC<{ router: Router }> = (props) => {
       signup({ variables: { name: state.name } }).then((res) => {
         if (!res.error && res.data) {
           setUserId(res.data.signup.id);
-          props.router.push(pagesPath.channels.$url());
+          props.onAuthorized();
         }
       });
     },

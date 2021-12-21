@@ -11,6 +11,7 @@ import { setupCache } from '@/libs/urql';
 import { getUserId } from '@/libs/user';
 import { theme } from '@/libs/theme';
 import { useChangeNotificationSubscription } from '@/hooks/api';
+import { pagesPath } from '@/libs/$path';
 
 function MyApp({ Component, pageProps, ...rest }: AppProps) {
   const router = rest.router;
@@ -36,7 +37,7 @@ function MyApp({ Component, pageProps, ...rest }: AppProps) {
 
   return (
     <AppContainer>
-      <SignUp {...rest} />
+      <SignUp {...rest} onAuthorized={() => router.push(pagesPath.channels.$url())} />
     </AppContainer>
   );
 }
