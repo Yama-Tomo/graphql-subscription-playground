@@ -144,7 +144,9 @@ const Container: React.FC<ContainerProps> = (props) => {
       setState((current) => ({ ...current, editDescription: value }));
     },
     onSubmitClick: () => {
-      updateChannel({ variables: { id: props.id, name: state.editName } }).then((res) => {
+      updateChannel({
+        variables: { id: props.id, name: state.editName, description: state.editDescription },
+      }).then((res) => {
         if (res.data && !res.error) {
           setState((current) => ({ ...current, isEditing: false }));
         }

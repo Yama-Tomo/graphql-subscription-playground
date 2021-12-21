@@ -55,8 +55,8 @@ gql`
 const useCreateChannelMutation = toApolloClientIFUseMutation(useURQLCreateChannelMutation);
 
 gql`
-  mutation UpdateChannelName($id: ID!, $name: String!) {
-    updateChannel(data: { id: $id, name: $name }) {
+  mutation UpdateChannelName($id: ID!, $name: String!, $description: String) {
+    updateChannel(data: { id: $id, name: $name, description: $description }) {
       ...ChannelFragment
     }
   }
