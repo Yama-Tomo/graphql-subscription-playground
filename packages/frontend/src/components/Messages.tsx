@@ -64,8 +64,9 @@ type ContainerProps = {
 } & Pick<UiProps, 'myUserId'>;
 const Container: React.FC<ContainerProps> = (props) => {
   const ref = useRef<HTMLDivElement>(null);
-  const [state, setState] = useState<{ channelId: string; before?: string }>({
+  const [state, setState] = useState<{ channelId: string; before?: string; last: number }>({
     channelId: props.channelId,
+    last: 20,
   });
   const [messageReadStateUpdater] = useReadMessagesMutation();
   const wrappedMessageReadStateUpdater = useCallback(
@@ -82,7 +83,7 @@ const Container: React.FC<ContainerProps> = (props) => {
   });
 
   useEffect(() => {
-    setState({ channelId: props.channelId });
+    setState((current) => ({ ...current, channelId: props.channelId }));
     setTimeout(() => {
       if (ref.current) {
         ref.current.scrollTop = ref.current.scrollHeight;
