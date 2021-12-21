@@ -1,8 +1,9 @@
 import { DataSource, DataSourceConfig } from 'apollo-datasource';
 import DataLoader from 'dataloader';
 import { v4 } from 'uuid';
-import { db, Message } from '@/data/db';
+
 import { DataSourceContext, Options } from '@/data/datasources';
+import { db, Message } from '@/data/db';
 
 class MessageDataSource extends DataSource {
   context!: DataSourceContext;

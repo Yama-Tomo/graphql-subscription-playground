@@ -1,7 +1,7 @@
-import { MutationType, Resolvers } from '@/resolvers/generated';
-import { publishNotification } from '@/resolvers/subscription';
 import { UnAuthorizedContext } from '@/context';
+import { MutationType, Resolvers } from '@/resolvers/generated';
 import { isMessageRead } from '@/resolvers/libs/message';
+import { publishNotification } from '@/resolvers/subscription';
 
 const Mutation: Resolvers['Mutation'] = {
   createMessage(parent, { data }, { pubsub, user: currentUser, dataSources }) {

@@ -1,8 +1,9 @@
 import { Config } from 'apollo-server-core';
+
+import { ChannelDataSource } from '@/data/channel';
+import { DataSourceContext, Options } from '@/data/datasources';
 import { MessageDataSource } from '@/data/message';
 import { UserDataSource } from '@/data/user';
-import { DataSourceContext, Options } from '@/data/datasources';
-import { ChannelDataSource } from '@/data/channel';
 
 type Cache = NonNullable<Config['cache']>;
 

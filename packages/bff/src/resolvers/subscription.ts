@@ -1,12 +1,14 @@
 import { PubSub } from 'graphql-subscriptions';
-import { Resolvers, ResolversTypes, Subscription } from '@/resolvers/generated';
+
 import { Context } from '@/context';
+// 同じ変数名と型名が１つのファイルに存在しているとprettier-plugin-sort-importsがエラーになるので別名でimportする
+import { Resolvers, ResolversTypes, Subscription as SubscriptionType } from '@/resolvers/generated';
 
 const publishNotification = (
   pubsub: PubSub,
   userId: Context['user']['id'],
   // NOTE: ペイロードがユニオンタイプの場合はどのデータなのか区別するために __typename フィールドを必ず含める必要がある
-  typename: Required<Subscription['changeNotification']>['__typename'],
+  typename: Required<SubscriptionType['changeNotification']>['__typename'],
   payload: { changeNotification: ResolversTypes['ChangeNotificationSubscriptionPayload'] }
 ) => {
   const { changeNotification, ...rest } = payload;

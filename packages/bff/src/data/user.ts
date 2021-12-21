@@ -1,8 +1,9 @@
 import { DataSource, DataSourceConfig } from 'apollo-datasource';
 import DataLoader from 'dataloader';
-import { db, User } from '@/data/db';
-import { DataSourceContext, Options } from '@/data/datasources';
 import { v4 } from 'uuid';
+
+import { DataSourceContext, Options } from '@/data/datasources';
+import { db, User } from '@/data/db';
 
 class UserDataSource extends DataSource {
   context!: DataSourceContext;

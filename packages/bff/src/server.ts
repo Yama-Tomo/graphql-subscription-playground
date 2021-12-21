@@ -1,14 +1,15 @@
-import { ApolloServer } from 'apollo-server-fastify';
-import { ApolloServerPluginDrainHttpServer } from 'apollo-server-core';
-import { InMemoryLRUCache } from 'apollo-server-caching';
-import { fastify } from 'fastify';
 import { makeExecutableSchema } from '@graphql-tools/schema';
+import { InMemoryLRUCache } from 'apollo-server-caching';
+import { ApolloServerPluginDrainHttpServer } from 'apollo-server-core';
+import { ApolloServer } from 'apollo-server-fastify';
+import { fastify } from 'fastify';
 import { execute, subscribe } from 'graphql';
 import { SubscriptionServer } from 'subscriptions-transport-ws';
-import { typeDefs } from '@/schema';
-import { resolvers } from '@/resolvers';
+
 import { UnAuthorizedContext, createAllRequestSharedContext } from '@/context';
 import { dataSources, initDataSources } from '@/data';
+import { resolvers } from '@/resolvers';
+import { typeDefs } from '@/schema';
 
 const startServer = async (opts?: Partial<{ port: number; path: string }>) => {
   const path = opts?.path || '/graphql';

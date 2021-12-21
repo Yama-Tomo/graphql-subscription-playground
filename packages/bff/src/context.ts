@@ -1,4 +1,5 @@
 import { PubSub } from 'graphql-subscriptions';
+
 import { DataSources } from '@/data';
 
 const createAllRequestSharedContext = () => ({ pubsub: new PubSub() });

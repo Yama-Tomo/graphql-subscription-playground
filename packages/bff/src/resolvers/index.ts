@@ -1,11 +1,12 @@
 import { GraphQLResolveInfo } from 'graphql';
+
+import { Context, UnAuthorizedContext } from '@/context';
 import { MutationResolvers, QueryResolvers, Resolvers } from '@/resolvers/generated';
+import { Mutation } from '@/resolvers/mutation';
 import { ObjectsResolvers } from '@/resolvers/objects';
 import { Query } from '@/resolvers/query';
 import { Date, DateTime } from '@/resolvers/scalers';
-import { Mutation } from '@/resolvers/mutation';
 import { Subscription } from '@/resolvers/subscription';
-import { Context, UnAuthorizedContext } from '@/context';
 
 // prettier-ignore
 type UnAuthorizedCtxResolver =

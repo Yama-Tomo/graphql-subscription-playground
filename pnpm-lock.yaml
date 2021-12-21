@@ -12,6 +12,7 @@ importers:
       '@graphql-codegen/typescript': ^2.4.1
       '@graphql-codegen/typescript-resolvers': ^2.4.2
       '@graphql-tools/schema': ^8.3.1
+      '@trivago/prettier-plugin-sort-imports': ^3.1.1
       '@types/source-map-support': ^0.5.4
       '@types/uuid': ^8.3.3
       '@typescript-eslint/eslint-plugin': ^5.6.0
@@ -54,6 +55,7 @@ importers:
       '@graphql-codegen/cli': 2.3.0_graphql@16.1.0
       '@graphql-codegen/typescript': 2.4.1_graphql@16.1.0
       '@graphql-codegen/typescript-resolvers': 2.4.2_graphql@16.1.0
+      '@trivago/prettier-plugin-sort-imports': 3.1.1_prettier@2.5.1
       '@types/source-map-support': 0.5.4
       '@types/uuid': 8.3.3
       '@typescript-eslint/eslint-plugin': 5.6.0_a8d6e4147a400955d580224aab00bde0

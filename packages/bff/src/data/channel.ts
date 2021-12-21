@@ -1,8 +1,9 @@
 import { DataSource, DataSourceConfig } from 'apollo-datasource';
 import DataLoader from 'dataloader';
 import { v4 } from 'uuid';
-import { Channel, db } from '@/data/db';
+
 import { DataSourceContext, Options } from '@/data/datasources';
+import { Channel, db } from '@/data/db';
 
 class ChannelDataSource extends DataSource {
   context!: DataSourceContext;
