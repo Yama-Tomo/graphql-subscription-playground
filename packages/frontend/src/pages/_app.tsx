@@ -1,17 +1,19 @@
-import '../styles/globals.css';
-import React, { useEffect, useState } from 'react';
+import { ChakraProvider, Flex } from '@chakra-ui/react';
 import { withUrqlClient } from 'next-urql';
 import type { AppProps } from 'next/app';
-import { ChakraProvider, Flex } from '@chakra-ui/react';
-import { dedupExchange, fetchExchange, subscriptionExchange } from 'urql';
+import React, { useEffect, useState } from 'react';
 import { SubscriptionClient } from 'subscriptions-transport-ws';
+import { dedupExchange, fetchExchange, subscriptionExchange } from 'urql';
+
 import { Header } from '@/components/Header';
 import { SignUp } from '@/components/SignUp';
-import { setupCache } from '@/libs/urql';
-import { getUserId } from '@/libs/user';
-import { theme } from '@/libs/theme';
 import { useChangeNotificationSubscription } from '@/hooks/api';
 import { pagesPath } from '@/libs/$path';
+import { theme } from '@/libs/theme';
+import { setupCache } from '@/libs/urql';
+import { getUserId } from '@/libs/user';
+
+import '../styles/globals.css';
 
 function MyApp({ Component, pageProps, ...rest }: AppProps) {
   const router = rest.router;

@@ -1,7 +1,8 @@
+import { Box, Flex, IconButton, Kbd, Textarea, TextareaProps } from '@chakra-ui/react';
 import React, { useState } from 'react';
-import { Box, Textarea, Flex, IconButton, TextareaProps, Kbd } from '@chakra-ui/react';
-import { useCreateMessageMutation } from '@/hooks/api';
+
 import { Send } from '@/components/Icons';
+import { useCreateMessageMutation } from '@/hooks/api';
 import { withKeyboardShortcut } from '@/libs/keyboard';
 
 type UiProps = {

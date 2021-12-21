@@ -1,13 +1,10 @@
-import React, { forwardRef, useEffect, useState } from 'react';
-import { useUpdateMessageMutation, useDeleteMessageMutation } from '@/hooks/api';
-import { useInView } from 'react-intersection-observer';
 import {
   Avatar,
   Box,
   Button,
   Flex,
-  Heading,
   HStack,
+  Heading,
   IconButton,
   Menu,
   MenuButton,
@@ -17,7 +14,11 @@ import {
   TextareaProps,
   VStack,
 } from '@chakra-ui/react';
+import React, { forwardRef, useEffect, useState } from 'react';
+import { useInView } from 'react-intersection-observer';
+
 import { MoreVert } from '@/components/Icons';
+import { useDeleteMessageMutation, useUpdateMessageMutation } from '@/hooks/api';
 import { withKeyboardShortcut } from '@/libs/keyboard';
 
 type UiProps = {

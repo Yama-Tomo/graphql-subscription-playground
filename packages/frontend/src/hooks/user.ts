@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+
 import { useSearchUsersQuery } from '@/hooks/api';
 
 const useSearchUsers = (delay = 300) => {

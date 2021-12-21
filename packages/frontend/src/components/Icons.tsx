@@ -1,6 +1,6 @@
 import { Icon, IconProps } from '@chakra-ui/react';
-import { MdMoreVert, MdAddCircleOutline, MdPersonAdd, MdSend } from 'react-icons/md';
 import { FaArrowAltCircleRight } from 'react-icons/fa';
+import { MdAddCircleOutline, MdMoreVert, MdPersonAdd, MdSend } from 'react-icons/md';
 
 type Props = Omit<IconProps, 'as'>;
 const MoreVert = (props: Props) => <Icon as={MdMoreVert} {...props} />;

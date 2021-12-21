@@ -1,9 +1,10 @@
-import React, { useEffect } from 'react';
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
-import { pagesPath } from '@/libs/$path';
-import { useMyChannelAndProfileQuery } from '@/hooks/api';
+import React, { useEffect } from 'react';
+
 import { Channels, ChannelsProps } from '@/components/Channels';
+import { useMyChannelAndProfileQuery } from '@/hooks/api';
+import { pagesPath } from '@/libs/$path';
 
 type ContainerProps = Pick<ChannelsProps, 'activeChId'>;
 const Container: NextPage<ContainerProps> = (props) => {

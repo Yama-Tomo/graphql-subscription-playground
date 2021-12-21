@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   Box,
   FormControl,
@@ -16,6 +15,8 @@ import {
   ModalProps,
   UnorderedList,
 } from '@chakra-ui/react';
+import React from 'react';
+
 import { types } from '@/hooks/api';
 import { useSearchUsers } from '@/hooks/user';
 

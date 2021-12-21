@@ -1,6 +1,7 @@
 import React from 'react';
-import { useCreateChannelMutation, useMyChannelAndProfileQuery } from '@/hooks/api';
+
 import { SearchUserModal, SearchUserModalProps } from '@/components/SearchUserModal';
+import { useCreateChannelMutation, useMyChannelAndProfileQuery } from '@/hooks/api';
 
 type ContainerProps = {
   onCreated?: (channelId: string) => void;

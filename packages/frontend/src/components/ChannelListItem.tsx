@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from 'react';
 import {
   Box,
+  Link as ChakraUILink,
   IconButton,
   InputProps,
-  Link as ChakraUILink,
   ListItem,
   Menu,
   MenuButton,
@@ -11,11 +10,13 @@ import {
   MenuList,
 } from '@chakra-ui/react';
 import styled from '@emotion/styled';
-import { pagesPath } from '@/libs/$path';
-import { useDeleteChannelMutation, useUpdateChannelNameMutation } from '@/hooks/api';
-import { Link } from './Link';
-import { MoreVert } from '@/components/Icons';
+import React, { useEffect, useState } from 'react';
+
 import { ChannelFormModal } from '@/components/ChannelFormModal';
+import { MoreVert } from '@/components/Icons';
+import { Link } from '@/components/Link';
+import { useDeleteChannelMutation, useUpdateChannelNameMutation } from '@/hooks/api';
+import { pagesPath } from '@/libs/$path';
 
 type UiProps = {
   name: string;

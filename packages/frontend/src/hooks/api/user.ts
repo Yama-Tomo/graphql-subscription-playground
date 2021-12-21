@@ -1,10 +1,11 @@
-import {
-  useSignUpMutation as useURQLSignUpMutation,
-  useSearchUsersQuery as useURQLSearchUsersQuery,
-  useMyProfileQuery as useURQLMyProfileQuery,
-} from '@/hooks/api/gql_generated';
-import { toApolloClientIFUseMutation, toApolloClientIFUseQuery } from '@/hooks/api/adapter';
 import { gql } from 'urql';
+
+import { toApolloClientIFUseMutation, toApolloClientIFUseQuery } from '@/hooks/api/adapter';
+import {
+  useMyProfileQuery as useURQLMyProfileQuery,
+  useSearchUsersQuery as useURQLSearchUsersQuery,
+  useSignUpMutation as useURQLSignUpMutation,
+} from '@/hooks/api/gql_generated';
 
 // ----------- fragment -----------
 gql`

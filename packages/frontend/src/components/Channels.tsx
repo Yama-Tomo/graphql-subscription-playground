@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
 import { Box, BoxProps, Heading, IconButton, List, ListItem } from '@chakra-ui/react';
-import { CreateChannelModal, CreateChannelModalProps } from '@/components/CreateChannelModal';
+import React, { useState } from 'react';
+
 import { ChannelListItem } from '@/components/ChannelListItem';
+import { CreateChannelModal, CreateChannelModalProps } from '@/components/CreateChannelModal';
+import { CreateDMChannelModal, CreateDMChannelModalProps } from '@/components/CreateDMChannelModal';
 import { AddCircleOutline } from '@/components/Icons';
 import { ListSkeleton } from '@/components/ListSkelton';
-import { CreateDMChannelModal, CreateDMChannelModalProps } from '@/components/CreateDMChannelModal';
-import { getDMChannelName } from '@/libs/channel';
 import { types } from '@/hooks/api';
+import { getDMChannelName } from '@/libs/channel';
 
 type ChannelTypes = 'channel' | 'DM' | undefined;
 type UiProps = {

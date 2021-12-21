@@ -1,9 +1,9 @@
+import { Box, Center, Flex } from '@chakra-ui/react';
 import React, { forwardRef, useCallback, useEffect, useRef, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { Box, Center, Flex } from '@chakra-ui/react';
-import { types, useReadMessagesMutation } from '@/hooks/api';
-import { useLatestMessagesQuery } from '@/hooks/api';
+
 import { MessageListItem, MessageListItemProps } from '@/components/MessageListItem';
+import { types, useReadMessagesMutation, useLatestMessagesQuery } from '@/hooks/api';
 import { useMessageReadStateUpdate } from '@/hooks/message';
 
 type UiProps = {

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { useCreateChannelMutation } from '@/hooks/api';
+
 import { ChannelFormModal, ChannelFormModalProps } from '@/components/ChannelFormModal';
+import { useCreateChannelMutation } from '@/hooks/api';
 
 type ContainerProps = {
   onCreated?: (channelId: string) => void;

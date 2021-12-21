@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
 import { Box, Flex, Heading, IconButton, Input } from '@chakra-ui/react';
+import React, { useState } from 'react';
+
+import { ArrowAltCircleRight } from '@/components/Icons';
 import { useSignUpMutation } from '@/hooks/api';
 import { setUserId } from '@/libs/user';
-import { ArrowAltCircleRight } from '@/components/Icons';
 
 type UiProps = {
   name: string;

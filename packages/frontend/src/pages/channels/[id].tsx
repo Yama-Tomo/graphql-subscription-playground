@@ -1,14 +1,15 @@
-import React, { useState } from 'react';
+import { Box, Flex, Heading, IconButton, Tag } from '@chakra-ui/react';
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
-import { Box, Flex, Heading, IconButton, Tag } from '@chakra-ui/react';
-import Channel from '@/pages/channels';
-import { Messages, MessagesProps } from '@/components/Messages';
+import React, { useState } from 'react';
+
 import { CreateMessage } from '@/components/CreateMessage';
-import { SearchUserModal, SearchUserModalProps } from '@/components/SearchUserModal';
 import { PersonAdd } from '@/components/Icons';
+import { Messages, MessagesProps } from '@/components/Messages';
+import { SearchUserModal, SearchUserModalProps } from '@/components/SearchUserModal';
 import { useInviteChannelMutation, useMyChannelAndProfileQuery } from '@/hooks/api';
 import { getDMChannelName } from '@/libs/channel';
+import Channel from '@/pages/channels';
 
 type UiProps = {
   channelId: string;

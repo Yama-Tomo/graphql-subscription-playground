@@ -1,5 +1,6 @@
-import { cacheExchange, Cache } from '@urql/exchange-graphcache';
-import { docs, types, MutationType } from '@/hooks/api';
+import { Cache, cacheExchange } from '@urql/exchange-graphcache';
+
+import { MutationType, docs, types } from '@/hooks/api';
 
 const cacheConfig = (): types.GraphCacheConfig => ({
   resolvers: {
