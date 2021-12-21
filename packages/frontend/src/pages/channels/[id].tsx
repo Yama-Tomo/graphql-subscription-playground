@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
-import { Box, Heading, IconButton } from '@chakra-ui/react';
+import { Box, Flex, Heading, IconButton, Tag } from '@chakra-ui/react';
 import Channel from '@/pages/channels';
 import { Messages, MessagesProps } from '@/components/Messages';
 import { CreateMessage } from '@/components/CreateMessage';
@@ -14,6 +14,8 @@ type UiProps = {
   channelId: string;
   isDM: boolean;
   channelName: string;
+  description: string;
+  joinedUserCount: number;
   inviteUserEditing: boolean;
   onAddUserClick: () => void;
   onAddUserCancelClick: () => void;
@@ -21,21 +23,32 @@ type UiProps = {
   Pick<SearchUserModalProps, 'renderUserName' | 'onSearchResultClick'>;
 const Ui: React.FC<UiProps> = (props) => (
   <Channel activeChId={props.channelId}>
-    <hr style={{ width: '100%' }} />
-    <Box p={2} color={'gray.700'} boxShadow="md">
-      <Heading mt={4} size={'md'} display={'flex'} alignItems={'center'}>
+    <Flex p={2} color={'gray.700'} boxShadow="md" alignItems={'center'}>
+      <Heading mt={2} mb={2} size={'md'} display={'flex'} alignItems={'center'}>
         <Box># {props.channelName}</Box>
         {!props.isDM && (
-          <IconButton
-            ml={4}
-            aria-label="add user"
-            icon={<PersonAdd />}
-            size={'xs'}
-            onClick={props.onAddUserClick}
-          />
+          <>
+            <IconButton
+              ml={2}
+              aria-label="add user"
+              icon={<PersonAdd />}
+              size={'xs'}
+              onClick={props.onAddUserClick}
+            />
+          </>
         )}
       </Heading>
-    </Box>
+      {props.description && (
+        <Box fontWeight={'light'} color={'gray.700'} fontSize={'xs'} ms={4}>
+          {props.description}
+        </Box>
+      )}
+      <Box flex={1} textAlign={'right'} fontSize={'xs'}>
+        <Tag fontSize={'xs'} colorScheme={'teal'}>
+          {props.joinedUserCount} users
+        </Tag>
+      </Box>
+    </Flex>
     {props.inviteUserEditing && (
       <SearchUserModal
         onClose={props.onAddUserCancelClick}
@@ -73,6 +86,8 @@ const Container: NextPage = () => {
     channelName: currentChannel.isDM
       ? getDMChannelName(currentChannel, data.myProfile.id)
       : currentChannel.name,
+    description: currentChannel.description ?? '',
+    joinedUserCount: currentChannel.joinUsers.length,
     onSearchResultClick(user) {
       invite({ variables: { id: currentChannel.id, userId: user.id } });
     },
