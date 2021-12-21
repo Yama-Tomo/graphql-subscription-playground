@@ -114,7 +114,7 @@ const Container: React.FC<ContainerProps> = (props) => {
   const [updateMessage] = useUpdateMessageMutation();
   const [deleteMessage] = useDeleteMessageMutation();
 
-  const { ref, inView } = useInView({ rootMargin: '-350px 0px 0px 0px', triggerOnce: true });
+  const { ref, inView } = useInView({ rootMargin: '-150px 0px 0px 0px', triggerOnce: true });
   const { id, onReadMessage } = props;
 
   useEffect(() => {
