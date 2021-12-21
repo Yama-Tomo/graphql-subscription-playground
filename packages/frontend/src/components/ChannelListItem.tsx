@@ -36,7 +36,7 @@ type UiProps = {
   className?: string;
 };
 const Ui: React.FC<UiProps> = (props) => (
-  <ListItem className={props.className} display="flex" bg={props.active ? 'teal.50' : ''}>
+  <ListItem className={props.className} display="flex" bg={props.active ? 'teal.100' : ''}>
     <>
       <Link href={pagesPath.channels._id(props.id).$url()}>
         <ChakraUILink flex={1} textOverflow={'ellipsis'} whiteSpace={'nowrap'} overflow={'hidden'}>
@@ -45,7 +45,7 @@ const Ui: React.FC<UiProps> = (props) => (
           {props.unReadCount != null && props.unReadCount > 0 && (
             <Box
               className={props.active ? `delayed-visible` : ``}
-              backgroundColor={'#b13f60'}
+              backgroundColor={'#d62b5c'}
               color={'white'}
               display={'inline-block'}
               borderRadius={'10px'}
