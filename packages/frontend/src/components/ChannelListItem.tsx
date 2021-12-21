@@ -16,6 +16,7 @@ import { ChannelFormModal } from '@/components/ChannelFormModal';
 import { MoreVert } from '@/components/Icons';
 import { Link } from '@/components/Link';
 import { useDeleteChannelMutation, useUpdateChannelNameMutation } from '@/hooks/api';
+import { useDelayedUnReadCountRender } from '@/hooks/message';
 import { pagesPath } from '@/libs/$path';
 
 type UiProps = {
@@ -45,7 +46,6 @@ const Ui: React.FC<UiProps> = (props) => (
           {props.name}
           {props.unReadCount != null && props.unReadCount > 0 && (
             <Box
-              className={props.active ? `delayed-visible` : ``}
               backgroundColor={'#d62b5c'}
               color={'white'}
               display={'inline-block'}
@@ -127,9 +127,12 @@ const Container: React.FC<ContainerProps> = (props) => {
     }));
   }, [props.name, props.description]);
 
+  const unReadCount = useDelayedUnReadCountRender(!!props?.active, props.unReadCount);
+
   const uiProps: UiProps = {
     ...props,
     ...state,
+    unReadCount,
     onEditClick: () => {
       setState((current) => ({ ...current, isEditing: true }));
     },

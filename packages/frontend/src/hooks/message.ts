@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 const useMessageReadStateUpdate = (updater: (readMessageIds: string[]) => void, delay = 200) => {
   const refState = useRef<{ timer?: NodeJS.Timeout; id: Set<string>; flushedIds: Set<string> }>({
@@ -45,4 +45,36 @@ const useMessageReadStateUpdate = (updater: (readMessageIds: string[]) => void, 
   return asyncUpdater;
 };
 
-export { useMessageReadStateUpdate };
+const useDelayedUnReadCountRender = (
+  isActiveChannel: boolean,
+  unReadCount: undefined | number,
+  delay = 800
+) => {
+  const refState = useRef<NodeJS.Timeout | undefined>(undefined);
+  const [state, setState] = useState<{ unReadCount?: number }>({ unReadCount: unReadCount });
+
+  useEffect(() => {
+    if (refState.current) {
+      clearTimeout(refState.current);
+    }
+
+    const updateUnReadCount = () => setState((current) => ({ ...current, unReadCount }));
+    if (isActiveChannel) {
+      refState.current = setTimeout(updateUnReadCount, delay);
+    } else {
+      updateUnReadCount();
+    }
+  }, [isActiveChannel, unReadCount, delay]);
+
+  useEffect(() => {
+    return function clearTimerWhenUnMount() {
+      if (refState.current) {
+        clearTimeout(refState.current);
+      }
+    };
+  }, []);
+
+  return state.unReadCount;
+};
+
+export { useMessageReadStateUpdate, useDelayedUnReadCountRender };

@@ -12,14 +12,3 @@ a {
 * {
   box-sizing: border-box;
 }
-
-.delayed-visible {
-  animation: 0s linear 0.3s forwards makeVisible;
-  visibility: hidden;
-}
-
-@keyframes makeVisible {
-  to {
-    visibility: visible;
-  }
-}
