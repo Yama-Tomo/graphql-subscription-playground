@@ -19,13 +19,15 @@ import {
 import { types } from '@/hooks/api';
 import { useSearchUsers } from '@/hooks/user';
 
+type User = types.SearchUsersQuery['searchUsers'][number];
 type UiProps = {
   modalTitle: string;
   loading: boolean;
   userName: InputProps['value'];
   onUserNameChange: InputProps['onChange'];
-  onSearchResultClick: (user: types.SearchUsersQuery['searchUsers'][number]) => void;
+  onSearchResultClick: (user: User) => void;
   searchResults?: types.SearchUsersQuery['searchUsers'];
+  renderUserName?: (user: User) => JSX.Element;
 } & Pick<ModalProps, 'isOpen' | 'onClose'>;
 const Ui: React.FC<UiProps> = (props) => (
   <Modal isOpen={props.isOpen} onClose={props.onClose}>
@@ -53,7 +55,9 @@ const Ui: React.FC<UiProps> = (props) => (
               <UnorderedList>
                 {props.searchResults.map((user) => (
                   <ListItem key={user.id}>
-                    <Link onClick={() => props.onSearchResultClick(user)}>{user.name}</Link>
+                    <Link onClick={() => props.onSearchResultClick(user)}>
+                      {props.renderUserName ? props.renderUserName(user) : user.name}
+                    </Link>
                   </ListItem>
                 ))}
               </UnorderedList>
@@ -67,11 +71,12 @@ const Ui: React.FC<UiProps> = (props) => (
 
 type ContainerProps = {
   myUserId: string;
-} & Pick<UiProps, 'onSearchResultClick' | 'modalTitle' | 'onClose'>;
+} & Pick<UiProps, 'onSearchResultClick' | 'modalTitle' | 'onClose' | 'renderUserName'>;
 const Container: React.FC<ContainerProps> = (props) => {
   const { data: users, search, loading, input, reset } = useSearchUsers();
 
   const uiProps: UiProps = {
+    ...props,
     modalTitle: props.modalTitle,
     loading,
     userName: input,
