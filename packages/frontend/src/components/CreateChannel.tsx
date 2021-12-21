@@ -1,36 +1,19 @@
 import React, { useState } from 'react';
-import { types, useCreateChannelMutation } from '@/hooks/api';
-
-type UiProps = {
-  name: JSX.IntrinsicElements['input']['value'];
-  onNameChange: JSX.IntrinsicElements['input']['onChange'];
-  description: JSX.IntrinsicElements['input']['value'];
-  onDescriptionChange: JSX.IntrinsicElements['input']['onChange'];
-  onCreateClick: () => void;
-};
-
-const Ui: React.FC<UiProps> = (props) => (
-  <div>
-    <div>
-      channel name: <input type="text" value={props.name} onChange={props.onNameChange} />
-    </div>
-    <div>
-      description(optional):{' '}
-      <input type="text" value={props.description} onChange={props.onDescriptionChange} />
-    </div>
-    <button onClick={props.onCreateClick}>create</button>
-  </div>
-);
+import { useCreateChannelMutation } from '@/hooks/api';
+import { ChannelFormModal, ChannelFormModalProps } from '@/components/ChannelFormModal';
 
 type ContainerProps = {
-  onChannelCreated?: (data: types.CreateChannelMutation['createChannel']) => void;
+  onCreated?: (channelId: string) => void;
+  onCreateCancel: ChannelFormModalProps['onClose'];
 };
 const Container: React.FC<ContainerProps> = (props) => {
   const [state, setState] = useState({ name: '', description: '' });
   const [createChannel] = useCreateChannelMutation();
 
-  const uiProps: UiProps = {
+  const uiProps: ChannelFormModalProps = {
     ...state,
+    isOpen: true,
+    onClose: props.onCreateCancel,
     onNameChange: ({ target: { value } }) => setState((current) => ({ ...current, name: value })),
     onDescriptionChange: ({ target: { value } }) =>
       setState((current) => ({ ...current, description: value })),
@@ -40,13 +23,14 @@ const Container: React.FC<ContainerProps> = (props) => {
       }).then((res) => {
         if (!res.error && res.data?.createChannel) {
           setState({ name: '', description: '' });
-          props.onChannelCreated?.(res.data.createChannel);
+          props.onCreated?.(res.data.createChannel.id);
         }
       });
     },
+    mode: 'create',
   };
 
-  return <Ui {...uiProps} />;
+  return <ChannelFormModal {...uiProps} />;
 };
 
 export { Container as CreateChannel };

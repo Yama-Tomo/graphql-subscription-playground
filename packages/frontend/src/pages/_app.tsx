@@ -2,11 +2,14 @@ import '../styles/globals.css';
 import React, { useEffect, useState } from 'react';
 import { withUrqlClient } from 'next-urql';
 import type { AppProps } from 'next/app';
+import { ChakraProvider, Flex } from '@chakra-ui/react';
 import { dedupExchange, fetchExchange, subscriptionExchange } from 'urql';
 import { SubscriptionClient } from 'subscriptions-transport-ws';
+import { Header } from '@/components/Header';
 import { SignUp } from '@/components/SignUp';
 import { setupCache } from '@/libs/urql';
 import { getUserId } from '@/libs/user';
+import { theme } from '@/libs/theme';
 import { useChangeNotificationSubscription } from '@/hooks/api';
 
 function MyApp({ Component, pageProps, ...rest }: AppProps) {
@@ -24,15 +27,34 @@ function MyApp({ Component, pageProps, ...rest }: AppProps) {
   }, [router]);
 
   if (userId) {
-    return <AuthenticatedLayout pageProps={pageProps} Component={Component} {...rest} />;
+    return (
+      <AppContainer>
+        <AuthorizedContainer pageProps={pageProps} Component={Component} {...rest} />
+      </AppContainer>
+    );
   }
 
-  return <SignUp {...rest} />;
+  return (
+    <AppContainer>
+      <SignUp {...rest} />
+    </AppContainer>
+  );
 }
 
-const AuthenticatedLayout: React.FC<AppProps> = ({ Component, pageProps }) => {
+const AppContainer: React.FC = ({ children }) => (
+  <ChakraProvider theme={theme}>{children}</ChakraProvider>
+);
+
+const AuthorizedContainer: React.FC<AppProps> = ({ Component, pageProps }) => {
   useChangeNotificationSubscription();
-  return <Component {...pageProps} />;
+  return (
+    <>
+      <Header />
+      <Flex flex={'1 0 auto'} as="main">
+        <Component {...pageProps} />
+      </Flex>
+    </>
+  );
 };
 
 const setupSubscription = () => {

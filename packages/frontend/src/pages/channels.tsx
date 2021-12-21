@@ -1,117 +1,13 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
-import { CreateChannel, CreateChannelProps } from '@/components/CreateChannel';
-import { ChannelListItem } from '@/components/ChannelListItem';
 import { pagesPath } from '@/libs/$path';
-import { getDMChannelName } from '@/libs/channel';
-import { useMyChannelAndProfileQuery, types, useCreateChannelMutation } from '@/hooks/api';
-import { useSearchUsers } from '@/hooks/user';
+import { useMyChannelAndProfileQuery } from '@/hooks/api';
+import { Channels, ChannelsProps } from '@/components/Channels';
 
-type ChannelsUiProps = Pick<types.MyChannelAndProfileQuery, 'channels'> & {
-  myUserId: string;
-  activeChId?: string;
-};
-const Channels: React.FC<ChannelsUiProps> = (props) => (
-  <ul>
-    {props.channels.map((channel) => (
-      <ChannelListItem
-        key={channel.id}
-        id={channel.id}
-        name={channel.name}
-        isOwner={channel.ownerId === props.myUserId}
-        isDM={channel.isDM}
-        unReadCount={channel.unReadMessageCount}
-        active={props.activeChId === channel.id}
-      />
-    ))}
-  </ul>
-);
-
-type UiProps = {
-  channels: ChannelsUiProps['channels'];
-  DMChannels: ChannelsUiProps['channels'];
-  loading: boolean;
-  onAddChannelClick: () => void;
-  onAddChannelCancelClick: () => void;
-  newChannelEditing: boolean;
-  onAddDMClick: () => void;
-  onAddDMCancelClick: () => void;
-  newDMEditing: boolean;
-  searchUserName: JSX.IntrinsicElements['input']['value'];
-  onSearchUserNameChange: JSX.IntrinsicElements['input']['onChange'];
-  onUserClick: (user: types.SearchUsersQuery['searchUsers'][number]) => void;
-  users: types.SearchUsersQuery['searchUsers'];
-} & CreateChannelProps &
-  Pick<ChannelsUiProps, 'myUserId' | 'activeChId'>;
-const Ui: React.FC<UiProps> = ({
-  channels,
-  DMChannels,
-  myUserId,
-  activeChId,
-  loading,
-  onAddChannelClick,
-  onAddChannelCancelClick,
-  newChannelEditing,
-  onChannelCreated,
-  onAddDMClick,
-  onAddDMCancelClick,
-  newDMEditing,
-  searchUserName,
-  onSearchUserNameChange,
-  onUserClick,
-  users,
-  children,
-}) => (
-  <main style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
-    {loading && <span>loading...</span>}
-    {!loading && (
-      <Fragment>
-        <h2>
-          channels
-          <button onClick={newChannelEditing ? onAddChannelCancelClick : onAddChannelClick}>
-            {newChannelEditing ? 'cancel' : 'add'}
-          </button>
-        </h2>
-        {newChannelEditing && <CreateChannel onChannelCreated={onChannelCreated} />}
-        <Channels channels={channels} myUserId={myUserId} activeChId={activeChId} />
-      </Fragment>
-    )}
-    {!loading && (
-      <Fragment>
-        <h2>
-          DM
-          <button onClick={newDMEditing ? onAddDMCancelClick : onAddDMClick}>
-            {newDMEditing ? 'cancel' : 'add'}
-          </button>
-        </h2>
-        {newDMEditing && (
-          <React.Fragment>
-            <input type="text" value={searchUserName} onChange={onSearchUserNameChange} />
-            <ul>
-              {users.map((user) => (
-                <li key={user.id} onClick={() => onUserClick(user)}>
-                  {user.name}
-                </li>
-              ))}
-            </ul>
-          </React.Fragment>
-        )}
-        {!newDMEditing && (
-          <Channels channels={DMChannels} myUserId={myUserId} activeChId={activeChId} />
-        )}
-      </Fragment>
-    )}
-    {children}
-  </main>
-);
-
-type ContainerProps = Pick<UiProps, 'activeChId'>;
+type ContainerProps = Pick<ChannelsProps, 'activeChId'>;
 const Container: NextPage<ContainerProps> = (props) => {
-  const [state, setState] = useState({ newChannelEditing: false, newDMEditing: false });
-  const { data: users, search, input, reset } = useSearchUsers();
   const { data, loading, refetch } = useMyChannelAndProfileQuery();
-  const [createChannel] = useCreateChannelMutation();
   const router = useRouter();
 
   useEffect(() => {
@@ -120,65 +16,28 @@ const Container: NextPage<ContainerProps> = (props) => {
     });
   }, [router, refetch]);
 
-  const uiProps: UiProps = {
+  const gotoChannel = (id: string) => router.push(pagesPath.channels._id(id).$url());
+
+  const channelsProps: ChannelsProps = {
     ...props,
-    ...state,
     myUserId: data?.myProfile.id || '',
     channels: data?.channels ? data.channels.filter((channel) => !channel.isDM) : [],
-    DMChannels: data?.channels
-      ? data.channels
-          .filter((channel) => channel.isDM)
-          .map((channel) => ({ ...channel, name: getDMChannelName(channel, data.myProfile.id) }))
-      : [],
+    DMChannels: data?.channels ? data.channels.filter((channel) => channel.isDM) : [],
     loading,
-    onAddChannelClick: () => {
-      setState((current) => ({ ...current, newChannelEditing: true }));
+    sideNavStyle: {
+      padding: 2,
+      w: '170px',
+      height: 'calc(100vh - 8.125rem)',
+      overflowY: 'auto',
+      position: 'sticky',
+      borderRight: '1px solid',
+      borderColor: 'gray.300',
+      top: '64px',
     },
-    onAddChannelCancelClick: () => {
-      setState((current) => ({ ...current, newChannelEditing: false }));
-    },
-    onChannelCreated: () => {
-      setState((current) => ({ ...current, newChannelEditing: false }));
-    },
-    onAddDMClick: () => {
-      setState((current) => ({ ...current, newDMEditing: true }));
-    },
-    onAddDMCancelClick: () => {
-      setState((current) => ({ ...current, newDMEditing: false }));
-    },
-    onSearchUserNameChange: ({ target: { value } }) => {
-      search(value);
-    },
-    onUserClick: (user) => {
-      if (!data) {
-        return;
-      }
-
-      const existsDM = data.channels.find(
-        (channel) => channel.isDM && channel.joinUsers.find((u) => u.id == user.id)
-      );
-      if (existsDM) {
-        setState((current) => ({ ...current, newDMEditing: false }));
-        router.push(pagesPath.channels._id(existsDM.id).$url());
-        return;
-      }
-
-      const channelName = [data.myProfile.name, user.name].join(', ');
-      createChannel({
-        variables: { name: channelName, description: '', isDM: true, joinUsers: [user.id] },
-      }).then((res) => {
-        if (!res.error && res.data) {
-          setState((current) => ({ ...current, newDMEditing: false }));
-          reset();
-        }
-      });
-    },
-    searchUserName: input,
-    users: users?.searchUsers
-      ? users.searchUsers.filter((user) => user.id != data?.myProfile.id)
-      : [],
+    onChannelCreated: gotoChannel,
+    onDMChannelCreated: gotoChannel,
   };
-  return <Ui {...uiProps} />;
+  return <Channels {...channelsProps} />;
 };
 
 export default Container;
