@@ -4,13 +4,15 @@ import { SearchUserModal, SearchUserModalProps } from '@/components/SearchUserMo
 
 type ContainerProps = {
   onCreated?: (channelId: string) => void;
-} & Pick<SearchUserModalProps, 'onCreateCancel'>;
+  onCreateCancel: SearchUserModalProps['onClose'];
+};
 const Container: React.FC<ContainerProps> = (props) => {
   const { data } = useMyChannelAndProfileQuery();
   const [createChannel] = useCreateChannelMutation();
 
   const uiProps: SearchUserModalProps = {
     ...props,
+    onClose: props.onCreateCancel,
     modalTitle: 'create DM channel',
     myUserId: data?.myProfile.id || '',
     onSearchResultClick: (user) => {

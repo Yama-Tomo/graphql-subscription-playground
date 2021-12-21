@@ -66,9 +66,8 @@ const Ui: React.FC<UiProps> = (props) => (
 );
 
 type ContainerProps = {
-  onCreateCancel: UiProps['onClose'];
   myUserId: string;
-} & Pick<UiProps, 'onSearchResultClick' | 'modalTitle'>;
+} & Pick<UiProps, 'onSearchResultClick' | 'modalTitle' | 'onClose'>;
 const Container: React.FC<ContainerProps> = (props) => {
   const { data: users, search, loading, input, reset } = useSearchUsers();
 
@@ -78,7 +77,7 @@ const Container: React.FC<ContainerProps> = (props) => {
     userName: input,
     isOpen: true,
     searchResults: users?.searchUsers.filter((user) => user.id != props.myUserId),
-    onClose: props.onCreateCancel,
+    onClose: props.onClose,
     onUserNameChange: ({ target: { value } }) => search(value),
     onSearchResultClick(user) {
       props.onSearchResultClick(user);
