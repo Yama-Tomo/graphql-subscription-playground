@@ -93,7 +93,11 @@ const Ui: React.FC<UiProps> = (props) => (
 // styled-components like なスタイリング(あまり推奨されていない..?
 const StyledUi = styled(Ui)`
   &:hover {
-    background-color: ${(p) => p.theme.colors.gray['100']};
+    background-color: ${(p) => {
+      // TODO: カスタマイズしたテーマのオブジェクトの型を効かせる
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return (p.theme.colors as any).hover['50'];
+    }}};
   }
 `;
 
