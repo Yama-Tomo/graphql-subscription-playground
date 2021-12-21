@@ -66,7 +66,7 @@ const Ui: React.FC<UiProps> = (props) => (
 const Container: NextPage = () => {
   const [state, setState] = useState({ inviteUserEditing: false });
   const router = useRouter();
-  const { data, error } = useMyChannelAndProfileQuery();
+  const { data } = useMyChannelAndProfileQuery();
   const [invite] = useInviteChannelMutation();
 
   if (!router.query.id) {
