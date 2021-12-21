@@ -5,7 +5,7 @@ const Ui = () => (
   <Box
     as="header"
     color="gray.50"
-    bg="teal.400"
+    bg="brand"
     justifyContent="center"
     borderColor="gray.300"
     borderBottomWidth="1px"
