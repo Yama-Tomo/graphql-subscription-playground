@@ -32,6 +32,7 @@ const theme = extendTheme({
       '800': '#3B392B',
       '900': '#1D1C16',
     },
+    brand: '#1c202b',
   },
 });
 

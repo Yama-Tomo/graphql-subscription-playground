@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { Router } from 'next/router';
+import { Box, Flex, Heading, IconButton, Input } from '@chakra-ui/react';
 import { useSignUpMutation } from '@/hooks/api';
 import { pagesPath } from '@/libs/$path';
 import { setUserId } from '@/libs/user';
+import { ArrowAltCircleRight } from '@/components/Icons';
 
 type UiProps = {
   name: string;
@@ -10,24 +12,42 @@ type UiProps = {
   onSubmit: JSX.IntrinsicElements['form']['onSubmit'];
 };
 const Ui: React.FC<UiProps> = (props) => (
-  <div
-    style={{
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'center',
-      height: '100vh',
-      alignItems: 'center',
-    }}
+  <Box
+    bg={'brand'}
+    height={'100%'}
+    display={'flex'}
+    flexDirection={'column'}
+    justifyContent={'center'}
+    alignItems={'center'}
   >
-    <div style={{ marginBottom: '10rem' }}>
-      <h1>sign up</h1>
-      <div>please input your name</div>
+    <Box style={{ marginBottom: '10rem' }} color={'gray.50'}>
+      <Heading fontSize={'5xl'} fontWeight={'light'}>
+        sign up
+      </Heading>
+      <Box marginBlockStart={5}>please input your name</Box>
       <form onSubmit={props.onSubmit}>
-        <input type="text" value={props.name} onChange={props.onNameChange} required />
-        <button>sign up</button>
+        <Flex>
+          <Input
+            type="text"
+            value={props.name}
+            onChange={props.onNameChange}
+            required
+            placeholder={'your name'}
+            size={'lg'}
+            width={'350px'}
+          />
+          <IconButton
+            aria-label="add direct message"
+            icon={<ArrowAltCircleRight />}
+            colorScheme={'teal'}
+            size={'lg'}
+            ms={1}
+            type={'submit'}
+          />
+        </Flex>
       </form>
-    </div>
-  </div>
+    </Box>
+  </Box>
 );
 
 const Container: React.FC<{ router: Router }> = (props) => {
