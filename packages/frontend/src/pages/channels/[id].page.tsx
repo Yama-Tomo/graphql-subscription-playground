@@ -9,7 +9,7 @@ import { Messages, MessagesProps } from '@/components/Messages';
 import { SearchUserModal, SearchUserModalProps } from '@/components/SearchUserModal';
 import { useInviteChannelMutation, useMyChannelAndProfileQuery } from '@/hooks/api';
 import { getDMChannelName } from '@/libs/channel';
-import Channel from '@/pages/channels';
+import Channel from '@/pages/channels.page';
 
 type UiProps = {
   channelId: string;
