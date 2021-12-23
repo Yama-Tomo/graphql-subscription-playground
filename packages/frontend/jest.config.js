@@ -9,13 +9,15 @@ module.exports = {
   },
   moduleDirectories: ['node_modules', '<rootDir>'],
   transform: {
-    '^.+\\.(ts|tsx)$': 'ts-jest',
-  },
-  globals: {
-    'ts-jest': {
-      // TODO: babelでトランスパイルしたほうが速いか試す
-      isolatedModules: true,
-      tsconfig: 'tsconfig.jest.json',
-    },
+    // https://zenn.dev/uttk/scraps/475390e9d5b820
+    '.+\\.(t|j)sx?$': [
+      '@swc/jest',
+      {
+        sourceMaps: true,
+        jsc: {
+          transform: { react: { runtime: 'automatic' } },
+        },
+      },
+    ],
   },
 };
