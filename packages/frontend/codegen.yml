@@ -12,4 +12,15 @@ generates:
       - typescript-operations
       - typescript-urql
       - typescript-urql-graphcache
-
+  ./src/test_utils/mocks/gql_generated_factories.ts:
+    config:
+      scalarDefaults:
+        DateTime: './custom_scalars#DateTime'
+      scalars:
+        Date: string
+      avoidOptionals: true
+    plugins:
+      - typescript
+      - typescript-operations
+      - typed-document-node
+      - "@homebound/graphql-typescript-factories"

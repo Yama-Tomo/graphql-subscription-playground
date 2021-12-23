@@ -38,3 +38,4 @@ yarn-error.log*
 
 src/hooks/api/gql_generated.ts
 src/libs/$path.ts
+src/test_utils/mocks/gql_generated_factories.ts
