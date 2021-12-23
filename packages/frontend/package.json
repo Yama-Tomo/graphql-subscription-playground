@@ -13,7 +13,8 @@
     "lint:next": "next lint --max-warnings=0 --format codeframe",
     "lint:typing": "tsc --pretty",
     "lint:format": "prettier -c './**/*.{js,ts,tsx}'",
-    "format": "prettier -w './**/*.{js,ts,tsx}'"
+    "format": "prettier -w './**/*.{js,ts,tsx}'",
+    "test": "jest"
   },
   "dependencies": {
     "@chakra-ui/react": "^1.7.3",
@@ -40,6 +41,7 @@
     "@graphql-codegen/typescript-urql": "^3.4.1",
     "@graphql-codegen/typescript-urql-graphcache": "^2.2.2",
     "@trivago/prettier-plugin-sort-imports": "^3.1.1",
+    "@types/jest": "^27.0.3",
     "@types/node": "^16.11.12",
     "@types/react": "^17.0.37",
     "@typescript-eslint/eslint-plugin": "^5.6.0",
@@ -48,9 +50,11 @@
     "eslint-config-prettier": "^8.3.0",
     "graphql-tag": "^2.12.6",
     "http-proxy-middleware": "^2.0.1",
+    "jest": "^27.4.5",
     "npm-run-all": "^4.1.5",
     "pathpida": "^0.17.0",
     "prettier": "^2.5.1",
+    "ts-jest": "^27.1.2",
     "typescript": "^4.5.3"
   }
 }
