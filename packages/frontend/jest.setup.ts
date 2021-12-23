@@ -1,4 +1,5 @@
 import '@testing-library/jest-dom/extend-expect';
+import 'isomorphic-unfetch';
 
 import { router, server } from '@/test_utils/mocks';
 
