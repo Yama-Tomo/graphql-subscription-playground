@@ -14,5 +14,10 @@
   "engines": {
     "node": "16",
     "pnpm": ">= 6.23.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "graphql": "^16.0.1"
+    }
   }
 }
