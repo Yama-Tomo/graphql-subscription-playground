@@ -15,5 +15,11 @@ process.env = {
 mockRouter();
 
 beforeAll(() => server.listen());
-afterEach(() => server.resetHandlers());
+
+afterEach(() => {
+  jest.resetAllMocks();
+  jest.restoreAllMocks();
+  server.resetHandlers();
+});
+
 afterAll(() => server.close());
