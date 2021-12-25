@@ -25,4 +25,10 @@ const router = (): Router => {
   };
 };
 
-export { router };
+const mockRouter = () => {
+  jest.mock('@/libs/router', () => ({
+    useRouter: router,
+  }));
+};
+
+export { router, mockRouter };
