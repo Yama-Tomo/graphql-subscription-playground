@@ -76,5 +76,40 @@ describe('pages/channels', () => {
 
       expect(result.queryByText(otherUserCreatedChMatcher)).toBeNull();
     });
+
+    it('ほかユーザが作成したチャンネルが更新されたらチャンネル一覧を再描画すること', async () => {
+      const [publishable] = mockSubscriptionExchange();
+
+      const myUser = newUser();
+      const otherUser = newUser();
+      const otherUserCreatedCh = newChannelWithPersonalizedData({
+        name: 'other-user-ch1',
+        ownerId: otherUser.id,
+      });
+      const result = renderer(
+        myChannelAndProfileQuery({
+          channels: [
+            newChannelWithPersonalizedData({ name: 'ch1', ownerId: myUser.id }),
+            otherUserCreatedCh,
+          ],
+          myProfile: myUser,
+        })
+      );
+
+      expect(await result.findByText(/^# ch1$/)).toBeInTheDocument();
+      expect(await result.findByText(/^# other-user-ch1$/)).toBeInTheDocument();
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { unReadMessageCount: _, ...rest } = otherUserCreatedCh;
+      const data = newSubscription({
+        changeNotification: newChangeChannelSubscriptionPayload({
+          mutation: MutationType.Updated,
+          data: { ...rest, name: '[update]other-user-ch1', __typename: 'Channel' },
+        }),
+      });
+      await publishSubscription(publishable, data);
+
+      expect(await result.findByText('# [update]other-user-ch1')).toBeInTheDocument();
+    });
   });
 });
