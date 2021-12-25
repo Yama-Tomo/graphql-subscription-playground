@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom/extend-expect';
 import 'isomorphic-unfetch';
 
-import { mockRouter, server } from '@/test_utils/mocks';
+import { mockWithUrqlClient, mockRouter, server } from '@/test_utils/mocks';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 (process as any).browser = true;
@@ -13,6 +13,7 @@ process.env = {
 };
 
 mockRouter();
+mockWithUrqlClient();
 
 beforeAll(() => server.listen());
 
