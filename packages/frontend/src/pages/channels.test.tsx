@@ -21,9 +21,9 @@ describe('pages/channels', () => {
   it('チャンネル一覧が描画されること', async () => {
     mockSubscriptionExchange();
     const result = renderer();
-    expect(await result.findByText(/ch1/)).toBeInTheDocument();
-    expect(await result.findByText(/ch2/)).toBeInTheDocument();
-    expect(await result.findByText(/dm1/)).toBeInTheDocument();
+    expect(await result.findByText('# ch1')).toBeInTheDocument();
+    expect(await result.findByText('# ch2')).toBeInTheDocument();
+    expect(await result.findByText('dm1')).toBeInTheDocument();
   });
 
   describe('他ユーザからのアクション', () => {
@@ -38,7 +38,8 @@ describe('pages/channels', () => {
       });
       await publishSubscription(publishable, data, 100);
 
-      expect(await result.findByText(/new-add-channel/)).toBeInTheDocument();
+      expect(await result.findByText('# new-add-channel')).toBeInTheDocument();
+    });
 
     it('ほかユーザが作成したチャンネルを削除されたらチャンネル一覧を再描画すること', async () => {
       const [publishable] = mockSubscriptionExchange();
@@ -59,8 +60,8 @@ describe('pages/channels', () => {
         })
       );
 
-      expect(await result.findByText(/^# ch1$/)).toBeInTheDocument();
-      const otherUserCreatedChMatcher = /^# other-user-ch1$/;
+      expect(await result.findByText('# ch1')).toBeInTheDocument();
+      const otherUserCreatedChMatcher = '# other-user-ch1';
       expect(await result.findByText(otherUserCreatedChMatcher)).toBeInTheDocument();
 
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
