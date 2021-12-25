@@ -2,7 +2,11 @@ import { Cache, cacheExchange } from '@urql/exchange-graphcache';
 
 import { MutationType, docs, types } from '@/hooks/api';
 
+import schema from './generated_gql_schema_json';
+
 const cacheConfig = (): types.GraphCacheConfig => ({
+  // パフォーマンスに懸念が出てきたら ...(process.env.NODE_ENV !== 'production' ? { schema ..snip.. } : {}) とする
+  schema: schema as types.GraphCacheConfig['schema'],
   resolvers: {
     Query: {
       messages(parent, args, cache, info) {
