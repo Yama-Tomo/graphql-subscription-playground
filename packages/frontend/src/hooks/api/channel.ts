@@ -7,7 +7,7 @@ import {
   useInviteChannelMutation as useURQLInviteChannelMutation,
   useMyChannelAndProfileQuery as useURQLMyChannelAndProfileQuery,
   useUpdateChannelNameMutation as useURQLUpdateChannelNameMutation,
-} from '@/hooks/api/gql_generated';
+} from '@/hooks/api/generated_gql_codes';
 
 // ----------- fragment -----------
 gql`

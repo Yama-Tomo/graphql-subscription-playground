@@ -14,4 +14,4 @@ export type {
   ReadMessageUsers,
   MessageReadUsersFragmentFragment,
   SearchUsersQuery,
-} from './gql_generated';
+} from './generated_gql_codes';

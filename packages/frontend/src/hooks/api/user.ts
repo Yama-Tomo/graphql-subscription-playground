@@ -5,7 +5,7 @@ import {
   useMyProfileQuery as useURQLMyProfileQuery,
   useSearchUsersQuery as useURQLSearchUsersQuery,
   useSignUpMutation as useURQLSignUpMutation,
-} from '@/hooks/api/gql_generated';
+} from '@/hooks/api/generated_gql_codes';
 
 // ----------- fragment -----------
 gql`

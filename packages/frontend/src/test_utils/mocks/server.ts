@@ -7,7 +7,7 @@ import {
   newChannelWithPersonalizedData,
   newUser,
   User,
-} from './gql_generated_factories';
+} from './generated_gql_mocks';
 
 const myChannelAndProfileQuery = ({
   channels,

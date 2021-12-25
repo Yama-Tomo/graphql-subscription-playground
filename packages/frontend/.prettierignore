@@ -1,4 +1,4 @@
 .next
-src/hooks/api/gql_generated.ts
-src/test_utils/mocks/gql_generated_factories.ts
+src/hooks/api/generated_gql_codes.ts
+src/test_utils/mocks/generated_gql_mocks.ts
 src/libs/urql/generated_gql_schema_json.ts

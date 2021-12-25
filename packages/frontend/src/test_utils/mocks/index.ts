@@ -1,4 +1,4 @@
-export * from './gql_generated_factories';
+export * from './generated_gql_mocks';
 export * from './router';
 export * from './server';
 export * from './subscription';
