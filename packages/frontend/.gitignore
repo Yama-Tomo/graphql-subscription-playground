@@ -36,7 +36,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 
-src/hooks/api/generated_gql_codes.ts
+src/hooks/api/_generated_gql_codes.ts
 src/libs/$path.ts
-src/test_utils/mocks/generated_gql_mocks.ts
-src/libs/urql/generated_gql_schema_json.ts
+src/test_utils/mocks/_generated_gql_mocks.ts
+src/libs/urql/_generated_gql_schema_json.ts

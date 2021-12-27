@@ -2,7 +2,11 @@ import { PubSub } from 'graphql-subscriptions';
 
 import { Context } from '@/context';
 // 同じ変数名と型名が１つのファイルに存在しているとprettier-plugin-sort-importsがエラーになるので別名でimportする
-import { Resolvers, ResolversTypes, Subscription as SubscriptionType } from '@/resolvers/generated';
+import {
+  Resolvers,
+  ResolversTypes,
+  Subscription as SubscriptionType,
+} from '@/resolvers/_generated';
 
 const publishNotification = (
   pubsub: PubSub,

@@ -1,7 +1,7 @@
 import { GraphQLResolveInfo } from 'graphql';
 
 import { Context, UnAuthorizedContext } from '@/context';
-import { MutationResolvers, QueryResolvers, Resolvers } from '@/resolvers/generated';
+import { MutationResolvers, QueryResolvers, Resolvers } from '@/resolvers/_generated';
 import { Mutation } from '@/resolvers/mutation';
 import { ObjectsResolvers } from '@/resolvers/objects';
 import { Query } from '@/resolvers/query';
@@ -60,4 +60,4 @@ const resolvers: Resolvers = {
 };
 
 export { resolvers };
-export type { Message, Channel, User } from '@/resolvers/generated';
+export type { Message, Channel, User } from '@/resolvers/_generated';

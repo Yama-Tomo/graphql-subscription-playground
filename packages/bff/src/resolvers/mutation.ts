@@ -1,5 +1,5 @@
 import { UnAuthorizedContext } from '@/context';
-import { MutationType, Resolvers } from '@/resolvers/generated';
+import { MutationType, Resolvers } from '@/resolvers/_generated';
 import { isMessageRead } from '@/resolvers/libs/message';
 import { publishNotification } from '@/resolvers/subscription';
 

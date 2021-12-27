@@ -1,13 +1,13 @@
 import { gql } from 'urql';
 
-import { toApolloClientIFUseMutation, toApolloClientIFUseQuery } from '@/hooks/api/adapter';
 import {
   useCreateChannelMutation as useURQLCreateChannelMutation,
   useDeleteChannelMutation as useURQLDeleteChannelMutation,
   useInviteChannelMutation as useURQLInviteChannelMutation,
   useMyChannelAndProfileQuery as useURQLMyChannelAndProfileQuery,
   useUpdateChannelNameMutation as useURQLUpdateChannelNameMutation,
-} from '@/hooks/api/generated_gql_codes';
+} from '@/hooks/api/_generated_gql_codes';
+import { toApolloClientIFUseMutation, toApolloClientIFUseQuery } from '@/hooks/api/adapter';
 
 // ----------- fragment -----------
 gql`

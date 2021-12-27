@@ -4,7 +4,7 @@ schema:
   - './src/schema/index.ts':
       noPluck: true
 generates:
-  ./src/resolvers/generated.ts:
+  ./src/resolvers/_generated.ts:
     config:
       useIndexSignature: true
       contextType: ../context#Context

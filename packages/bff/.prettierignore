@@ -1,2 +1,2 @@
 dist
-src/resolvers/generated.ts
+src/resolvers/_generated.ts

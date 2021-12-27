@@ -6,4 +6,4 @@ export {
   ChannelFragmentFragmentDoc,
   MessageFragmentFragmentDoc,
   MessageReadUsersFragmentFragmentDoc,
-} from './generated_gql_codes';
+} from './_generated_gql_codes';

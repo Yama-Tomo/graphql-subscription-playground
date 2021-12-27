@@ -34,7 +34,7 @@ const s = ${JSON.stringify(minified)}
 export default s;
     `;
     fs.writeFileSync(
-      path.resolve(dirname, '..', 'src', 'libs', 'urql', 'generated_gql_schema_json.ts'),
+      path.resolve(dirname, '..', 'src', 'libs', 'urql', '_generated_gql_schema_json.ts'),
       code
     );
   });

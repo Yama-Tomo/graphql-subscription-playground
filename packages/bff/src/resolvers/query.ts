@@ -1,4 +1,4 @@
-import { Resolvers } from '@/resolvers/generated';
+import { Resolvers } from '@/resolvers/_generated';
 
 const Query: Resolvers['Query'] = {
   hello: () => {

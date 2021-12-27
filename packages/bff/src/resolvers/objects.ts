@@ -1,4 +1,4 @@
-import { Resolvers } from '@/resolvers/generated';
+import { Resolvers } from '@/resolvers/_generated';
 import { isMessageRead } from '@/resolvers/libs/message';
 
 const ObjectsResolvers: Resolvers = {

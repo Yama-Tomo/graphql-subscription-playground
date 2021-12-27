@@ -3,7 +3,7 @@ documents:
   - ./src/**/*.tsx
   - ./src/**/*.ts
 generates:
-  ./src/hooks/api/generated_gql_codes.ts:
+  ./src/hooks/api/_generated_gql_codes.ts:
     config:
       scalars:
         Date: string
@@ -12,7 +12,7 @@ generates:
       - typescript-operations
       - typescript-urql
       - typescript-urql-graphcache
-  ./src/test_utils/mocks/generated_gql_mocks.ts:
+  ./src/test_utils/mocks/_generated_gql_mocks.ts:
     config:
       scalarDefaults:
         DateTime: './custom_scalars#DateTime'
