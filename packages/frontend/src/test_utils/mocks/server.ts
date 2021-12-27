@@ -1,4 +1,4 @@
-import { graphql } from 'msw';
+import { graphql, setupWorker } from 'msw';
 import { setupServer } from 'msw/node';
 
 import {
@@ -29,6 +29,18 @@ const myChannelAndProfileQuery = ({
 
 const handlers = [myChannelAndProfileQuery()];
 
-const server = setupServer(...handlers);
+const isBrowser = process.browser;
+const server = isBrowser ? setupWorker(...handlers) : setupServer(...handlers);
+const isMockForNode = (arg: typeof server): arg is ReturnType<typeof setupServer> => !isBrowser;
 
-export { server, handlers, myChannelAndProfileQuery };
+const setupMockServer = () => {
+  if (process.env.NEXT_PUBLIC_ENABLE_MSW === 'enabled') {
+    if (isMockForNode(server)) {
+      server.listen();
+    } else {
+      server.start();
+    }
+  }
+};
+
+export { server, isMockForNode, handlers, myChannelAndProfileQuery, setupMockServer };

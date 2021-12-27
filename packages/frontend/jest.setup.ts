@@ -1,8 +1,9 @@
 import '@testing-library/jest-dom/extend-expect';
 import 'isomorphic-unfetch';
 
-import { mockWithUrqlClient, mockRouter, server } from '@/test_utils/mocks';
+import { mockWithUrqlClient, mockRouter, server, isMockForNode } from '@/test_utils/mocks';
 
+const serverForNode = isMockForNode(server) ? server : undefined;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 (process as any).browser = true;
 
@@ -15,7 +16,7 @@ process.env = {
 mockRouter();
 mockWithUrqlClient();
 
-beforeAll(() => server.listen());
+beforeAll(() => serverForNode?.listen());
 
 afterEach(() => {
   jest.resetAllMocks();
@@ -23,4 +24,4 @@ afterEach(() => {
   server.resetHandlers();
 });
 
-afterAll(() => server.close());
+afterAll(() => serverForNode?.close());

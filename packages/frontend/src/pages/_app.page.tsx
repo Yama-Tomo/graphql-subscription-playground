@@ -15,6 +15,12 @@ import { getUserId } from '@/libs/user';
 
 import '../styles/globals.css';
 
+if (process.env.NODE_ENV !== 'production') {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const mod: typeof import('@/test_utils/mocks') = require('@/test_utils/mocks');
+  mod.setupMockServer();
+}
+
 function MyApp({ Component, pageProps, ...rest }: AppProps) {
   const router = rest.router;
   const [userId, setUserId] = useState<string | undefined>(undefined);
