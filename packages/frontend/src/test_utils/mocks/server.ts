@@ -1,6 +1,8 @@
 import { graphql, setupWorker } from 'msw';
 import { setupServer } from 'msw/node';
 
+import testUtilsMark from '@/test_utils/tree_shake';
+
 import {
   ChannelWithPersonalizedData,
   MyChannelAndProfileDocument,
@@ -35,6 +37,7 @@ const isMockForNode = (arg: typeof server): arg is ReturnType<typeof setupServer
 
 const setupMockServer = () => {
   if (process.env.NEXT_PUBLIC_ENABLE_MSW === 'enabled') {
+    testUtilsMark();
     if (isMockForNode(server)) {
       server.listen();
     } else {

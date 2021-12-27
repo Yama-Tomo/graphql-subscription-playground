@@ -13,7 +13,7 @@
     "gen:gql-schema": "node ./scripts/gen_gql_schema.mjs",
     "gen:chakra-ui-typings": "chakra-cli tokens src/libs/theme.ts",
     "gen:path": "pathpida -o src/libs --ignorePath .gitignore",
-    "build": "next build",
+    "build": "next build && ./scripts/post_build.sh",
     "start": "next start",
     "lint": "FORCE_COLOR=true run-p -l -c lint:*",
     "lint:next": "next lint --max-warnings=0 --format codeframe",
