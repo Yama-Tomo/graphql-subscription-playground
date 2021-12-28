@@ -18,6 +18,7 @@ generates:
         DateTime: './custom_scalars#DateTime'
       scalars:
         Date: string
+        DateTime: string
       avoidOptionals: true
     plugins:
       - typescript

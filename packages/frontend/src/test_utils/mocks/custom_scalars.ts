@@ -1,3 +1,3 @@
-const DateTime = () => new Date();
+const DateTime = () => new Date().toISOString();
 
 export { DateTime };
