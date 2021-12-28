@@ -18,6 +18,7 @@
     "lint": "FORCE_COLOR=true run-p -l -c lint:*",
     "lint:next": "next lint --max-warnings=0 --format codeframe",
     "lint:src-typing": "tsc --pretty",
+    "lint:cypress-typing": "tsc -p cypress --pretty",
     "lint:format": "prettier -c './**/*.{js,ts,tsx}'",
     "format": "prettier -w './**/*.{js,ts,tsx}'",
     "test": "jest"
