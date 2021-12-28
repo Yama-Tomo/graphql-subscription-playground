@@ -42,3 +42,28 @@ jobs:
             packages/frontend/src/libs/$path.ts
             packages/frontend/src/test_utils/mocks/_generated_gql_mocks.ts
             packages/frontend/src/libs/urql/_generated_gql_schema_json.ts
+  frontend_test:
+    needs: generate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: ~/.pnpm-store
+          key: node-modules-${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            node-modules-${{ runner.os }}-
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 16
+      - uses: actions/download-artifact@v2
+        with:
+          name: generated-code
+          path: ./packages
+      - run: npm i -g pnpm
+      - run: pnpm i
+      - run: pnpm lint
+      - name: test
+        run: |
+          cd packages/frontend
+          pnpm test
