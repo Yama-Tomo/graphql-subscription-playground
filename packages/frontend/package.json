@@ -17,7 +17,7 @@
     "start": "next start",
     "lint": "FORCE_COLOR=true run-p -l -c lint:*",
     "lint:next": "next lint --max-warnings=0 --format codeframe",
-    "lint:typing": "tsc --pretty",
+    "lint:src-typing": "tsc --pretty",
     "lint:format": "prettier -c './**/*.{js,ts,tsx}'",
     "format": "prettier -w './**/*.{js,ts,tsx}'",
     "test": "jest"
