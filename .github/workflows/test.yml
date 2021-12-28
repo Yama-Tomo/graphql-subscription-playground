@@ -1,0 +1,36 @@
+name: test
+on:
+  workflow_run:
+    workflows:
+      - generate-code
+    types:
+      - completed
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+      - uses: actions/cache@v2
+        with:
+          path: |
+            node_modules
+            */*/node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            node-modules-${{ runner.os }}-
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 16
+      - run: npm i -g pnpm
+      - uses: dawidd6/action-download-artifact@v2
+        with:
+          name: generated-code
+          workflow: generate-code.yml
+          path: .
+        continue-on-error: true
+      - name: check exsits generated code
+        run: |
+          git status
