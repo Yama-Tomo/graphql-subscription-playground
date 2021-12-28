@@ -2,7 +2,7 @@
   "name": "frontend",
   "private": true,
   "scripts": {
-    "dev": "FORCE_COLOR=true run-p -l -c dev:*",
+    "dev": "pnpm gen && FORCE_COLOR=true run-p -l -c dev:*",
     "dev:serve": "next dev",
     "dev:gql-codes": "pnpm gen:gql-codes -- --watch",
     "dev:gql-schema": "pnpm gen:gql-schema",
