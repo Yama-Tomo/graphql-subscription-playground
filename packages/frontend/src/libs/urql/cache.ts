@@ -29,7 +29,9 @@ const cacheConfig = (): types.GraphCacheConfig => ({
             const isFirstPage = pageCache.arguments?.before == null;
             if (!isFirstPage) {
               // 1ページ目以降のキャッシュが残っているとそれが読み出されてしまうので削除
-              console.log('cache purge', pageCache.arguments);
+              if (process.env.NODE_ENV === 'development') {
+                console.log('cache purge', pageCache.arguments);
+              }
               cache.invalidate(entityKey, fieldName, pageCache.arguments);
             }
 
@@ -73,7 +75,9 @@ const cacheConfig = (): types.GraphCacheConfig => ({
     },
     Subscription: {
       changeNotification: ({ changeNotification: { mutation, data } }, args, cache) => {
-        console.log('subscription:', mutation, data);
+        if (process.env.NODE_ENV === 'development') {
+          console.log('subscription:', mutation, data);
+        }
         if (mutation === MutationType.Created) {
           if (data?.__typename === 'Message') {
             addNewMessage(data, cache);
