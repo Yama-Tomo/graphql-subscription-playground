@@ -80,7 +80,7 @@ const Ui: React.FC<UiProps> = (props) => (
           <MenuButton
             size={'xs'}
             as={IconButton}
-            aria-label="Options"
+            aria-label={`${props.name}-options`}
             icon={<MoreVert />}
             variant="inline"
           />
