@@ -1,0 +1,81 @@
+name: tasks
+on:
+  workflow_call:
+    inputs:
+      task:
+        required: true
+        type: string
+jobs:
+  execute:
+    runs-on: ubuntu-latest
+    env:
+      CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/node_modules/.cypress
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: |
+            node_modules
+            */*/node_modules
+          key: node_modules-${{ runner.os }}@${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            node_modules-${{ runner.os }}@
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 16
+      - run: npm i -g pnpm
+      - run: pnpm i
+      - uses: actions/cache@v2
+        with:
+          key: generated_code@${{ github.sha }}
+          path: |
+            .code_generated
+            packages/bff/src/resolvers/_generated.ts
+            packages/frontend/node_modules/@chakra-ui/styled-system/dist/declarations/src/theming.types.d.ts
+            packages/frontend/src/hooks/api/_generated_gql_codes.ts
+            packages/frontend/src/libs/$path.ts
+            packages/frontend/src/test_utils/mocks/_generated_gql_mocks.ts
+            packages/frontend/src/libs/urql/_generated_gql_schema_json.ts
+      # --------------------------------- tasks ---------------------------------
+      - name: generate code
+        if: ${{ inputs.task == 'generate' || hashFiles('.code_generated') == '' }}
+        run: |
+          cd packages/bff
+          pnpm dev &
+          bff_server_pid=$!
+
+          wait_count=0
+          until `ss -ntl | grep 4000 >/dev/null`; do
+            echo "Wait for start server" && sleep 1 && wait_count=`expr ${wait_count} + 1`
+            [ ${wait_count} -eq 30 ] && exit 1
+          done
+
+          cd ../frontend
+          export GRAPHQL_URL_FOR_CODEGEN=http://localhost:4000/graphql
+          pnpm gen
+          echo ${{ github.sha }} > .code_generated
+
+          kill ${bff_server_pid}
+      - run: pnpm lint
+        if: ${{ inputs.task == 'lint' }}
+      - name: frontend test
+        if: ${{ inputs.task == 'frontend_test' }}
+        run: |
+          cd packages/frontend
+          pnpm test
+      - name: visual regression test
+        if: ${{ inputs.task == 'VR_test' }}
+        uses: cypress-io/github-action@v2
+        with:
+          install: false
+          working-directory: packages/frontend
+          start: pnpm dev:serve
+          wait-on: http://localhost:3000/
+          command: pnpm percy exec -- cypress run --config video=false
+        env:
+          PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
+          NEXT_PUBLIC_ENABLE_MSW: enabled
+          NEXT_PUBLIC_GRAPHQL_URL: http://localhost:9999/dummy/graphql
+          NEXT_PUBLIC_WS_GRAPHQL_URL: ws://localhost:9999/dummy/graphql
+          CYPRESS_BASE_URL: http://localhost:3000/
+          CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/node_modules/.cypress
