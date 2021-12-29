@@ -63,8 +63,8 @@ jobs:
         run: |
           cd packages/frontend
           pnpm test
-      - name: visual regression test
-        if: ${{ inputs.task == 'VR_test' }}
+      - name: headless browser test
+        if: ${{ inputs.task == 'headless_browser_test' }}
         uses: cypress-io/github-action@v2
         with:
           install: false
