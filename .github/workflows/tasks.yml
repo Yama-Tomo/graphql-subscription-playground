@@ -73,6 +73,13 @@ jobs:
         run: |
           cd packages/frontend
           pnpm test
+      - name: faking npx
+        if: ${{ inputs.task == 'headless_browser_test' }}
+        run: |
+          npx=$(which npx)
+          pnpm=$(which pnpm)
+          mv ${npx} ${npx}.org
+          ln -s ${pnpm} ${npx}
       - name: headless browser test
         if: ${{ inputs.task == 'headless_browser_test' }}
         uses: cypress-io/github-action@v2
@@ -83,7 +90,8 @@ jobs:
           working-directory: packages/frontend
           start: pnpm dev:serve
           wait-on: http://localhost:3000/
-          command: pnpm percy exec -- cypress run --config video=false
+          command-prefix: percy exec --
+          config: video=false
         env:
           PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
           PERCY_PARALLEL_TOTAL: ${{ strategy.job-total }}
