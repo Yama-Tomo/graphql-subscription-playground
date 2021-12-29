@@ -5,6 +5,9 @@ on:
       task:
         required: true
         type: string
+    secrets:
+      PERCY_TOKEN:
+        required: false
 jobs:
   execute:
     runs-on: ubuntu-latest
