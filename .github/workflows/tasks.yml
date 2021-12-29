@@ -8,9 +8,17 @@ on:
     secrets:
       PERCY_TOKEN:
         required: false
+      CYPRESS_PROJECT_ID:
+        required: false
+      CYPRESS_RECORD_KEY:
+        required: false
 jobs:
   execute:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        parallelism: ${{ (inputs.task == 'headless_browser_test' && fromJson('[1,2]')) || (fromJson('[1]')) }}
     env:
       CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/node_modules/.cypress
     steps:
@@ -70,14 +78,20 @@ jobs:
         uses: cypress-io/github-action@v2
         with:
           install: false
+          record: true
+          parallel: true
           working-directory: packages/frontend
           start: pnpm dev:serve
           wait-on: http://localhost:3000/
           command: pnpm percy exec -- cypress run --config video=false
         env:
           PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
+          PERCY_PARALLEL_TOTAL: ${{ strategy.job-total }}
+          PERCY_PARALLEL_NONCE: ${{ github.event_name }}-${{ github.sha }}
           NEXT_PUBLIC_ENABLE_MSW: enabled
           NEXT_PUBLIC_GRAPHQL_URL: http://localhost:9999/dummy/graphql
           NEXT_PUBLIC_WS_GRAPHQL_URL: ws://localhost:9999/dummy/graphql
           CYPRESS_BASE_URL: http://localhost:3000/
           CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/node_modules/.cypress
+          CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_PROJECT_ID }}
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
