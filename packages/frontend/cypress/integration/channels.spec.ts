@@ -8,16 +8,15 @@ describe('/channels', () => {
 
     cy.visit(`${env.BASE_URL}/channels`);
     cy.get('body').invoke('attr', 'style', 'caret-color: transparent');
+    cy.waitForNetworkIdle();
   });
 
   it('チャンネル一覧が表示されること', () => {
-    cy.waitForNetworkIdle();
+    cy.contains('ch1');
     cy.takeScreenshot();
   });
 
   it('チャンネル新規作成モーダルが立ち上がること', () => {
-    cy.waitForNetworkIdle();
-
     cy.get(`[aria-label="invite user"]`).click();
     cy.contains('create channel');
     cy.wait(200);
@@ -25,8 +24,6 @@ describe('/channels', () => {
   });
 
   it('チャンネル編集モーダルが立ち上がること', () => {
-    cy.waitForNetworkIdle();
-
     cy.get(`[aria-label="ch1-options"]`).click();
     cy.contains('edit');
     cy.wait(200);
@@ -34,8 +31,6 @@ describe('/channels', () => {
   });
 
   it('DM新規作成モーダルが立ち上がること', () => {
-    cy.waitForNetworkIdle();
-
     cy.get(`[aria-label="add direct message"]`).click();
     cy.contains('create DM channel');
     cy.wait(200);
