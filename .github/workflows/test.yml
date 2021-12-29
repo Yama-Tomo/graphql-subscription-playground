@@ -1,5 +1,11 @@
 name: test
-on: [pull_request]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - '*'
 jobs:
   prepare:
     uses: Yama-Tomo/graphql-subscription-playground/.github/workflows/tasks.yml@main
