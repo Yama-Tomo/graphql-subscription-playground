@@ -44,7 +44,7 @@ const Ui: React.FC<UiProps> = ({
       <List color="gray.700" spacing={2} fontSize={14}>
         <ListItem>
           <Heading mt={4} size={'sm'} display={'flex'} alignItems={'center'}>
-            <Box flex={1}>channels</Box>
+            <Box flex={1}>channels!</Box>
             <IconButton
               aria-label="invite user"
               icon={<AddCircleOutline />}
