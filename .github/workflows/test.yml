@@ -2,21 +2,21 @@ name: test
 on: [pull_request]
 jobs:
   prepare:
-    uses: Yama-Tomo/graphql-subscription-playground/.github/workflows/tasks.yml@main
+    uses: Yama-Tomo/graphql-subscription-playground/.github/workflows/tasks.yml@test1
     with:
       task: generate
   lint:
     needs: prepare
-    uses: Yama-Tomo/graphql-subscription-playground/.github/workflows/tasks.yml@main
+    uses: Yama-Tomo/graphql-subscription-playground/.github/workflows/tasks.yml@test1
     with:
       task: lint
   frontend-test:
     needs: prepare
-    uses: Yama-Tomo/graphql-subscription-playground/.github/workflows/tasks.yml@main
+    uses: Yama-Tomo/graphql-subscription-playground/.github/workflows/tasks.yml@test1
     with:
       task: frontend_test
   visual-regression-test:
     needs: prepare
-    uses: Yama-Tomo/graphql-subscription-playground/.github/workflows/tasks.yml@main
+    uses: Yama-Tomo/graphql-subscription-playground/.github/workflows/tasks.yml@test1
     with:
       task: VR_test
