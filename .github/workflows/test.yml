@@ -15,8 +15,8 @@ jobs:
     uses: Yama-Tomo/graphql-subscription-playground/.github/workflows/tasks.yml@main
     with:
       task: frontend_test
-  visual-regression-test:
+  headless-browser-test:
     needs: prepare
     uses: Yama-Tomo/graphql-subscription-playground/.github/workflows/tasks.yml@main
     with:
-      task: VR_test
+      task: headless_browser_test
