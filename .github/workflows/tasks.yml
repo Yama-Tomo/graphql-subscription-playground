@@ -21,6 +21,7 @@ jobs:
         parallelism: ${{ (inputs.task == 'headless_browser_test' && fromJson('[1,2]')) || (fromJson('[1]')) }}
     env:
       CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/node_modules/.cypress
+      PERCY_POSTINSTALL_BROWSER: true
     steps:
       - uses: actions/checkout@v2
       - uses: actions/cache@v2
