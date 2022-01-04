@@ -8,9 +8,9 @@ import { PublishSubscription, router, server, Subscription } from '@/test_utils/
 
 const createTestRenderer =
   (Component: AppProps['Component'], pageProps?: Omit<AppProps, 'router' | 'Component'>) =>
-  (responseOverride?: GraphQLHandler<GraphQLRequest<never>>) => {
-    if (responseOverride) {
-      server.use(responseOverride);
+  (...responseOverride: GraphQLHandler<GraphQLRequest<never>>[]) => {
+    if (responseOverride.length > 0) {
+      server.use(...responseOverride);
     }
     const appProps: AppProps = {
       Component,

@@ -66,8 +66,10 @@ const latestMessagesQuery = (messageLength = 15) => {
       ctx.data({
         messages: newMessageConnection({
           pageInfo: newPageInfo({
-            startCursor: edges[0].cursor,
-            endCursor: edges[edges.length - 1].cursor,
+            startCursor: edges[0]?.cursor,
+            endCursor: edges[edges.length - 1]?.cursor,
+            hasPreviousPage: false,
+            hasNextPage: false,
           }),
           edges,
         }),
@@ -94,4 +96,11 @@ const setupMockServer = () => {
   }
 };
 
-export { server, isMockForNode, handlers, myChannelAndProfileQuery, setupMockServer };
+export {
+  server,
+  isMockForNode,
+  handlers,
+  myChannelAndProfileQuery,
+  latestMessagesQuery,
+  setupMockServer,
+};
