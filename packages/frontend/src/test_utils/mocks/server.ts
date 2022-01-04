@@ -89,6 +89,7 @@ const setupMockServer = () => {
       server.listen();
     } else {
       server.start();
+      window._msw = server;
     }
   }
 };
