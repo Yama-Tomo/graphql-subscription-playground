@@ -8,7 +8,7 @@ function red() {
 dirname=$(cd $(dirname $0);pwd)
 cd ${dirname}/../
 
-test_utils_mark=$(node -e "console.log(require('./src/test_utils/tree_shake')())")
+test_utils_mark="DEVELOPMENT ONLY CODES"
 result=$(grep -lr "${test_utils_mark}" .next | grep -v '.next/cache/')
 
 if [ "${result}" != "" ]; then
