@@ -34,8 +34,11 @@ type ReadMessageUsers = {
 type DB = { messages: Message[]; channels: Channel[]; users: User[] };
 
 const db: DB = (() => {
-  const dataFile = path.resolve(__dirname, 'db.json');
+  if (process.env.NODE_ENV === 'test') {
+    throw new Error('DB values must be mocked');
+  }
 
+  const dataFile = path.resolve(__dirname, 'db.json');
   const flushToDisk = () => fs.writeFileSync(dataFile, JSON.stringify(db));
 
   process.once('SIGUSR2', function () {
@@ -61,4 +64,4 @@ const db: DB = (() => {
 })();
 
 export { db };
-export type { Channel, Message, User, ChannelWithPersonalizedData, ReadMessageUsers };
+export type { DB, Channel, Message, User, ChannelWithPersonalizedData, ReadMessageUsers };

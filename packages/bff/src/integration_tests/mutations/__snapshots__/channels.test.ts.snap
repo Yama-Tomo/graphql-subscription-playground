@@ -1,0 +1,77 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`channel作成: mutation-result 1`] = `
+Object {
+  "data": Object {
+    "createChannel": Object {
+      "description": "test-ch",
+      "id": "dummy-uuid-v4",
+      "isDM": false,
+      "joinUsers": Array [
+        Object {
+          "id": "u2",
+          "name": "user2",
+        },
+        Object {
+          "id": "u1",
+          "name": "user1",
+        },
+      ],
+      "name": "test-ch",
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`channel作成: subscription-payload-u1 1`] = `
+Object {
+  "done": false,
+  "value": Object {
+    "changeNotification": Object {
+      "__typename": "ChangeChannelSubscriptionPayload",
+      "data": Object {
+        "description": "test-ch",
+        "id": "dummy-uuid-v4",
+        "isDM": false,
+        "joinUserIds": Array [
+          "u2",
+          "u1",
+        ],
+        "name": "test-ch",
+        "ownerId": "u1",
+      },
+      "mutation": "CREATED",
+    },
+  },
+}
+`;
+
+exports[`channel作成: subscription-payload-u2 1`] = `
+Object {
+  "done": false,
+  "value": Object {
+    "changeNotification": Object {
+      "__typename": "ChangeChannelSubscriptionPayload",
+      "data": Object {
+        "description": "test-ch",
+        "id": "dummy-uuid-v4",
+        "isDM": false,
+        "joinUserIds": Array [
+          "u2",
+          "u1",
+        ],
+        "name": "test-ch",
+        "ownerId": "u1",
+      },
+      "mutation": "CREATED",
+    },
+  },
+}
+`;

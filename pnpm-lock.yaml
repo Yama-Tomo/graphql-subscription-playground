@@ -15,7 +15,10 @@ importers:
       '@graphql-codegen/typescript': ^2.4.1
       '@graphql-codegen/typescript-resolvers': ^2.4.2
       '@graphql-tools/schema': ^8.3.1
+      '@swc/core': ^1.2.124
+      '@swc/jest': ^0.2.15
       '@trivago/prettier-plugin-sort-imports': ^3.1.1
+      '@types/jest': ^27.0.3
       '@types/source-map-support': ^0.5.4
       '@types/uuid': ^8.3.3
       '@typescript-eslint/eslint-plugin': ^5.6.0
@@ -33,6 +36,7 @@ importers:
       graphql: ^16.0.1
       graphql-scalars: ^1.14.1
       graphql-subscriptions: ^2.0.0
+      jest: ^27.4.5
       nodemon: ^2.0.15
       npm-run-all: ^4.1.5
       prettier: ^2.5.1
@@ -58,7 +62,10 @@ importers:
       '@graphql-codegen/cli': 2.3.0_graphql@16.2.0
       '@graphql-codegen/typescript': 2.4.1_graphql@16.2.0
       '@graphql-codegen/typescript-resolvers': 2.4.2_graphql@16.2.0
+      '@swc/core': 1.2.124
+      '@swc/jest': 0.2.15_@swc+core@1.2.124
       '@trivago/prettier-plugin-sort-imports': 3.1.1_prettier@2.5.1
+      '@types/jest': 27.0.3
       '@types/source-map-support': 0.5.4
       '@types/uuid': 8.3.3
       '@typescript-eslint/eslint-plugin': 5.8.1_0b0546e81f411a2a73324569a2f4c90e
@@ -67,6 +74,7 @@ importers:
       esbuild-node-externals: 1.4.1_esbuild@0.14.9
       eslint: 7.32.0
       eslint-config-prettier: 8.3.0_eslint@7.32.0
+      jest: 27.4.5
       nodemon: 2.0.15
       npm-run-all: 4.1.5
       prettier: 2.5.1

@@ -1,0 +1,72 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`メッセージ一覧 1`] = `
+Object {
+  "data": Object {
+    "messages": Object {
+      "edges": Array [
+        Object {
+          "cursor": "mes1",
+          "node": Object {
+            "channelId": "ch1",
+            "date": 2021-01-01T00:00:00.000Z,
+            "id": "mes1",
+            "readUsers": Array [
+              Object {
+                "id": "u1",
+                "name": "user1",
+              },
+            ],
+            "text": "mes1",
+            "user": Object {
+              "id": "u1",
+              "name": "user1",
+            },
+          },
+        },
+        Object {
+          "cursor": "mes2",
+          "node": Object {
+            "channelId": "ch1",
+            "date": 2021-01-01T00:00:00.000Z,
+            "id": "mes2",
+            "readUsers": Array [],
+            "text": "mes2",
+            "user": Object {
+              "id": "u1",
+              "name": "user1",
+            },
+          },
+        },
+        Object {
+          "cursor": "mes3",
+          "node": Object {
+            "channelId": "ch1",
+            "date": 2021-01-01T00:00:00.000Z,
+            "id": "mes3",
+            "readUsers": Array [],
+            "text": "mes3",
+            "user": Object {
+              "id": "u2",
+              "name": "user2",
+            },
+          },
+        },
+      ],
+      "pageInfo": Object {
+        "endCursor": "mes3",
+        "hasNextPage": false,
+        "hasPreviousPage": false,
+        "startCursor": "mes1",
+      },
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
