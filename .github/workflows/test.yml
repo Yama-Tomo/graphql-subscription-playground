@@ -21,11 +21,24 @@ jobs:
     uses: Yama-Tomo/graphql-subscription-playground/.github/workflows/tasks.yml@main
     with:
       task: frontend_test
-  headless-browser-test:
+  bff-test:
     needs: prepare
     uses: Yama-Tomo/graphql-subscription-playground/.github/workflows/tasks.yml@main
     with:
+      task: bff_test
+  generate-percy-nonce:
+    runs-on: ubuntu-latest
+    outputs:
+      result: ${{ steps.nonce.outputs.result }}
+    steps:
+      - id: nonce
+        run: echo "::set-output name=result::${{ github.run_id }}-$(date +%s)"
+  headless-browser-test:
+    needs: [prepare, generate-percy-nonce]
+    uses: Yama-Tomo/graphql-subscription-playground/.github/workflows/tasks.yml@main
+    with:
       task: headless_browser_test
+      percy_nonce: ${{ needs.generate-percy-nonce.outputs.result }}
     secrets:
       PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
       CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_PROJECT_ID }}

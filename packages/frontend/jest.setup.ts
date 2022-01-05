@@ -13,10 +13,11 @@ process.env = {
   NEXT_PUBLIC_WS_GRAPHQL_URL: 'ws://localhost:9999/ws/graphql', // dummy
 };
 
-mockRouter();
-mockWithUrqlClient();
-
 beforeAll(() => serverForNode?.listen());
+beforeEach(() => {
+  mockWithUrqlClient();
+  mockRouter();
+});
 
 afterEach(() => {
   jest.resetAllMocks();

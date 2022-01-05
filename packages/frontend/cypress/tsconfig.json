@@ -3,6 +3,6 @@
   "compilerOptions": {
     "isolatedModules": false,
   },
-  "include": ["./**/*.ts" ,"../node_modules/cypress/types/", "../node_modules/@percy/cypress/types"],
+  "include": ["./**/*.ts", "../src/types/" ,"../node_modules/cypress/types/", "../node_modules/@percy/cypress/types"],
   "exclude": ["node_modules/**!(cypress|@percy/cypress)"]
 }

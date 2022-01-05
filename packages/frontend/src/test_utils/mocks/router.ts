@@ -1,6 +1,6 @@
-import { Router } from '@/libs/router';
+import * as Router from '@/libs/router';
 
-const router = (): Router => {
+const router = (): Router.Router => {
   return {
     route: '/',
     pathname: '/',
@@ -26,9 +26,7 @@ const router = (): Router => {
 };
 
 const mockRouter = () => {
-  jest.mock('@/libs/router', () => ({
-    useRouter: router,
-  }));
+  jest.spyOn(Router, 'useRouter').mockImplementation(router);
 };
 
 export { router, mockRouter };

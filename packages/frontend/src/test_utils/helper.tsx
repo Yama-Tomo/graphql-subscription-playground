@@ -3,14 +3,13 @@ import { GraphQLHandler, GraphQLRequest } from 'msw';
 import { AppProps } from 'next/app';
 import React from 'react';
 
-import App from '@/pages/_app.page';
 import { PublishSubscription, router, server, Subscription } from '@/test_utils/mocks';
 
 const createTestRenderer =
   (Component: AppProps['Component'], pageProps?: Omit<AppProps, 'router' | 'Component'>) =>
-  (responseOverride?: GraphQLHandler<GraphQLRequest<never>>) => {
-    if (responseOverride) {
-      server.use(responseOverride);
+  (...responseOverride: GraphQLHandler<GraphQLRequest<never>>[]) => {
+    if (responseOverride.length > 0) {
+      server.use(...responseOverride);
     }
     const appProps: AppProps = {
       Component,
@@ -20,6 +19,10 @@ const createTestRenderer =
       pageProps: pageProps || {},
     };
 
+    // _app.page.tsxをimportしてしまうとその中で呼び出しているwithUrqlClientが先に実行され
+    // beforeEachで行うnext-urqlのモックが無意味になるのでrequireを使ってこのタイミングで動的に読み込む
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const { default: App }: typeof import('@/pages/_app.page') = require('@/pages/_app.page');
     return render(<App {...appProps} />);
   };
 
