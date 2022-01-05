@@ -74,6 +74,11 @@ jobs:
         run: |
           cd packages/frontend
           pnpm test
+      - name: bff test
+        if: ${{ inputs.task == 'bff_test' }}
+        run: |
+          cd packages/bff
+          pnpm test
       - name: faking npx
         if: ${{ inputs.task == 'headless_browser_test' }}
         run: |
