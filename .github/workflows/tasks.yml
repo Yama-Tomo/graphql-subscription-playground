@@ -5,6 +5,9 @@ on:
       task:
         required: true
         type: string
+      percy_nonce:
+        required: false
+        type: string
     secrets:
       PERCY_TOKEN:
         required: false
@@ -101,7 +104,7 @@ jobs:
         env:
           PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
           PERCY_PARALLEL_TOTAL: ${{ strategy.job-total }}
-          PERCY_PARALLEL_NONCE: ${{ github.event_name }}-${{ github.sha }}
+          PERCY_PARALLEL_NONCE: ${{ inputs.percy_nonce }}
           NEXT_PUBLIC_ENABLE_MSW: enabled
           NEXT_PUBLIC_GRAPHQL_URL: http://localhost:9999/dummy/graphql
           NEXT_PUBLIC_WS_GRAPHQL_URL: ws://localhost:9999/dummy/graphql
