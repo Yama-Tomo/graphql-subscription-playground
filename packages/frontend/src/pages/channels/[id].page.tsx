@@ -28,20 +28,26 @@ type UiProps = {
 const Ui: React.FC<UiProps> = (props) => (
   <>
     <Flex p={2} color={'gray.700'} boxShadow="md" alignItems={'center'}>
-      <Heading mt={2} mb={2} size={'md'} display={'flex'} alignItems={'center'}>
-        <Box display={{ base: 'inline', md: 'none' }} me={1.5}>
-          <DrawerMenu
-            buttonStyleProps={{ size: 'sm' }}
-            activeChId={props.activeChId}
-            addReFetchEventListener={props.addReFetchEventListener}
-            removeReFetchEventListener={props.removeReFetchEventListener}
-            onChannelCreated={props.onChannelCreated}
-            onDMChannelCreated={props.onDMChannelCreated}
-          />
-        </Box>
-        <Box># {props.channelName}</Box>
-        {!props.isDM && (
-          <>
+      <Flex flex={1} alignItems={'center'} flexWrap={'wrap'} me={4}>
+        <Heading
+          mt={2}
+          mb={2}
+          fontSize={{ base: 'md', md: 'xl' }}
+          display={'flex'}
+          alignItems={'center'}
+        >
+          <Box display={{ base: 'inline', md: 'none' }} me={1.5}>
+            <DrawerMenu
+              buttonStyleProps={{ size: 'sm' }}
+              activeChId={props.activeChId}
+              addReFetchEventListener={props.addReFetchEventListener}
+              removeReFetchEventListener={props.removeReFetchEventListener}
+              onChannelCreated={props.onChannelCreated}
+              onDMChannelCreated={props.onDMChannelCreated}
+            />
+          </Box>
+          <Box># {props.channelName}</Box>
+          {!props.isDM && (
             <IconButton
               ml={2}
               aria-label="add user"
@@ -49,15 +55,15 @@ const Ui: React.FC<UiProps> = (props) => (
               size={'xs'}
               onClick={props.onAddUserClick}
             />
-          </>
+          )}
+        </Heading>
+        {props.description && (
+          <Box fontWeight={'light'} color={'gray.700'} fontSize={'xs'} ms={{ base: 2, md: 4 }}>
+            {props.description}
+          </Box>
         )}
-      </Heading>
-      {props.description && (
-        <Box fontWeight={'light'} color={'gray.700'} fontSize={'xs'} ms={4}>
-          {props.description}
-        </Box>
-      )}
-      <Box flex={1} textAlign={'right'} fontSize={'xs'}>
+      </Flex>
+      <Box textAlign={'right'} fontSize={'xs'}>
         <Tag fontSize={'xs'} colorScheme={'teal'}>
           {props.joinedUserCount} users
         </Tag>

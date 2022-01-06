@@ -51,7 +51,13 @@ const Ui = forwardRef<HTMLDivElement, UiProps>((props, ref) => (
             <Heading as={'span'} fontSize={'sm'}>
               {props.userName}
             </Heading>
-            <Box as={'span'} ml="2" fontSize={'xs'} color={'gray.500'}>
+            <Box
+              as={'span'}
+              display={{ base: 'block', md: 'initial' }}
+              ms={{ base: 0, md: '2' }}
+              fontSize={'xs'}
+              color={'gray.500'}
+            >
               {props.date}
             </Box>
             <Box fontSize={'sm'}>
