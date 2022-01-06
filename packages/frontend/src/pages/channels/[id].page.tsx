@@ -6,10 +6,10 @@ import { CreateMessage } from '@/components/CreateMessage';
 import { PersonAdd } from '@/components/Icons';
 import { Messages, MessagesProps } from '@/components/Messages';
 import { SearchUserModal, SearchUserModalProps } from '@/components/SearchUserModal';
+import { WithChannelsPage } from '@/components/WithChannelsPage';
 import { useInviteChannelMutation, useMyChannelAndProfileQuery } from '@/hooks/api';
 import { getDMChannelName } from '@/libs/channel';
 import { useRouter } from '@/libs/router';
-import Channel from '@/pages/channels.page';
 
 type UiProps = {
   channelId: string;
@@ -23,7 +23,7 @@ type UiProps = {
 } & MessagesProps &
   Pick<SearchUserModalProps, 'renderUserName' | 'onSearchResultClick'>;
 const Ui: React.FC<UiProps> = (props) => (
-  <Channel activeChId={props.channelId}>
+  <>
     <Flex p={2} color={'gray.700'} boxShadow="md" alignItems={'center'}>
       <Heading mt={2} mb={2} size={'md'} display={'flex'} alignItems={'center'}>
         <Box># {props.channelName}</Box>
@@ -61,7 +61,7 @@ const Ui: React.FC<UiProps> = (props) => (
     )}
     <Messages channelId={props.channelId} myUserId={props.myUserId} />
     <CreateMessage channelId={props.channelId} />
-  </Channel>
+  </>
 );
 
 const Container: NextPage = () => {
@@ -112,4 +112,4 @@ const Container: NextPage = () => {
   return <Ui {...uiProps} />;
 };
 
-export default Container;
+export default WithChannelsPage(Container);

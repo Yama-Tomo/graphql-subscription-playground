@@ -55,3 +55,4 @@ const Container: NextPage<ContainerProps> = (props) => {
 };
 
 export default Container;
+export type { ContainerProps as ChannelsPageProps };
