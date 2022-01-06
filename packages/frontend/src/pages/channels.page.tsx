@@ -1,14 +1,32 @@
+import { Box } from '@chakra-ui/react';
 import { NextPage } from 'next';
 import React, { useEffect } from 'react';
 
 import { Channels, ChannelsProps } from '@/components/Channels';
-import { useMyChannelAndProfileQuery } from '@/hooks/api';
 import { pagesPath } from '@/libs/$path';
 import { useRouter } from '@/libs/router';
 
-type ContainerProps = Pick<ChannelsProps, 'activeChId'>;
+type UiProps = Omit<ChannelsProps, 'sideNavStyle'>;
+const Ui: React.FC<UiProps> = ({ children, ...rest }) => (
+  <>
+    <Channels
+      {...rest}
+      sideNavStyle={{
+        padding: 2,
+        w: '170px',
+        height: 'calc(100vh - 5.75rem)',
+        overflowY: 'auto',
+        position: 'sticky',
+        borderRight: '1px solid',
+        borderColor: 'gray.200',
+        top: '64px',
+      }}
+    />
+  </>
+);
+
+type ContainerProps = Pick<UiProps, 'activeChId'>;
 const Container: NextPage<ContainerProps> = (props) => {
-  const { data, loading, refetch } = useMyChannelAndProfileQuery();
   const router = useRouter();
 
   useEffect(() => {
@@ -19,26 +37,12 @@ const Container: NextPage<ContainerProps> = (props) => {
 
   const gotoChannel = (id: string) => router.push(pagesPath.channels._id(id).$url());
 
-  const channelsProps: ChannelsProps = {
+  const uiProps: UiProps = {
     ...props,
-    myUserId: data?.myProfile.id || '',
-    channels: data?.channels ? data.channels.filter((channel) => !channel.isDM) : [],
-    DMChannels: data?.channels ? data.channels.filter((channel) => channel.isDM) : [],
-    loading,
-    sideNavStyle: {
-      padding: 2,
-      w: '170px',
-      height: 'calc(100vh - 5.75rem)',
-      overflowY: 'auto',
-      position: 'sticky',
-      borderRight: '1px solid',
-      borderColor: 'gray.200',
-      top: '64px',
-    },
     onChannelCreated: gotoChannel,
     onDMChannelCreated: gotoChannel,
   };
-  return <Channels {...channelsProps} />;
+  return <Ui {...uiProps} />;
 };
 
 export default Container;

@@ -6,7 +6,7 @@ import { CreateChannelModal, CreateChannelModalProps } from '@/components/Create
 import { CreateDMChannelModal, CreateDMChannelModalProps } from '@/components/CreateDMChannelModal';
 import { AddCircleOutline } from '@/components/Icons';
 import { ListSkeleton } from '@/components/ListSkelton';
-import { types } from '@/hooks/api';
+import { types, useMyChannelAndProfileQuery } from '@/hooks/api';
 import { getDMChannelName } from '@/libs/channel';
 
 type ChannelTypes = 'channel' | 'DM' | undefined;
@@ -105,30 +105,31 @@ const Ui: React.FC<UiProps> = ({
 
 type ContainerProps = Pick<
   UiProps,
-  | 'activeChId'
-  | 'channels'
-  | 'DMChannels'
-  | 'myUserId'
-  | 'loading'
-  | 'sideNavStyle'
-  | 'onDMChannelCreated'
-  | 'onChannelCreated'
->;
+  'activeChId' | 'sideNavStyle' | 'onDMChannelCreated' | 'onChannelCreated'
+>
 const Container: React.FC<ContainerProps> = (props) => {
   const [state, setState] = useState<{ editingChannelType: ChannelTypes | undefined }>({
     editingChannelType: undefined,
   });
+  const { data, loading, refetch } = useMyChannelAndProfileQuery();
+
+  const { addReFetchEventListener, removeReFetchEventListener } = props;
 
   const hideModal = () => setState((current) => ({ ...current, editingChannelType: undefined }));
+  const myUserId = data?.myProfile.id || '';
 
   const uiProps: UiProps = {
     ...props,
     ...state,
-    channels: props.channels.filter((channel) => !channel.isDM),
-    DMChannels: props.DMChannels.filter((channel) => channel.isDM).map((channel) => ({
-      ...channel,
-      name: getDMChannelName(channel, props.myUserId),
-    })),
+    loading,
+    myUserId,
+    channels: (data?.channels || []).filter((channel) => !channel.isDM),
+    DMChannels: (data?.channels || [])
+      .filter((channel) => channel.isDM)
+      .map((channel) => ({
+        ...channel,
+        name: getDMChannelName(channel, myUserId),
+      })),
     onCreateClick: (type) => {
       setState((current) => ({ ...current, editingChannelType: type }));
     },
