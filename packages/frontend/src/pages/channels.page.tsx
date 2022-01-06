@@ -1,6 +1,6 @@
 import { Box } from '@chakra-ui/react';
 import { NextPage } from 'next';
-import React, { useEffect } from 'react';
+import React, { useCallback } from 'react';
 
 import { Channels, ChannelsProps } from '@/components/Channels';
 import { pagesPath } from '@/libs/$path';
@@ -32,16 +32,22 @@ type ContainerProps = Pick<UiProps, 'activeChId'>;
 const Container: NextPage<ContainerProps> = (props) => {
   const router = useRouter();
 
-  useEffect(() => {
-    router.events.on('routeChangeStart', () => {
-      refetch({ requestPolicy: 'network-only' });
-    });
-  }, [router, refetch]);
-
   const gotoChannel = (id: string) => router.push(pagesPath.channels._id(id).$url());
 
   const uiProps: UiProps = {
     ...props,
+    addReFetchEventListener: useCallback(
+      (handler) => {
+        router.events.on('routeChangeStart', handler);
+      },
+      [router]
+    ),
+    removeReFetchEventListener: useCallback(
+      (handler) => {
+        router.events.off('routeChangeStart', handler);
+      },
+      [router]
+    ),
     onChannelCreated: gotoChannel,
     onDMChannelCreated: gotoChannel,
   };

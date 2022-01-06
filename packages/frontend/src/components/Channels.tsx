@@ -1,5 +1,5 @@
 import { Box, BoxProps, Heading, IconButton, List, ListItem } from '@chakra-ui/react';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { ChannelListItem } from '@/components/ChannelListItem';
 import { CreateChannelModal, CreateChannelModalProps } from '@/components/CreateChannelModal';
@@ -102,7 +102,10 @@ const Ui: React.FC<UiProps> = ({
 type ContainerProps = Pick<
   UiProps,
   'activeChId' | 'sideNavStyle' | 'onDMChannelCreated' | 'onChannelCreated'
->
+> & {
+  addReFetchEventListener?: (handler: () => void) => void;
+  removeReFetchEventListener?: (handler: () => void) => void;
+};
 const Container: React.FC<ContainerProps> = (props) => {
   const [state, setState] = useState<{ editingChannelType: ChannelTypes | undefined }>({
     editingChannelType: undefined,
@@ -110,6 +113,16 @@ const Container: React.FC<ContainerProps> = (props) => {
   const { data, loading, refetch } = useMyChannelAndProfileQuery();
 
   const { addReFetchEventListener, removeReFetchEventListener } = props;
+  useEffect(() => {
+    const handler = () => {
+      refetch({ requestPolicy: 'network-only' });
+    };
+
+    addReFetchEventListener?.(handler);
+    return () => {
+      removeReFetchEventListener?.(handler);
+    };
+  }, [addReFetchEventListener, removeReFetchEventListener, refetch]);
 
   const hideModal = () => setState((current) => ({ ...current, editingChannelType: undefined }));
   const myUserId = data?.myProfile.id || '';
