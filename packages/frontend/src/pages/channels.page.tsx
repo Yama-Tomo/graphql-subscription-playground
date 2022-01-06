@@ -22,6 +22,9 @@ const Ui: React.FC<UiProps> = ({ children, ...rest }) => (
         top: '64px',
       }}
     />
+    <Box flex="1" display={'flex'} flexDirection={'column'}>
+      {children}
+    </Box>
   </>
 );
 

@@ -37,7 +37,6 @@ const Ui: React.FC<UiProps> = ({
   onDMChannelCreated,
   editingChannelType,
   sideNavStyle = {},
-  children,
 }) => (
   <>
     <Box as={'nav'} {...sideNavStyle}>
@@ -87,9 +86,6 @@ const Ui: React.FC<UiProps> = ({
             />
           ))}
       </List>
-    </Box>
-    <Box flex="1" display={'flex'} flexDirection={'column'}>
-      {children}
     </Box>
     {editingChannelType === 'channel' && (
       <CreateChannelModal onCreateCancel={onChannelCreateCancel} onCreated={onChannelCreated} />
