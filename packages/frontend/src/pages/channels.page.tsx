@@ -9,12 +9,15 @@ import { useRouter } from '@/libs/router';
 type UiProps = Omit<ChannelsProps, 'sideNavStyle'>;
 const Ui: React.FC<UiProps> = ({ children, ...rest }) => (
   <>
-    <Box display={{ base: 'none', md: 'block' }}>
+    <Box
+      display={{ base: rest.activeChId ? 'none' : 'block', md: 'block' }}
+      w={{ base: '80%', md: '20%' }}
+      maxW={'250px'}
+    >
       <Channels
         {...rest}
         sideNavStyle={{
           padding: 2,
-          w: '170px',
           height: 'calc(100vh - 5.75rem)',
           overflowY: 'auto',
           position: 'sticky',
