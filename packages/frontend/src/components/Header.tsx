@@ -13,10 +13,12 @@ const Ui = () => (
     top={0}
     zIndex="sticky"
   >
-    <Box p={2} height={'56px'}>
+    <Box p={2} height={{ base: '48px', md: '56px' }}>
       <Flex height={'100%'} justifyContent="center">
         <Center flex="1">
-          <Heading size="md">GraphQL subscription playground</Heading>
+          <Heading size={'md'} fontSize={{ base: 'sm', md: 'xl' }}>
+            GraphQL subscription playground
+          </Heading>
         </Center>
       </Flex>
     </Box>
