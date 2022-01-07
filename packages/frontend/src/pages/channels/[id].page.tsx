@@ -89,11 +89,11 @@ const Container: NextPage = () => {
   const { data } = useMyChannelAndProfileQuery();
   const [invite] = useInviteChannelMutation();
 
-  if (!router.query.id) {
+  if (!router.query.id || !data) {
     return null;
   }
 
-  const currentChannel = data && data.channels.find((ch) => ch.id == router.query.id);
+  const currentChannel = data.channels.find((ch) => ch.id == router.query.id);
   if (!currentChannel) {
     return <div>page not found..</div>;
   }
