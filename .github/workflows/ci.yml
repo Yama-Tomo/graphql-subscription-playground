@@ -45,8 +45,8 @@ jobs:
     outputs:
       result: ${{ steps.nonce.outputs.result }}
     steps:
-      - id: nonce
-        run: echo "::set-output name=result::${{ github.run_id }}-$(date +%s)"
+    - id: nonce
+      run: echo "::set-output name=result::${{ github.run_id }}-$(date +%s)"
   headless-browser-test:
     needs: [prepare, generate-percy-nonce]
     runs-on: ubuntu-latest
