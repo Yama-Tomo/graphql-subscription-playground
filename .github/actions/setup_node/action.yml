@@ -1,0 +1,26 @@
+name: setup_node
+description: setup node.js
+
+runs:
+  using: composite
+  steps:
+  - uses: actions/cache@v2
+    with:
+      path: |
+        node_modules
+        */*/node_modules
+      key: node_modules-${{ runner.os }}@${{ hashFiles('**/pnpm-lock.yaml') }}
+      restore-keys: |
+        node_modules-${{ runner.os }}@
+  - uses: actions/setup-node@v2
+    with:
+      node-version: 16
+  - shell: bash
+    run: |
+      export CYPRESS_CACHE_FOLDER=${{ github.workspace }}/node_modules/.cypress
+      export PERCY_POSTINSTALL_BROWSER=true
+
+      npm i -g pnpm
+  - shell: bash
+    run: pnpm i
+
