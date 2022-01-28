@@ -1,0 +1,93 @@
+name: CI
+on:
+  pull_request:
+  push:
+    branches:
+    - main
+
+env:
+  CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/node_modules/.cypress
+  PERCY_POSTINSTALL_BROWSER: true
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: ./.github/actions/setup_node
+    - uses: ./.github/actions/code_generate
+  lint:
+    needs: prepare
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: ./.github/actions/setup_node
+    - uses: ./.github/actions/code_generate
+    - run: pnpm lint
+  frontend-test:
+    needs: prepare
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: ./.github/actions/setup_node
+    - uses: ./.github/actions/code_generate
+    - run: |
+        cd packages/frontend
+        pnpm test
+  bff-test:
+    needs: prepare
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: ./.github/actions/setup_node
+    - uses: ./.github/actions/code_generate
+    - run: |
+        cd packages/bff
+        pnpm test
+  generate-percy-nonce:
+    runs-on: ubuntu-latest
+    outputs:
+      result: ${{ steps.nonce.outputs.result }}
+    steps:
+    - id: nonce
+      run: echo "::set-output name=result::${{ github.run_id }}-$(date +%s)"
+  headless-browser-test:
+    needs: [prepare, generate-percy-nonce]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        parallelism: [1,2]
+    steps:
+    - uses: actions/checkout@v2
+    - uses: ./.github/actions/setup_node
+    - uses: ./.github/actions/code_generate
+    - name: faking npx
+      run: |
+        npx=$(which npx)
+        pnpm=$(which pnpm)
+        mv ${npx} ${npx}.org
+        ln -s ${pnpm} ${npx}
+    - name: headless browser test
+      uses: cypress-io/github-action@v2
+      with:
+        install: false
+        record: true
+        parallel: true
+        working-directory: packages/frontend
+        start: pnpm dev:serve
+        wait-on: http://localhost:3000/
+        command-prefix: percy exec --
+        config: video=false
+      env:
+        PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
+        PERCY_PARALLEL_TOTAL: ${{ strategy.job-total }}
+        PERCY_PARALLEL_NONCE: ${{ needs.generate-percy-nonce.outputs.result }}
+        NEXT_PUBLIC_ENABLE_MSW: enabled
+        NEXT_PUBLIC_GRAPHQL_URL: http://localhost:9999/dummy/graphql
+        NEXT_PUBLIC_WS_GRAPHQL_URL: ws://localhost:9999/dummy/graphql
+        CYPRESS_BASE_URL: http://localhost:3000/
+        CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/node_modules/.cypress
+        CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_PROJECT_ID }}
+        CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+
