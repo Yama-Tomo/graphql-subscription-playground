@@ -5,6 +5,10 @@ on:
     branches:
     - main
 
+env:
+  CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/node_modules/.cypress
+  PERCY_POSTINSTALL_BROWSER: true
+
 jobs:
   prepare:
     runs-on: ubuntu-latest

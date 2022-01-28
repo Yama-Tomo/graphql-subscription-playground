@@ -16,11 +16,7 @@ runs:
     with:
       node-version: 16
   - shell: bash
-    run: |
-      export CYPRESS_CACHE_FOLDER=${{ github.workspace }}/node_modules/.cypress
-      export PERCY_POSTINSTALL_BROWSER=true
-
-      npm i -g pnpm
+    run: npm i -g pnpm
   - shell: bash
     run: pnpm i
 
