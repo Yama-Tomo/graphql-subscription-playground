@@ -4,9 +4,12 @@ import {
   OperationResult,
   UseMutationResponse,
   UseMutationState,
+  useQuery as useURQLQuery,
   UseQueryArgs,
   UseQueryResponse,
 } from 'urql';
+
+import { AnyTypedDocNode, TypedUseQueryArgs, TypedUseQueryResponse } from './typed_document';
 
 type UseCustomQueryArgs<T> = T extends Omit<UseQueryArgs, 'query'>
   ? Omit<T, 'requestPolicy' | 'pause'> & {
@@ -38,6 +41,30 @@ const toApolloClientIFUseQuery = <
       refetch,
     };
   };
+};
+
+type UseQueryOptions<T extends AnyTypedDocNode> = UseCustomQueryArgs<
+  Omit<TypedUseQueryArgs<T>, 'query'>
+>;
+type UseQueryReturn<T extends AnyTypedDocNode> = {
+  data: TypedUseQueryResponse<T>[0]['data'];
+  loading: TypedUseQueryResponse<T>[0]['fetching'];
+  error: TypedUseQueryResponse<T>[0]['error'];
+  extra: {
+    isValidating: TypedUseQueryResponse<T>[0]['stale'];
+  } & Pick<TypedUseQueryResponse<T>[0], 'extensions' | 'operation'>;
+  refetch: TypedUseQueryResponse<T>[1];
+};
+const useQuery = <T extends AnyTypedDocNode>(
+  query: T,
+  opts?: UseQueryOptions<T>
+): UseQueryReturn<T> => {
+  const args = { query, ...(opts ? swapOptKeys(opts) : {}) };
+  const [res, refetch] = useURQLQuery(args);
+  const { data, fetching: loading, error, ...extra } = res;
+  const { stale, ...restExtra } = extra;
+
+  return { data, loading, error, extra: { ...restExtra, isValidating: stale }, refetch };
 };
 
 type WrappedExecute<Data = unknown, Variables = unknown> = (
@@ -92,4 +119,5 @@ const swapOptKeys = <T extends Record<string, any>>(options: T) => {
   }, {});
 };
 
-export { toApolloClientIFUseQuery, toApolloClientIFUseMutation };
+export { toApolloClientIFUseQuery, toApolloClientIFUseMutation, useQuery };
+export type { UseQueryOptions, UseQueryReturn };
