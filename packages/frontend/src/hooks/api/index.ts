@@ -5,3 +5,6 @@ export * as docs from './docs';
 export * as types from './types';
 export { MutationType, useChangeNotificationSubscription } from './_generated_gql_codes';
 export { useQuery } from './adapter';
+export * from './colocation_util';
+export * from './typed_document';
+export * from './_generated_gql_typed_doc_nodes';

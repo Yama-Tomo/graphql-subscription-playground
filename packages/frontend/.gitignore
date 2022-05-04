@@ -37,6 +37,7 @@ yarn-error.log*
 *.tsbuildinfo
 
 src/hooks/api/_generated_gql_codes.ts
+src/hooks/api/_generated_gql_typed_doc_nodes.ts
 src/libs/$path.ts
 src/test_utils/mocks/_generated_gql_mocks.ts
 src/libs/urql/_generated_gql_schema_json.ts
