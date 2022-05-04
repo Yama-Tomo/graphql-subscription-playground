@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import { useSearchUsersQuery } from '@/hooks/api';
+import { useQuery, SearchUserModalDocument } from '@/hooks/api';
 
 const useSearchUsers = (delay = 300) => {
   const [searchVars, setSearchVars] = useState({ name: '' });
   const { name } = searchVars;
-  const { data, refetch, error, loading } = useSearchUsersQuery({
+  const { data, refetch, error, loading } = useQuery(SearchUserModalDocument, {
     variables: searchVars,
     skip: true,
   });

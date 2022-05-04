@@ -2,7 +2,6 @@ import {
   Box,
   Link as ChakraUILink,
   IconButton,
-  InputProps,
   ListItem,
   Menu,
   MenuButton,
@@ -11,31 +10,31 @@ import {
 } from '@chakra-ui/react';
 import styled from '@emotion/styled';
 import React, { useEffect, useState } from 'react';
+import { gql } from 'urql';
 
-import { ChannelFormModal } from '@/components/ChannelFormModal';
+import { ChannelFormModal, ChannelFormModalProps } from '@/components/ChannelFormModal';
 import { MoreVert } from '@/components/Icons';
 import { Link } from '@/components/Link';
-import { useDeleteChannelMutation, useUpdateChannelNameMutation } from '@/hooks/api';
+import {
+  useDeleteChannelMutation,
+  useUpdateChannelNameMutation,
+  ChannelListItem_ChannelWithPersonalizedDataFragment,
+} from '@/hooks/api';
 import { useDelayedUnReadCountRender } from '@/hooks/message';
 import { pagesPath } from '@/libs/$path';
 
 type UiProps = {
   name: string;
-  editName: string;
-  editDescription: string;
   active?: boolean;
   id: string;
   isOwner: boolean;
   isEditing: boolean;
-  onNameChange: InputProps['onChange'];
-  onDescriptionChange: InputProps['onChange'];
   onEditClick: () => void;
-  onSubmitClick: () => void;
-  onCancelClick: () => void;
   onDeleteChannelClick: () => void;
   isDM: boolean;
   unReadCount?: number;
   className?: string;
+  updateChannelModalProps: ChannelFormModalProps;
 };
 const Ui: React.FC<UiProps> = (props) => (
   <ListItem
@@ -93,18 +92,7 @@ const Ui: React.FC<UiProps> = (props) => (
         <Box width={6} />
       )}
     </>
-    {props.isOwner && (
-      <ChannelFormModal
-        name={props.editName}
-        onNameChange={props.onNameChange}
-        description={props.editDescription}
-        onDescriptionChange={props.onDescriptionChange}
-        onCreateClick={props.onSubmitClick}
-        mode={'update'}
-        isOpen={props.isEditing}
-        onClose={props.onCancelClick}
-      />
-    )}
+    {props.isOwner && <ChannelFormModal {...props.updateChannelModalProps} />}
   </ListItem>
 );
 
@@ -115,18 +103,12 @@ const StyledUi = styled(Ui)`
   }
 `;
 
-type ContainerProps = Pick<
-  UiProps,
-  'name' | 'id' | 'isOwner' | 'isDM' | 'unReadCount' | 'active'
-> & { description?: string | null };
+type ContainerProps = ChannelListItem_ChannelWithPersonalizedDataFragment &
+  Pick<UiProps, 'active' | 'isOwner'>;
 const Container: React.FC<ContainerProps> = (props) => {
-  const [state, setState] = useState<{
-    editName: string;
-    editDescription: string;
-    isEditing: boolean;
-  }>({
-    editName: props.name,
-    editDescription: '',
+  const [state, setState] = useState<{ name: string; description: string; isEditing: boolean }>({
+    name: props.name,
+    description: props.description || '',
     isEditing: false,
   });
   const [updateChannel] = useUpdateChannelNameMutation();
@@ -135,43 +117,48 @@ const Container: React.FC<ContainerProps> = (props) => {
   useEffect(() => {
     setState((current) => ({
       ...current,
-      editName: props.name,
-      editDescription: props.description ?? '',
+      name: props.name,
+      description: props.description ?? '',
     }));
   }, [props.name, props.description]);
 
-  const unReadCount = useDelayedUnReadCountRender(!!props?.active, props.unReadCount);
+  const unReadCount = useDelayedUnReadCountRender(!!props?.active, props.unReadMessageCount);
 
   const uiProps: UiProps = {
     ...props,
-    ...state,
     unReadCount,
     onEditClick: () => {
       setState((current) => ({ ...current, isEditing: true }));
     },
-    onCancelClick: () => {
-      // キャンセルしたら入力状態はリセット
-      setState((current) => ({
-        ...current,
-        isEditing: false,
-        editName: props.name,
-        editDescription: props.description ?? '',
-      }));
-    },
-    onNameChange: ({ target: { value } }) => {
-      setState((current) => ({ ...current, editName: value }));
-    },
-    onDescriptionChange: ({ target: { value } }) => {
-      setState((current) => ({ ...current, editDescription: value }));
-    },
-    onSubmitClick: () => {
-      updateChannel({
-        variables: { id: props.id, name: state.editName, description: state.editDescription },
-      }).then((res) => {
-        if (res.data && !res.error) {
-          setState((current) => ({ ...current, isEditing: false }));
-        }
-      });
+    isEditing: state.isEditing,
+    updateChannelModalProps: {
+      ...state,
+      isOpen: state.isEditing,
+      mode: 'update',
+      onClose: () => {
+        // キャンセルしたら入力状態はリセット
+        setState((current) => ({
+          ...current,
+          isEditing: false,
+          name: props.name,
+          description: props.description ?? '',
+        }));
+      },
+      onNameChange: ({ target: { value } }) => {
+        setState((current) => ({ ...current, name: value }));
+      },
+      onDescriptionChange: ({ target: { value } }) => {
+        setState((current) => ({ ...current, description: value }));
+      },
+      onCreateClick: () => {
+        updateChannel({
+          variables: { id: props.id, name: state.name, description: state.description },
+        }).then((res) => {
+          if (res.data && !res.error) {
+            setState((current) => ({ ...current, isEditing: false }));
+          }
+        });
+      },
     },
     onDeleteChannelClick: () => {
       deleteChannel({ variables: { id: props.id } });
@@ -180,6 +167,16 @@ const Container: React.FC<ContainerProps> = (props) => {
 
   return <StyledUi {...uiProps} />;
 };
+
+gql`
+  fragment ChannelListItem_channelWithPersonalizedData on ChannelWithPersonalizedData {
+    id
+    isDM
+    unReadMessageCount
+    name
+    description
+  }
+`;
 
 export { Container as ChannelListItem };
 export type { ContainerProps as ChannelListItemProps };

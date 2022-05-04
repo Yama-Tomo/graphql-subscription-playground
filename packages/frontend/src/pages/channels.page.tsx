@@ -1,8 +1,10 @@
 import { Box } from '@chakra-ui/react';
 import { NextPage } from 'next';
-import React, { useCallback } from 'react';
+import React from 'react';
+import { gql } from 'urql';
 
 import { Channels, ChannelsProps } from '@/components/Channels';
+import { ChannelsPageDocument, useQuery } from '@/hooks/api';
 import { pagesPath } from '@/libs/$path';
 import { useRouter } from '@/libs/router';
 
@@ -37,27 +39,28 @@ type ContainerProps = Pick<UiProps, 'activeChId'>;
 const Container: NextPage<ContainerProps> = (props) => {
   const router = useRouter();
 
+  const data = useQuery(ChannelsPageDocument);
   const gotoChannel = (id: string) => router.push(pagesPath.channels._id(id).$url());
+
+  if (!data.data) {
+    return null;
+  }
 
   const uiProps: UiProps = {
     ...props,
-    addReFetchEventListener: useCallback(
-      (handler) => {
-        router.events.on('routeChangeStart', handler);
-      },
-      [router]
-    ),
-    removeReFetchEventListener: useCallback(
-      (handler) => {
-        router.events.off('routeChangeStart', handler);
-      },
-      [router]
-    ),
+    ...data.data,
     onChannelCreated: gotoChannel,
     onDMChannelCreated: gotoChannel,
   };
   return <Ui {...uiProps} />;
 };
 
+gql`
+  query ChannelsPage {
+    ...Channels_query
+  }
+`;
+
 export default Container;
-export type { ContainerProps as ChannelsPageProps };
+export { Ui as ChannelsPageUi };
+export type { ContainerProps as ChannelsPageProps, UiProps as ChannelsPageUiProps };

@@ -1,21 +1,21 @@
 import React from 'react';
+import { gql } from 'urql';
 
 import { SearchUserModal, SearchUserModalProps } from '@/components/SearchUserModal';
-import { useCreateChannelMutation, useMyChannelAndProfileQuery } from '@/hooks/api';
+import { CreateDmChannelModalDocument, useCreateChannelMutation, useQuery } from '@/hooks/api';
 
 type ContainerProps = {
   onCreated?: (channelId: string) => void;
   onCreateCancel: SearchUserModalProps['onClose'];
 };
 const Container: React.FC<ContainerProps> = (props) => {
-  const { data } = useMyChannelAndProfileQuery();
+  const { data } = useQuery(CreateDmChannelModalDocument);
   const [createChannel] = useCreateChannelMutation();
 
   const uiProps: SearchUserModalProps = {
     ...props,
     onClose: props.onCreateCancel,
     modalTitle: 'create DM channel',
-    myUserId: data?.myProfile.id || '',
     onSearchResultClick: (user) => {
       if (!data) {
         return;
@@ -43,6 +43,21 @@ const Container: React.FC<ContainerProps> = (props) => {
 
   return <SearchUserModal {...uiProps} />;
 };
+
+gql`
+  query CreateDMChannelModal {
+    channels {
+      id
+      isDM
+      joinUsers {
+        id
+      }
+    }
+    myProfile {
+      name
+    }
+  }
+`;
 
 export { Container as CreateDMChannelModal };
 export type { ContainerProps as CreateDMChannelModalProps };

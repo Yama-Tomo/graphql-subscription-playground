@@ -14,11 +14,16 @@ import {
   TextareaProps,
   VStack,
 } from '@chakra-ui/react';
+import gql from 'graphql-tag';
 import React, { forwardRef, useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 
 import { MoreVert } from '@/components/Icons';
-import { useDeleteMessageMutation, useUpdateMessageMutation } from '@/hooks/api';
+import {
+  useDeleteMessageMutation,
+  useUpdateMessageMutation,
+  MessageListItem_MessageFragment,
+} from '@/hooks/api';
 import { withKeyboardShortcut } from '@/libs/keyboard';
 
 type UiProps = {
@@ -111,13 +116,11 @@ const Ui = forwardRef<HTMLDivElement, UiProps>((props, ref) => (
   </Box>
 ));
 
-type ContainerProps = Pick<UiProps, 'message' | 'userName' | 'isOwner' | 'date'> & {
-  id: string;
-  isRead: boolean;
+type ContainerProps = Pick<UiProps, 'isOwner'> & {
   onReadMessage: (id: string) => void;
-};
+} & MessageListItem_MessageFragment;
 const Container: React.FC<ContainerProps> = (props) => {
-  const [state, setState] = useState({ message: props.message, isEditing: false });
+  const [state, setState] = useState({ message: props.text, isEditing: false });
   const [updateMessage] = useUpdateMessageMutation();
   const [deleteMessage] = useDeleteMessageMutation();
 
@@ -131,8 +134,8 @@ const Container: React.FC<ContainerProps> = (props) => {
   }, [inView, onReadMessage, props.isOwner, props.isRead, id]);
 
   useEffect(() => {
-    setState((current) => ({ ...current, message: props.message }));
-  }, [props.message]);
+    setState((current) => ({ ...current, message: props.text }));
+  }, [props.text]);
 
   const onCancelClick = () => {
     setState((current) => ({ ...current, isEditing: false }));
@@ -149,7 +152,7 @@ const Container: React.FC<ContainerProps> = (props) => {
   const uiProps: UiProps = {
     ...state,
     date: props.date,
-    userName: props.userName,
+    userName: props.user.name,
     isOwner: props.isOwner,
     onEditClick: () => {
       setState((current) => ({ ...current, isEditing: true }));
@@ -167,6 +170,18 @@ const Container: React.FC<ContainerProps> = (props) => {
 
   return <Ui {...uiProps} ref={ref} />;
 };
+
+gql`
+  fragment MessageListItem_message on Message {
+    id
+    text
+    date
+    isRead
+    user {
+      name
+    }
+  }
+`;
 
 export { Container as MessageListItem };
 export type { ContainerProps as MessageListItemProps };
