@@ -3,11 +3,10 @@ import { gql } from 'urql';
 import {
   useCreateMessageMutation as useURQLCreateMessageMutation,
   useDeleteMessageMutation as useURQLDeleteMessageMutation,
-  useLatestMessagesQuery as useURQLLatestMessagesQuery,
   useReadMessagesMutation as useURQLReadMessagesMutation,
   useUpdateMessageMutation as useURQLUpdateMessageMutation,
 } from '@/hooks/api/_generated_gql_codes';
-import { toApolloClientIFUseMutation, toApolloClientIFUseQuery } from '@/hooks/api/adapter';
+import { toApolloClientIFUseMutation } from '@/hooks/api/adapter';
 
 // ----------- fragment -----------
 gql`
@@ -55,7 +54,6 @@ gql`
     }
   }
 `;
-const useLatestMessagesQuery = toApolloClientIFUseQuery(useURQLLatestMessagesQuery);
 
 gql`
   mutation CreateMessage($channelId: ID!, $text: String!) {
@@ -94,7 +92,6 @@ gql`
 const useReadMessagesMutation = toApolloClientIFUseMutation(useURQLReadMessagesMutation);
 
 export {
-  useLatestMessagesQuery,
   useUpdateMessageMutation,
   useCreateMessageMutation,
   useDeleteMessageMutation,

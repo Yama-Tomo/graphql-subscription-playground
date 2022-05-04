@@ -3,11 +3,10 @@ import { gql } from 'urql';
 import {
   useCreateChannelMutation as useURQLCreateChannelMutation,
   useDeleteChannelMutation as useURQLDeleteChannelMutation,
-  useInviteChannelMutation as useURQLInviteChannelMutation,
-  useMyChannelAndProfileQuery as useURQLMyChannelAndProfileQuery,
+  useInviteChannelMutation as useURQLInviteChannelMutation, // useMyChannelAndProfileQuery as useURQLMyChannelAndProfileQuery,
   useUpdateChannelNameMutation as useURQLUpdateChannelNameMutation,
 } from '@/hooks/api/_generated_gql_codes';
-import { toApolloClientIFUseMutation, toApolloClientIFUseQuery } from '@/hooks/api/adapter';
+import { toApolloClientIFUseMutation } from '@/hooks/api/adapter';
 
 // ----------- fragment -----------
 gql`
@@ -42,7 +41,6 @@ gql`
     }
   }
 `;
-const useMyChannelAndProfileQuery = toApolloClientIFUseQuery(useURQLMyChannelAndProfileQuery, true);
 
 gql`
   mutation CreateChannel($name: String!, $description: String, $isDM: Boolean!, $joinUsers: [ID!]) {
@@ -83,7 +81,6 @@ gql`
 const useInviteChannelMutation = toApolloClientIFUseMutation(useURQLInviteChannelMutation);
 
 export {
-  useMyChannelAndProfileQuery,
   useCreateChannelMutation,
   useUpdateChannelNameMutation,
   useDeleteChannelMutation,

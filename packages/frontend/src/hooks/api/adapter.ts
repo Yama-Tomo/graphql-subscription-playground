@@ -6,7 +6,6 @@ import {
   UseMutationState,
   useQuery as useURQLQuery,
   UseQueryArgs,
-  UseQueryResponse,
 } from 'urql';
 
 import { AnyTypedDocNode, TypedUseQueryArgs, TypedUseQueryResponse } from './typed_document';
@@ -17,31 +16,6 @@ type UseCustomQueryArgs<T> = T extends Omit<UseQueryArgs, 'query'>
       skip?: NonNullable<T>['pause'];
     }
   : never;
-
-const toApolloClientIFUseQuery = <
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  CODEGEN_USE_QUERY_FN extends (args: any) => UseQueryResponse,
-  OPTS_OPTIONAL extends boolean = false
->(
-  useQueryFn: CODEGEN_USE_QUERY_FN,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  opts_optional?: OPTS_OPTIONAL
-) => {
-  return function useQueryWrapper(
-    ...options: NonNullable<OPTS_OPTIONAL> extends true
-      ? Partial<[UseCustomQueryArgs<Parameters<CODEGEN_USE_QUERY_FN>[0]>]>
-      : [UseCustomQueryArgs<Parameters<CODEGEN_USE_QUERY_FN>[0]>]
-  ) {
-    const [res, refetch] = useQueryFn(options[0] ? swapOptKeys(options[0]) : {});
-
-    return {
-      data: res.data as ReturnType<CODEGEN_USE_QUERY_FN>[0]['data'],
-      loading: res.fetching,
-      error: res.error,
-      refetch,
-    };
-  };
-};
 
 type UseQueryOptions<T extends AnyTypedDocNode> = UseCustomQueryArgs<
   Omit<TypedUseQueryArgs<T>, 'query'>
@@ -121,5 +95,5 @@ const swapOptKeys = <T extends Record<string, any>>(options: T) => {
   }, {});
 };
 
-export { toApolloClientIFUseQuery, toApolloClientIFUseMutation, useQuery };
+export { toApolloClientIFUseMutation, useQuery };
 export type { UseQueryOptions, UseQueryReturn };
