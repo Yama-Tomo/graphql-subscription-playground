@@ -81,12 +81,15 @@ const Container: React.FC<ContainerProps> = (props) => {
     variables: state,
     ...(!state.before ? { fetchPolicy: 'network-only' } : {}),
   });
+  const preventOnPrevClick = useRef(false);
 
   useEffect(() => {
+    preventOnPrevClick.current = true;
     setState((current) => ({ ...current, channelId: props.channelId }));
     setTimeout(() => {
       if (ref.current) {
         ref.current.scrollTop = ref.current.scrollHeight;
+        preventOnPrevClick.current = false;
       }
     }, 10);
   }, [props.channelId]);
@@ -98,7 +101,7 @@ const Container: React.FC<ContainerProps> = (props) => {
     hasPrevPage: !!data?.messages.pageInfo.hasPreviousPage,
     onPrevClick: () => {
       const before = data?.messages.pageInfo.startCursor;
-      if (before) {
+      if (before && !preventOnPrevClick.current) {
         setState((current) => ({ ...current, before }));
       }
     },
