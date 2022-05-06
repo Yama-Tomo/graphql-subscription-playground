@@ -1,5 +1,5 @@
 import { setUserId } from '@/libs/user';
-import { latestMessagesQuery } from '@/test_utils/mocks';
+import { channelIdPageDocumentQuery } from '@/test_utils/mocks';
 
 import { env } from '../env';
 
@@ -26,13 +26,10 @@ describe('/channels/[id]', () => {
         return;
       }
 
-      win._msw.use(latestMessagesQuery(0));
+      win._msw.use(channelIdPageDocumentQuery(0));
 
       cy.get('a').contains('ch1').click();
-
-      // インジケータがトグルされるかのテスト
-      cy.contains('Loading');
-      cy.contains('Loading').should('not.exist');
+      cy.contains('no message');
 
       cy.takeScreenshot();
     });
