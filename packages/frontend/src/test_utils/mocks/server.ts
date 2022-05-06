@@ -16,11 +16,14 @@ import {
   User,
 } from './_generated_gql_mocks';
 
+const requestServerSpy = typeof jest !== 'undefined' ? jest.fn() : undefined;
+
 const channelsPageQuery = ({
   channels,
   myProfile,
 }: { channels?: ChannelWithPersonalizedData[]; myProfile?: User } = {}) => {
   return graphql.query(ChannelsPageDocument, (req, res, ctx) => {
+    requestServerSpy?.({ docName: 'ChannelsPageDocument', variables: req.variables });
     const user = myProfile || users.yamatomo;
     return res(
       ctx.data({
@@ -49,6 +52,7 @@ const users = {
 
 const latestMessagesQuery = (messageLength = 15) => {
   return graphql.query(LatestMessagesDocument, (req, res, ctx) => {
+    requestServerSpy?.({ docName: 'LatestMessagesDocument', variables: req.variables });
     const userArr = Object.values(users);
 
     const edges = Array.from({ length: messageLength }).map((_, idx) => {
@@ -100,6 +104,7 @@ export {
   server,
   isMockForNode,
   handlers,
+  requestServerSpy,
   latestMessagesQuery,
   channelsPageQuery,
   setupMockServer,
