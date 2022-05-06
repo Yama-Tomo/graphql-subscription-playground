@@ -23,9 +23,9 @@ const Ui = forwardRef<HTMLDivElement, UiProps>((props, ref) => (
     ref={ref}
     p={2}
   >
-    {!props.messages && (
+    {!props.messages.length && (
       <Box className="loader" key={0} color={'gray.600'}>
-        <Center fontSize={'sm'}>Loading ...</Center>
+        <Center fontSize={'sm'}>no message</Center>
       </Box>
     )}
 
