@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import {
   OperationContext,
   OperationResult,
@@ -61,10 +61,12 @@ const useQuery = <T extends AnyTypedDocNode>(
 ): UseQueryReturn<T> => {
   const args = { query, ...(opts ? swapOptKeys(opts) : {}) };
   const [res, refetch] = useURQLQuery(args);
-  const { data, fetching: loading, error, ...extra } = res;
-  const { stale, ...restExtra } = extra;
+  return useMemo(() => {
+    const { data, fetching: loading, error, ...extra } = res;
+    const { stale, ...restExtra } = extra;
 
-  return { data, loading, error, extra: { ...restExtra, isValidating: stale }, refetch };
+    return { data, loading, error, extra: { ...restExtra, isValidating: stale }, refetch };
+  }, [res, refetch]);
 };
 
 type WrappedExecute<Data = unknown, Variables = unknown> = (
