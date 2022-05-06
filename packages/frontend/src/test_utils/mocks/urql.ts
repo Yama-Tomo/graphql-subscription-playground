@@ -18,12 +18,14 @@ const mockWithUrqlClient = () => {
       AppOrPage: C
       // eslint-disable-next-line @typescript-eslint/ban-types
     ): NextComponentType<NextUrqlContext, {}, WithUrqlProps> => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const WithUrql = ({ pageProps, urqlClient, urqlState, ...rest }: WithUrqlProps) => {
         const urqlServerState = (pageProps && pageProps.urqlState) || urqlState;
         const ssr = ssrExchange({
           initialState: urqlServerState,
           isClient: true,
           staleWhileRevalidate:
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             typeof window !== 'undefined' ? options!.staleWhileRevalidate : undefined,
         });
 
