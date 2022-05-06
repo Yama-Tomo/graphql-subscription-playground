@@ -2,9 +2,9 @@ import { setUserId } from '@/libs/user';
 import Channels from '@/pages/channels.page';
 import { createTestRenderer, publishSubscription } from '@/test_utils/helper';
 import {
+  channelsPageQuery,
   mockSubscriptionExchange,
   MutationType,
-  myChannelAndProfileQuery,
   newChangeChannelSubscriptionPayload,
   newChannelWithPersonalizedData,
   newSubscription,
@@ -51,7 +51,7 @@ describe('pages/channels', () => {
         ownerId: otherUser.id,
       });
       const result = renderer(
-        myChannelAndProfileQuery({
+        channelsPageQuery({
           channels: [
             newChannelWithPersonalizedData({ name: 'ch1', ownerId: myUser.id }),
             otherUserCreatedCh,
@@ -87,7 +87,7 @@ describe('pages/channels', () => {
         ownerId: otherUser.id,
       });
       const result = renderer(
-        myChannelAndProfileQuery({
+        channelsPageQuery({
           channels: [
             newChannelWithPersonalizedData({ name: 'ch1', ownerId: myUser.id }),
             otherUserCreatedCh,

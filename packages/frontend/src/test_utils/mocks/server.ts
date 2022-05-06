@@ -6,7 +6,7 @@ import testUtilsMark from '@/test_utils/tree_shake';
 import {
   ChannelWithPersonalizedData,
   LatestMessagesDocument,
-  MyChannelAndProfileDocument,
+  ChannelsPageDocument,
   newChannelWithPersonalizedData,
   newMessage,
   newMessageConnection,
@@ -16,11 +16,11 @@ import {
   User,
 } from './_generated_gql_mocks';
 
-const myChannelAndProfileQuery = ({
+const channelsPageQuery = ({
   channels,
   myProfile,
 }: { channels?: ChannelWithPersonalizedData[]; myProfile?: User } = {}) => {
-  return graphql.query(MyChannelAndProfileDocument, (req, res, ctx) => {
+  return graphql.query(ChannelsPageDocument, (req, res, ctx) => {
     const user = myProfile || users.yamatomo;
     return res(
       ctx.data({
@@ -78,7 +78,7 @@ const latestMessagesQuery = (messageLength = 15) => {
   });
 };
 
-const handlers = [myChannelAndProfileQuery(), latestMessagesQuery()];
+const handlers = [latestMessagesQuery(), channelsPageQuery()];
 
 const isBrowser = process.browser;
 const server = isBrowser ? setupWorker(...handlers) : setupServer(...handlers);
@@ -100,7 +100,7 @@ export {
   server,
   isMockForNode,
   handlers,
-  myChannelAndProfileQuery,
   latestMessagesQuery,
+  channelsPageQuery,
   setupMockServer,
 };
