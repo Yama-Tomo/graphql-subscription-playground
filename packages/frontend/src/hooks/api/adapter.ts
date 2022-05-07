@@ -1,12 +1,14 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import {
   OperationContext,
   OperationResult,
   UseMutationResponse,
   UseMutationState,
+  useQuery as useURQLQuery,
   UseQueryArgs,
-  UseQueryResponse,
 } from 'urql';
+
+import { AnyTypedDocNode, TypedUseQueryArgs, TypedUseQueryResponse } from './typed_document';
 
 type UseCustomQueryArgs<T> = T extends Omit<UseQueryArgs, 'query'>
   ? Omit<T, 'requestPolicy' | 'pause'> & {
@@ -15,29 +17,30 @@ type UseCustomQueryArgs<T> = T extends Omit<UseQueryArgs, 'query'>
     }
   : never;
 
-const toApolloClientIFUseQuery = <
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  CODEGEN_USE_QUERY_FN extends (args: any) => UseQueryResponse,
-  OPTS_OPTIONAL extends boolean = false
->(
-  useQueryFn: CODEGEN_USE_QUERY_FN,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  opts_optional?: OPTS_OPTIONAL
-) => {
-  return function useQueryWrapper(
-    ...options: NonNullable<OPTS_OPTIONAL> extends true
-      ? Partial<[UseCustomQueryArgs<Parameters<CODEGEN_USE_QUERY_FN>[0]>]>
-      : [UseCustomQueryArgs<Parameters<CODEGEN_USE_QUERY_FN>[0]>]
-  ) {
-    const [res, refetch] = useQueryFn(options[0] ? swapOptKeys(options[0]) : {});
+type UseQueryOptions<T extends AnyTypedDocNode> = UseCustomQueryArgs<
+  Omit<TypedUseQueryArgs<T>, 'query'>
+>;
+type UseQueryReturn<T extends AnyTypedDocNode> = {
+  data: TypedUseQueryResponse<T>[0]['data'];
+  loading: TypedUseQueryResponse<T>[0]['fetching'];
+  error: TypedUseQueryResponse<T>[0]['error'];
+  extra: {
+    isValidating: TypedUseQueryResponse<T>[0]['stale'];
+  } & Pick<TypedUseQueryResponse<T>[0], 'extensions' | 'operation'>;
+  refetch: TypedUseQueryResponse<T>[1];
+};
+const useQuery = <T extends AnyTypedDocNode>(
+  query: T,
+  opts?: UseQueryOptions<T>
+): UseQueryReturn<T> => {
+  const args = { query, ...(opts ? swapOptKeys(opts) : {}) };
+  const [res, refetch] = useURQLQuery(args);
+  return useMemo(() => {
+    const { data, fetching: loading, error, ...extra } = res;
+    const { stale, ...restExtra } = extra;
 
-    return {
-      data: res.data as ReturnType<CODEGEN_USE_QUERY_FN>[0]['data'],
-      loading: res.fetching,
-      error: res.error,
-      refetch,
-    };
-  };
+    return { data, loading, error, extra: { ...restExtra, isValidating: stale }, refetch };
+  }, [res, refetch]);
 };
 
 type WrappedExecute<Data = unknown, Variables = unknown> = (
@@ -92,4 +95,5 @@ const swapOptKeys = <T extends Record<string, any>>(options: T) => {
   }, {});
 };
 
-export { toApolloClientIFUseQuery, toApolloClientIFUseMutation };
+export { toApolloClientIFUseMutation, useQuery };
+export type { UseQueryOptions, UseQueryReturn };

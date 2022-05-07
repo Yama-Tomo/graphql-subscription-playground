@@ -5,8 +5,8 @@ import testUtilsMark from '@/test_utils/tree_shake';
 
 import {
   ChannelWithPersonalizedData,
-  LatestMessagesDocument,
-  MyChannelAndProfileDocument,
+  ChannelsPageDocument,
+  ChannelIdPageDocument,
   newChannelWithPersonalizedData,
   newMessage,
   newMessageConnection,
@@ -16,11 +16,14 @@ import {
   User,
 } from './_generated_gql_mocks';
 
-const myChannelAndProfileQuery = ({
+const requestServerSpy = typeof jest !== 'undefined' ? jest.fn() : undefined;
+
+const channelsPageQuery = ({
   channels,
   myProfile,
 }: { channels?: ChannelWithPersonalizedData[]; myProfile?: User } = {}) => {
-  return graphql.query(MyChannelAndProfileDocument, (req, res, ctx) => {
+  return graphql.query(ChannelsPageDocument, (req, res, ctx) => {
+    requestServerSpy?.({ docName: 'ChannelsPageDocument', variables: req.variables });
     const user = myProfile || users.yamatomo;
     return res(
       ctx.data({
@@ -47,8 +50,9 @@ const users = {
   Q: newUser({ name: 'Q' }),
 };
 
-const latestMessagesQuery = (messageLength = 15) => {
-  return graphql.query(LatestMessagesDocument, (req, res, ctx) => {
+const channelIdPageDocumentQuery = (messageLength = 15) => {
+  return graphql.query(ChannelIdPageDocument, (req, res, ctx) => {
+    requestServerSpy?.({ docName: 'ChannelIdPageDocument', variables: req.variables });
     const userArr = Object.values(users);
 
     const edges = Array.from({ length: messageLength }).map((_, idx) => {
@@ -64,6 +68,17 @@ const latestMessagesQuery = (messageLength = 15) => {
 
     return res(
       ctx.data({
+        channels: [
+          newChannelWithPersonalizedData({ id: 'ch1', name: 'ch1', ownerId: users.yamatomo.id }),
+          newChannelWithPersonalizedData({ id: 'ch2', name: 'ch2' }),
+          newChannelWithPersonalizedData({
+            id: 'ch3',
+            name: 'loooong channel',
+            unReadMessageCount: 2,
+          }),
+          newChannelWithPersonalizedData({ id: 'dm1', name: 'dm1', isDM: true }),
+        ],
+        myProfile: users.yamatomo,
         messages: newMessageConnection({
           pageInfo: newPageInfo({
             startCursor: edges[0]?.cursor,
@@ -78,7 +93,7 @@ const latestMessagesQuery = (messageLength = 15) => {
   });
 };
 
-const handlers = [myChannelAndProfileQuery(), latestMessagesQuery()];
+const handlers = [channelIdPageDocumentQuery(), channelsPageQuery()];
 
 const isBrowser = process.browser;
 const server = isBrowser ? setupWorker(...handlers) : setupServer(...handlers);
@@ -100,7 +115,8 @@ export {
   server,
   isMockForNode,
   handlers,
-  myChannelAndProfileQuery,
-  latestMessagesQuery,
+  requestServerSpy,
+  channelIdPageDocumentQuery,
+  channelsPageQuery,
   setupMockServer,
 };

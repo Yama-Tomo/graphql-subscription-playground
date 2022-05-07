@@ -1,17 +1,26 @@
 import { Box, Flex, Heading, IconButton, Tag } from '@chakra-ui/react';
 import { NextPage } from 'next';
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
+import { gql } from 'urql';
 
 import { CreateMessage } from '@/components/CreateMessage';
 import { DrawerMenu, DrawerMenuProps } from '@/components/DrawerMenu';
 import { PersonAdd } from '@/components/Icons';
-import { Messages, MessagesProps } from '@/components/Messages';
+import { Messages } from '@/components/Messages';
 import { SearchUserModal, SearchUserModalProps } from '@/components/SearchUserModal';
-import { WithChannelsPage } from '@/components/WithChannelsPage';
-import { useInviteChannelMutation, useMyChannelAndProfileQuery } from '@/hooks/api';
+import {
+  useInviteChannelMutation,
+  ChannelIdPageDocument,
+  typedFilter,
+  useQueryWithFetchedTime,
+  RefetchableFragment,
+  MessagesDocument,
+  combinedQueryResult,
+} from '@/hooks/api';
 import { pagesPath } from '@/libs/$path';
 import { getDMChannelName } from '@/libs/channel';
 import { useRouter } from '@/libs/router';
+import { ChannelsPageUi, ChannelsPageUiProps } from '@/pages/channels.page';
 
 type UiProps = {
   channelId: string;
@@ -22,11 +31,12 @@ type UiProps = {
   inviteUserEditing: boolean;
   onAddUserClick: () => void;
   onAddUserCancelClick: () => void;
-} & MessagesProps &
-  Pick<SearchUserModalProps, 'renderUserName' | 'onSearchResultClick'> &
-  DrawerMenuProps;
+  drawerMenuProps: DrawerMenuProps;
+  channelsPageUiProps: ChannelsPageUiProps;
+} & MessagesProviderProps &
+  Pick<SearchUserModalProps, 'renderUserName' | 'onSearchResultClick'>;
 const Ui: React.FC<UiProps> = (props) => (
-  <>
+  <ChannelsPageUi {...props.channelsPageUiProps}>
     <Flex p={2} color={'gray.700'} boxShadow="md" alignItems={'center'}>
       <Flex flex={1} alignItems={'center'} flexWrap={'wrap'} me={4}>
         <Heading
@@ -37,14 +47,7 @@ const Ui: React.FC<UiProps> = (props) => (
           alignItems={'center'}
         >
           <Box display={{ base: 'inline', md: 'none' }} me={1.5}>
-            <DrawerMenu
-              buttonStyleProps={{ size: 'sm' }}
-              activeChId={props.activeChId}
-              addReFetchEventListener={props.addReFetchEventListener}
-              removeReFetchEventListener={props.removeReFetchEventListener}
-              onChannelCreated={props.onChannelCreated}
-              onDMChannelCreated={props.onDMChannelCreated}
-            />
+            <DrawerMenu {...props.drawerMenuProps} buttonStyleProps={{ size: 'sm' }} />
           </Box>
           <Box># {props.channelName}</Box>
           {!props.isDM && (
@@ -72,39 +75,45 @@ const Ui: React.FC<UiProps> = (props) => (
     {props.inviteUserEditing && (
       <SearchUserModal
         onClose={props.onAddUserCancelClick}
-        myUserId={props.myUserId}
         modalTitle={'invite user'}
         onSearchResultClick={props.onSearchResultClick}
         renderUserName={props.renderUserName}
       />
     )}
-    <Messages channelId={props.channelId} myUserId={props.myUserId} />
+    <MessagesProvider channelId={props.channelId} />
     <CreateMessage channelId={props.channelId} />
-  </>
+  </ChannelsPageUi>
 );
 
 const Container: NextPage = () => {
   const [state, setState] = useState({ inviteUserEditing: false });
   const router = useRouter();
-  const { data } = useMyChannelAndProfileQuery();
+  const currentChannelId = router.query.id ? String(router.query.id) : undefined;
+  const [{ data }] = usePageQuery(currentChannelId);
   const [invite] = useInviteChannelMutation();
 
-  if (!router.query.id || !data) {
+  if (!currentChannelId || !data) {
     return null;
   }
 
-  const currentChannel = data.channels.find((ch) => ch.id == router.query.id);
+  const currentChannel = data.channels.find((ch) => ch.id == currentChannelId);
   if (!currentChannel) {
     return <div>page not found..</div>;
   }
 
   const gotoChannel = (id: string) => router.push(pagesPath.channels._id(id).$url());
+  const channelsPageUiProps: UiProps['channelsPageUiProps'] = {
+    ...typedFilter(ChannelIdPageDocument, data),
+    activeChId: currentChannel.id,
+    onChannelCreated: gotoChannel,
+    onDMChannelCreated: gotoChannel,
+  };
 
   const uiProps: UiProps = {
     ...state,
     channelId: currentChannel.id,
-    activeChId: currentChannel.id,
-    myUserId: data?.myProfile.id || '',
+    channelsPageUiProps,
+    drawerMenuProps: channelsPageUiProps,
     isDM: currentChannel.isDM,
     channelName: currentChannel.isDM
       ? getDMChannelName(currentChannel, data.myProfile.id)
@@ -120,8 +129,6 @@ const Container: NextPage = () => {
     onAddUserCancelClick() {
       setState((current) => ({ ...current, inviteUserEditing: false }));
     },
-    onChannelCreated: gotoChannel,
-    onDMChannelCreated: gotoChannel,
     renderUserName(user) {
       const isJoined = currentChannel.joinUsers.find((usr) => usr.id === user.id);
       return (
@@ -136,4 +143,36 @@ const Container: NextPage = () => {
   return <Ui {...uiProps} />;
 };
 
-export default WithChannelsPage(Container);
+const usePageQuery = (channelId: string | undefined) => {
+  return useQueryWithFetchedTime(ChannelIdPageDocument, {
+    variables: { channelId: channelId || '', last: 20 },
+    skip: channelId == null,
+  });
+};
+
+type MessagesProviderProps = { channelId: string };
+// usePageQuery は上流のコンポーネントでも実行しているのでこの hooks がきっかけの再レンダリングが発生すると再レンダリングが倍になるので
+// (更に下層のコンポーネントでも呼び出している場合は更に倍になる）適宜 memo でくるんで再描画の回数を倍にならないようにする
+// eslint-disable-next-line react/display-name
+const MessagesProvider = React.memo((props: MessagesProviderProps) => {
+  const pageQuery = usePageQuery(props.channelId);
+
+  const refetchableFragment: RefetchableFragment<typeof MessagesDocument> = useCallback(
+    (fragmentQuery) =>
+      combinedQueryResult(pageQuery, fragmentQuery, (pageQueryData) =>
+        typedFilter(MessagesDocument, pageQueryData)
+      ),
+    [pageQuery]
+  );
+
+  return <Messages {...props} refetchableFragment={refetchableFragment} />;
+});
+
+gql`
+  query ChannelIdPage($channelId: ID!, $last: Int = 10, $before: String) {
+    ...Channels_query
+    ...Messages_query
+  }
+`;
+
+export default Container;

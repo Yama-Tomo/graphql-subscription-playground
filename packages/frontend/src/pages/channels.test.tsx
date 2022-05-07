@@ -2,13 +2,14 @@ import { setUserId } from '@/libs/user';
 import Channels from '@/pages/channels.page';
 import { createTestRenderer, publishSubscription } from '@/test_utils/helper';
 import {
+  channelsPageQuery,
   mockSubscriptionExchange,
   MutationType,
-  myChannelAndProfileQuery,
   newChangeChannelSubscriptionPayload,
   newChannelWithPersonalizedData,
   newSubscription,
   newUser,
+  requestServerSpy,
 } from '@/test_utils/mocks';
 
 const renderer = createTestRenderer(Channels);
@@ -39,6 +40,7 @@ describe('pages/channels', () => {
       await publishSubscription(publishable, data, 100);
 
       expect(await result.findByText('# new-add-channel')).toBeInTheDocument();
+      expect(requestServerSpy?.mock.calls.length).toBe(1);
     });
 
     it('ほかユーザが作成したチャンネルを削除されたらチャンネル一覧を再描画すること', async () => {
@@ -51,7 +53,7 @@ describe('pages/channels', () => {
         ownerId: otherUser.id,
       });
       const result = renderer(
-        myChannelAndProfileQuery({
+        channelsPageQuery({
           channels: [
             newChannelWithPersonalizedData({ name: 'ch1', ownerId: myUser.id }),
             otherUserCreatedCh,
@@ -75,6 +77,7 @@ describe('pages/channels', () => {
       await publishSubscription(publishable, data);
 
       expect(result.queryByText(otherUserCreatedChMatcher)).toBeNull();
+      expect(requestServerSpy?.mock.calls.length).toBe(1);
     });
 
     it('ほかユーザが作成したチャンネルが更新されたらチャンネル一覧を再描画すること', async () => {
@@ -87,7 +90,7 @@ describe('pages/channels', () => {
         ownerId: otherUser.id,
       });
       const result = renderer(
-        myChannelAndProfileQuery({
+        channelsPageQuery({
           channels: [
             newChannelWithPersonalizedData({ name: 'ch1', ownerId: myUser.id }),
             otherUserCreatedCh,
@@ -110,6 +113,7 @@ describe('pages/channels', () => {
       await publishSubscription(publishable, data);
 
       expect(await result.findByText('# [update]other-user-ch1')).toBeInTheDocument();
+      expect(requestServerSpy?.mock.calls.length).toBe(1);
     });
   });
 });

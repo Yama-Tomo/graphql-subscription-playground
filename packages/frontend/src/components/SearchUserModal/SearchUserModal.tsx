@@ -16,18 +16,18 @@ import {
   UnorderedList,
 } from '@chakra-ui/react';
 import React from 'react';
+import { gql } from 'urql';
 
-import { types } from '@/hooks/api';
-import { useSearchUsers } from '@/hooks/user';
+import { useSearchUsers } from './lib';
 
-type User = types.SearchUsersQuery['searchUsers'][number];
+type User = { id: string; name: string };
 type UiProps = {
   modalTitle: string;
   loading: boolean;
   userName: InputProps['value'];
   onUserNameChange: InputProps['onChange'];
   onSearchResultClick: (user: User) => void;
-  searchResults?: types.SearchUsersQuery['searchUsers'];
+  searchResults?: User[];
   renderUserName?: (user: User) => JSX.Element;
 } & Pick<ModalProps, 'isOpen' | 'onClose'>;
 const Ui: React.FC<UiProps> = (props) => (
@@ -70,11 +70,12 @@ const Ui: React.FC<UiProps> = (props) => (
   </Modal>
 );
 
-type ContainerProps = {
-  myUserId: string;
-} & Pick<UiProps, 'onSearchResultClick' | 'modalTitle' | 'onClose' | 'renderUserName'>;
+type ContainerProps = Pick<
+  UiProps,
+  'onSearchResultClick' | 'modalTitle' | 'onClose' | 'renderUserName'
+>;
 const Container: React.FC<ContainerProps> = (props) => {
-  const { data: users, search, loading, input, reset } = useSearchUsers();
+  const { data, search, loading, input, reset } = useSearchUsers();
 
   const uiProps: UiProps = {
     ...props,
@@ -82,7 +83,7 @@ const Container: React.FC<ContainerProps> = (props) => {
     loading,
     userName: input,
     isOpen: true,
-    searchResults: users?.searchUsers.filter((user) => user.id != props.myUserId),
+    searchResults: data?.searchUsers.filter((user) => user.id != data.myProfile.id),
     onClose: props.onClose,
     onUserNameChange: ({ target: { value } }) => search(value),
     onSearchResultClick(user) {
@@ -93,6 +94,18 @@ const Container: React.FC<ContainerProps> = (props) => {
 
   return <Ui {...uiProps} />;
 };
+
+gql`
+  query SearchUserModal($name: String!) {
+    myProfile {
+      id
+    }
+    searchUsers(name: $name) {
+      id
+      name
+    }
+  }
+`;
 
 export { Container as SearchUserModal };
 export type { ContainerProps as SearchUserModalProps };

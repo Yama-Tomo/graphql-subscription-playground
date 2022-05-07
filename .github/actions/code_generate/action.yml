@@ -12,6 +12,7 @@ runs:
         packages/bff/src/resolvers/_generated.ts
         packages/frontend/node_modules/@chakra-ui/styled-system/dist/declarations/src/theming.types.d.ts
         packages/frontend/src/hooks/api/_generated_gql_codes.ts
+        packages/frontend/src/hooks/api/_generated_gql_typed_doc_nodes.ts
         packages/frontend/src/libs/$path.ts
         packages/frontend/src/test_utils/mocks/_generated_gql_mocks.ts
         packages/frontend/src/libs/urql/_generated_gql_schema_json.ts

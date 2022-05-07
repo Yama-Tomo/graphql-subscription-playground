@@ -1,34 +1,35 @@
 import { Box, BoxProps, Heading, IconButton, List, ListItem } from '@chakra-ui/react';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
+import { gql } from 'urql';
 
-import { ChannelListItem } from '@/components/ChannelListItem';
+import { ChannelListItem, ChannelListItemProps } from '@/components/ChannelListItem';
 import { CreateChannelModal, CreateChannelModalProps } from '@/components/CreateChannelModal';
 import { CreateDMChannelModal, CreateDMChannelModalProps } from '@/components/CreateDMChannelModal';
 import { AddCircleOutline } from '@/components/Icons';
 import { ListSkeleton } from '@/components/ListSkelton';
-import { types, useMyChannelAndProfileQuery } from '@/hooks/api';
-import { getDMChannelName } from '@/libs/channel';
+import {
+  Channels_QueryFragment,
+  ChannelListItem_ChannelWithPersonalizedDataFragmentDoc,
+  typedFilter,
+} from '@/hooks/api';
 
 type ChannelTypes = 'channel' | 'DM' | undefined;
 type UiProps = {
-  channels: types.MyChannelAndProfileQuery['channels'];
-  DMChannels: types.MyChannelAndProfileQuery['channels'];
+  channels: ChannelListItemProps[];
+  DMChannels: ChannelListItemProps[];
   loading: boolean;
   editingChannelType: ChannelTypes;
   onCreateClick: (channelType: ChannelTypes) => void;
+  // TODO: context Api にして props drilling 回避
   onChannelCreated: CreateChannelModalProps['onCreated'];
   onChannelCreateCancel: CreateChannelModalProps['onCreateCancel'];
   onDMChannelCreated: CreateDMChannelModalProps['onCreated'];
   onDMChannelCreateCancel: CreateDMChannelModalProps['onCreateCancel'];
-  myUserId: string;
   sideNavStyle?: BoxProps;
-  activeChId?: string;
 };
 const Ui: React.FC<UiProps> = ({
   channels,
   DMChannels,
-  myUserId,
-  activeChId,
   loading,
   onCreateClick,
   onChannelCreateCancel,
@@ -53,16 +54,7 @@ const Ui: React.FC<UiProps> = ({
           </Heading>
         </ListItem>
         {loading && <ListSkeleton length={3} height={'16px'} />}
-        {!loading &&
-          channels.map((ch) => (
-            <ChannelListItem
-              {...ch}
-              key={ch.id}
-              isOwner={ch.ownerId === myUserId}
-              unReadCount={ch.unReadMessageCount}
-              active={activeChId === ch.id}
-            />
-          ))}
+        {!loading && channels.map((ch) => <ChannelListItem key={ch.id} {...ch} />)}
         <ListItem>
           <Heading mt={4} size={'sm'} display={'flex'} alignItems={'center'}>
             <Box flex={1}>DM</Box>
@@ -75,16 +67,7 @@ const Ui: React.FC<UiProps> = ({
           </Heading>
         </ListItem>
         {loading && <ListSkeleton length={3} height={'16px'} />}
-        {!loading &&
-          DMChannels.map((ch) => (
-            <ChannelListItem
-              {...ch}
-              key={ch.id}
-              isOwner={ch.ownerId === myUserId}
-              unReadCount={ch.unReadMessageCount}
-              active={activeChId === ch.id}
-            />
-          ))}
+        {!loading && DMChannels.map((ch) => <ChannelListItem key={ch.id} {...ch} />)}
       </List>
     </Box>
     {editingChannelType === 'channel' && (
@@ -99,45 +82,36 @@ const Ui: React.FC<UiProps> = ({
   </>
 );
 
-type ContainerProps = Pick<
-  UiProps,
-  'activeChId' | 'sideNavStyle' | 'onDMChannelCreated' | 'onChannelCreated'
-> & {
-  addReFetchEventListener?: (handler: () => void) => void;
-  removeReFetchEventListener?: (handler: () => void) => void;
-};
+type ContainerProps = Channels_QueryFragment &
+  Pick<UiProps, 'sideNavStyle' | 'onDMChannelCreated' | 'onChannelCreated'> & {
+    activeChId?: string;
+  };
 const Container: React.FC<ContainerProps> = (props) => {
   const [state, setState] = useState<{ editingChannelType: ChannelTypes | undefined }>({
     editingChannelType: undefined,
   });
-  const { data, loading, refetch } = useMyChannelAndProfileQuery();
-
-  const { addReFetchEventListener, removeReFetchEventListener } = props;
-  useEffect(() => {
-    const handler = () => {
-      refetch({ requestPolicy: 'network-only' });
-    };
-
-    addReFetchEventListener?.(handler);
-    return () => {
-      removeReFetchEventListener?.(handler);
-    };
-  }, [addReFetchEventListener, removeReFetchEventListener, refetch]);
 
   const hideModal = () => setState((current) => ({ ...current, editingChannelType: undefined }));
-  const myUserId = data?.myProfile.id || '';
+  const myUserId = props.myProfile.id;
 
   const uiProps: UiProps = {
     ...props,
     ...state,
-    loading,
-    myUserId,
-    channels: (data?.channels || []).filter((channel) => !channel.isDM),
-    DMChannels: (data?.channels || [])
+    loading: false,
+    channels: props.channels
+      .filter((channel) => !channel.isDM)
+      .map((channel) => ({
+        ...typedFilter(ChannelListItem_ChannelWithPersonalizedDataFragmentDoc, channel),
+        isOwner: channel.ownerId === myUserId,
+        active: props.activeChId === channel.id,
+      })),
+    DMChannels: props.channels
       .filter((channel) => channel.isDM)
       .map((channel) => ({
-        ...channel,
-        name: getDMChannelName(channel, myUserId),
+        ...typedFilter(ChannelListItem_ChannelWithPersonalizedDataFragmentDoc, channel),
+        name: channel.joinUsers.find((u) => u.id !== myUserId)?.name || channel.name,
+        isOwner: channel.ownerId === myUserId,
+        active: props.activeChId === channel.id,
       })),
     onCreateClick: (type) => {
       setState((current) => ({ ...current, editingChannelType: type }));
@@ -160,6 +134,23 @@ const Container: React.FC<ContainerProps> = (props) => {
 
   return <Ui {...uiProps} />;
 };
+
+gql`
+  fragment Channels_query on Query {
+    channels {
+      id
+      ownerId
+      joinUsers {
+        id
+        name
+      }
+      ...ChannelListItem_channelWithPersonalizedData
+    }
+    myProfile {
+      id
+    }
+  }
+`;
 
 export { Container as Channels };
 export type { ContainerProps as ChannelsProps };

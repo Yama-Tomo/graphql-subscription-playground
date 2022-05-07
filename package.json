@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "pnpm --parallel dev --filter .",
-    "lint": "pnpm --parallel lint --filter .",
-    "format": "pnpm run format --filter ."
+    "dev": "pnpm --parallel dev",
+    "lint": "pnpm --parallel lint",
+    "format": "pnpm --parallel format"
   },
   "author": "",
   "license": "MIT",

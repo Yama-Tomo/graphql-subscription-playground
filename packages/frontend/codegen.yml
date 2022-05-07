@@ -3,6 +3,7 @@ documents:
   - ./src/**/*.tsx
   - ./src/**/*.ts
 generates:
+   # graphcache の型のためだけにこのファイルを生成している。それ以外は _generated_gql_typed_doc_nodes.ts で生成された型を使う
   ./src/hooks/api/_generated_gql_codes.ts:
     config:
       scalars:
@@ -12,6 +13,16 @@ generates:
       - typescript-operations
       - typescript-urql
       - typescript-urql-graphcache
+  # TypedDocumentNode を生成する。typescript-urql で生成された hooks を使わないのは fragment を再フェッチするコードを書こうとすると
+  # クエリそのものを関数に渡すコードを書く必要があり、クエリに型が付いていないとそれに紐づく variables の型付けができないため
+  ./src/hooks/api/_generated_gql_typed_doc_nodes.ts:
+    config:
+      scalars:
+        Date: string
+    plugins:
+      - typescript
+      - typescript-operations
+      - typed-document-node
   ./src/test_utils/mocks/_generated_gql_mocks.ts:
     config:
       scalarDefaults:
