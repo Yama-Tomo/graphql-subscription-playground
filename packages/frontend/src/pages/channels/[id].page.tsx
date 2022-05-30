@@ -1,6 +1,6 @@
 import { Box, Flex, Heading, IconButton, Tag } from '@chakra-ui/react';
 import { NextPage } from 'next';
-import React, { useCallback, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { gql } from 'urql';
 
 import { CreateMessage } from '@/components/CreateMessage';
@@ -12,10 +12,8 @@ import {
   useInviteChannelMutation,
   ChannelIdPageDocument,
   typedFilter,
-  useQueryWithFetchedTime,
-  RefetchableFragment,
+  useQuery,
   MessagesDocument,
-  combinedQueryResult,
 } from '@/hooks/api';
 import { pagesPath } from '@/libs/$path';
 import { getDMChannelName } from '@/libs/channel';
@@ -144,10 +142,19 @@ const Container: NextPage = () => {
 };
 
 const usePageQuery = (channelId: string | undefined) => {
-  return useQueryWithFetchedTime(ChannelIdPageDocument, {
-    variables: { channelId: channelId || '', last: 20 },
-    skip: channelId == null,
-  });
+  const ref = useRef({ channelId, requestStartTime: new Date().getTime() });
+  if (channelId != null && ref.current.channelId !== channelId) {
+    ref.current.requestStartTime = new Date().getTime();
+    ref.current.channelId = channelId;
+  }
+
+  return [
+    useQuery(ChannelIdPageDocument, {
+      variables: { channelId: channelId || '', last: 20 },
+      skip: channelId == null,
+    }),
+    ref.current.requestStartTime,
+  ] as const;
 };
 
 type MessagesProviderProps = { channelId: string };
@@ -155,17 +162,14 @@ type MessagesProviderProps = { channelId: string };
 // (更に下層のコンポーネントでも呼び出している場合は更に倍になる）適宜 memo でくるんで再描画の回数を倍にならないようにする
 // eslint-disable-next-line react/display-name
 const MessagesProvider = React.memo((props: MessagesProviderProps) => {
-  const pageQuery = usePageQuery(props.channelId);
+  const [pageQuery, requestStartTime] = usePageQuery(props.channelId);
+  const queryData = {
+    loading: pageQuery.loading,
+    data: typedFilter(MessagesDocument, pageQuery.data),
+    requestStartTime,
+  };
 
-  const refetchableFragment: RefetchableFragment<typeof MessagesDocument> = useCallback(
-    (fragmentQuery) =>
-      combinedQueryResult(pageQuery, fragmentQuery, (pageQueryData) =>
-        typedFilter(MessagesDocument, pageQueryData)
-      ),
-    [pageQuery]
-  );
-
-  return <Messages {...props} refetchableFragment={refetchableFragment} />;
+  return <Messages {...props} queryData={queryData} />;
 });
 
 gql`

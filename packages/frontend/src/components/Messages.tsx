@@ -1,14 +1,16 @@
 import { Box, Center, Flex } from '@chakra-ui/react';
 import gql from 'graphql-tag';
-import React, { forwardRef, useCallback, useEffect, useRef } from 'react';
+import React, { forwardRef, useCallback, useEffect, useRef, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 import { MessageListItem, MessageListItemProps } from '@/components/MessageListItem';
 import {
-  RefetchableFragment,
   MessagesDocument,
-  useFragmentQueryWithFetchedTime,
   useReadMessagesMutation,
+  useQuery,
+  useCombinedQuery,
+  TypedUseQueryResult,
+  QueryData,
 } from '@/hooks/api';
 import { useMessageReadStateUpdate } from '@/hooks/message';
 
@@ -53,13 +55,19 @@ const Ui = forwardRef<HTMLDivElement, UiProps>((props, ref) => (
 
 type ContainerProps = {
   channelId: string;
-  refetchableFragment: RefetchableFragment<typeof MessagesDocument>;
+  queryData: QueryData<TypedUseQueryResult<typeof MessagesDocument>>;
 };
 const Container: React.FC<ContainerProps> = (props) => {
   const ref = useRef<HTMLDivElement>(null);
-  const { data, fetch } = props.refetchableFragment(
-    useFragmentQueryWithFetchedTime(MessagesDocument)
-  );
+  const [{ variables, skip, requestStartTime }, setQueryOpts] = useState({
+    requestStartTime: -1,
+    variables: { channelId: props.channelId, last: 20, before: '' },
+    skip: true,
+  });
+
+  const fragmentQuery = useQuery(MessagesDocument, { variables, skip });
+  const combinedQuery = useCombinedQuery(props.queryData, { ...fragmentQuery, requestStartTime });
+  const { data } = combinedQuery;
 
   const [messageReadStateUpdater] = useReadMessagesMutation();
   const wrappedMessageReadStateUpdater = useCallback(
@@ -90,7 +98,11 @@ const Container: React.FC<ContainerProps> = (props) => {
     onPrevClick: () => {
       const before = data?.messages.pageInfo.startCursor;
       if (before && !preventOnPrevClick.current) {
-        fetch({ variables: { channelId: props.channelId, last: 20, before } });
+        setQueryOpts({
+          requestStartTime: new Date().getTime(),
+          variables: { channelId: props.channelId, last: 20, before },
+          skip: false,
+        });
       }
     },
   };
