@@ -1,6 +1,15 @@
 import { Box, Center, Flex } from '@chakra-ui/react';
 import gql from 'graphql-tag';
-import React, { forwardRef, useCallback, useEffect, useRef, useState } from 'react';
+import React, {
+  createContext,
+  forwardRef,
+  memo,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 import { MessageListItem, MessageListItemProps } from '@/components/MessageListItem';
@@ -53,20 +62,27 @@ const Ui = forwardRef<HTMLDivElement, UiProps>((props, ref) => (
   </Flex>
 ));
 
-type ContainerProps = {
+type ContextType = {
   channelId: string;
   queryData: QueryData<TypedUseQueryResult<typeof MessagesDocument>>;
 };
-const Container: React.FC<ContainerProps> = (props) => {
+
+const Context = createContext<ContextType>({
+  channelId: '',
+  queryData: { loading: false, data: undefined, requestStartTime: -1 },
+});
+
+const Container: React.FC = () => {
+  const ctx = useContext(Context);
   const ref = useRef<HTMLDivElement>(null);
   const [{ variables, skip, requestStartTime }, setQueryOpts] = useState({
     requestStartTime: -1,
-    variables: { channelId: props.channelId, last: 20, before: '' },
+    variables: { channelId: ctx.channelId, last: 20, before: '' },
     skip: true,
   });
 
   const fragmentQuery = useQuery(MessagesDocument, { variables, skip });
-  const combinedQuery = useCombinedQuery(props.queryData, { ...fragmentQuery, requestStartTime });
+  const combinedQuery = useCombinedQuery(ctx.queryData, { ...fragmentQuery, requestStartTime });
   const { data } = combinedQuery;
 
   const [messageReadStateUpdater] = useReadMessagesMutation();
@@ -86,7 +102,7 @@ const Container: React.FC<ContainerProps> = (props) => {
       ref.current.scrollTop = ref.current.scrollHeight;
       preventOnPrevClick.current = false;
     }
-  }, [props.channelId]);
+  }, [ctx.channelId]);
 
   const uiProps: UiProps = {
     messages: (data?.messages.edges || []).map((message) => ({
@@ -100,7 +116,7 @@ const Container: React.FC<ContainerProps> = (props) => {
       if (before && !preventOnPrevClick.current) {
         setQueryOpts({
           requestStartTime: new Date().getTime(),
-          variables: { channelId: props.channelId, last: 20, before },
+          variables: { channelId: ctx.channelId, last: 20, before },
           skip: false,
         });
       }
@@ -147,5 +163,7 @@ gql`
   }
 `;
 
-export { Container as Messages };
-export type { ContainerProps as MessagesProps };
+const MemorizedContainer = memo(Container);
+
+export { MemorizedContainer as Messages, Context as MessagesContext };
+export type { ContextType as MessagesContextType };
