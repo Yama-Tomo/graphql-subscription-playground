@@ -1,21 +1,19 @@
 import { Box, Flex, Heading, IconButton, Tag } from '@chakra-ui/react';
 import { NextPage } from 'next';
-import React, { useCallback, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { gql } from 'urql';
 
 import { CreateMessage } from '@/components/CreateMessage';
 import { DrawerMenu, DrawerMenuProps } from '@/components/DrawerMenu';
 import { PersonAdd } from '@/components/Icons';
-import { Messages } from '@/components/Messages';
+import { Messages, MessagesContext, MessagesContextType } from '@/components/Messages';
 import { SearchUserModal, SearchUserModalProps } from '@/components/SearchUserModal';
 import {
   useInviteChannelMutation,
   ChannelIdPageDocument,
   typedFilter,
-  useQueryWithFetchedTime,
-  RefetchableFragment,
+  useQuery,
   MessagesDocument,
-  combinedQueryResult,
 } from '@/hooks/api';
 import { pagesPath } from '@/libs/$path';
 import { getDMChannelName } from '@/libs/channel';
@@ -33,8 +31,7 @@ type UiProps = {
   onAddUserCancelClick: () => void;
   drawerMenuProps: DrawerMenuProps;
   channelsPageUiProps: ChannelsPageUiProps;
-} & MessagesProviderProps &
-  Pick<SearchUserModalProps, 'renderUserName' | 'onSearchResultClick'>;
+} & Pick<SearchUserModalProps, 'renderUserName' | 'onSearchResultClick'>;
 const Ui: React.FC<UiProps> = (props) => (
   <ChannelsPageUi {...props.channelsPageUiProps}>
     <Flex p={2} color={'gray.700'} boxShadow="md" alignItems={'center'}>
@@ -80,7 +77,7 @@ const Ui: React.FC<UiProps> = (props) => (
         renderUserName={props.renderUserName}
       />
     )}
-    <MessagesProvider channelId={props.channelId} />
+    <Messages />
     <CreateMessage channelId={props.channelId} />
   </ChannelsPageUi>
 );
@@ -89,7 +86,7 @@ const Container: NextPage = () => {
   const [state, setState] = useState({ inviteUserEditing: false });
   const router = useRouter();
   const currentChannelId = router.query.id ? String(router.query.id) : undefined;
-  const [{ data }] = usePageQuery(currentChannelId);
+  const [{ data, loading }, requestStartTime] = usePageQuery(currentChannelId);
   const [invite] = useInviteChannelMutation();
 
   if (!currentChannelId || !data) {
@@ -140,33 +137,33 @@ const Container: NextPage = () => {
     },
   };
 
-  return <Ui {...uiProps} />;
+  const messageContext: MessagesContextType = {
+    channelId: currentChannel.id,
+    queryData: { loading, data: typedFilter(MessagesDocument, data), requestStartTime },
+  };
+
+  return (
+    <MessagesContext.Provider value={messageContext}>
+      <Ui {...uiProps} />
+    </MessagesContext.Provider>
+  );
 };
 
 const usePageQuery = (channelId: string | undefined) => {
-  return useQueryWithFetchedTime(ChannelIdPageDocument, {
-    variables: { channelId: channelId || '', last: 20 },
-    skip: channelId == null,
-  });
+  const ref = useRef({ channelId, requestStartTime: new Date().getTime() });
+  if (channelId != null && ref.current.channelId !== channelId) {
+    ref.current.requestStartTime = new Date().getTime();
+    ref.current.channelId = channelId;
+  }
+
+  return [
+    useQuery(ChannelIdPageDocument, {
+      variables: { channelId: channelId || '', last: 20 },
+      skip: channelId == null,
+    }),
+    ref.current.requestStartTime,
+  ] as const;
 };
-
-type MessagesProviderProps = { channelId: string };
-// usePageQuery は上流のコンポーネントでも実行しているのでこの hooks がきっかけの再レンダリングが発生すると再レンダリングが倍になるので
-// (更に下層のコンポーネントでも呼び出している場合は更に倍になる）適宜 memo でくるんで再描画の回数を倍にならないようにする
-// eslint-disable-next-line react/display-name
-const MessagesProvider = React.memo((props: MessagesProviderProps) => {
-  const pageQuery = usePageQuery(props.channelId);
-
-  const refetchableFragment: RefetchableFragment<typeof MessagesDocument> = useCallback(
-    (fragmentQuery) =>
-      combinedQueryResult(pageQuery, fragmentQuery, (pageQueryData) =>
-        typedFilter(MessagesDocument, pageQueryData)
-      ),
-    [pageQuery]
-  );
-
-  return <Messages {...props} refetchableFragment={refetchableFragment} />;
-});
 
 gql`
   query ChannelIdPage($channelId: ID!, $last: Int = 10, $before: String) {

@@ -1,14 +1,25 @@
 import { Box, Center, Flex } from '@chakra-ui/react';
 import gql from 'graphql-tag';
-import React, { forwardRef, useCallback, useEffect, useRef } from 'react';
+import React, {
+  createContext,
+  forwardRef,
+  memo,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 import { MessageListItem, MessageListItemProps } from '@/components/MessageListItem';
 import {
-  RefetchableFragment,
   MessagesDocument,
-  useFragmentQueryWithFetchedTime,
   useReadMessagesMutation,
+  useQuery,
+  useCombinedQuery,
+  TypedUseQueryResult,
+  QueryData,
 } from '@/hooks/api';
 import { useMessageReadStateUpdate } from '@/hooks/message';
 
@@ -51,15 +62,28 @@ const Ui = forwardRef<HTMLDivElement, UiProps>((props, ref) => (
   </Flex>
 ));
 
-type ContainerProps = {
+type ContextType = {
   channelId: string;
-  refetchableFragment: RefetchableFragment<typeof MessagesDocument>;
+  queryData: QueryData<TypedUseQueryResult<typeof MessagesDocument>>;
 };
-const Container: React.FC<ContainerProps> = (props) => {
+
+const Context = createContext<ContextType>({
+  channelId: '',
+  queryData: { loading: false, data: undefined, requestStartTime: -1 },
+});
+
+const Container: React.FC = () => {
+  const ctx = useContext(Context);
   const ref = useRef<HTMLDivElement>(null);
-  const { data, fetch } = props.refetchableFragment(
-    useFragmentQueryWithFetchedTime(MessagesDocument)
-  );
+  const [{ variables, skip, requestStartTime }, setQueryOpts] = useState({
+    requestStartTime: -1,
+    variables: { channelId: ctx.channelId, last: 20, before: '' },
+    skip: true,
+  });
+
+  const fragmentQuery = useQuery(MessagesDocument, { variables, skip });
+  const combinedQuery = useCombinedQuery(ctx.queryData, { ...fragmentQuery, requestStartTime });
+  const { data } = combinedQuery;
 
   const [messageReadStateUpdater] = useReadMessagesMutation();
   const wrappedMessageReadStateUpdater = useCallback(
@@ -78,7 +102,7 @@ const Container: React.FC<ContainerProps> = (props) => {
       ref.current.scrollTop = ref.current.scrollHeight;
       preventOnPrevClick.current = false;
     }
-  }, [props.channelId]);
+  }, [ctx.channelId]);
 
   const uiProps: UiProps = {
     messages: (data?.messages.edges || []).map((message) => ({
@@ -90,7 +114,11 @@ const Container: React.FC<ContainerProps> = (props) => {
     onPrevClick: () => {
       const before = data?.messages.pageInfo.startCursor;
       if (before && !preventOnPrevClick.current) {
-        fetch({ variables: { channelId: props.channelId, last: 20, before } });
+        setQueryOpts({
+          requestStartTime: new Date().getTime(),
+          variables: { channelId: ctx.channelId, last: 20, before },
+          skip: false,
+        });
       }
     },
   };
@@ -135,5 +163,7 @@ gql`
   }
 `;
 
-export { Container as Messages };
-export type { ContainerProps as MessagesProps };
+const MemorizedContainer = memo(Container);
+
+export { MemorizedContainer as Messages, Context as MessagesContext };
+export type { ContextType as MessagesContextType };
