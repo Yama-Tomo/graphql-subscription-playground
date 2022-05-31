@@ -8,9 +8,12 @@ generates:
     config:
       scalars:
         Date: string
+      documentMode: external
+      importDocumentNodeExternallyFrom: ./_generated_gql_typed_doc_nodes.ts
+      importOperationTypesFrom: Operations
+      noExport: true
     plugins:
       - typescript
-      - typescript-operations
       - typescript-urql
       - typescript-urql-graphcache
   # TypedDocumentNode を生成する。typescript-urql で生成された hooks を使わないのは fragment を再フェッチするコードを書こうとすると
